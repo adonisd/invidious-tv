@@ -14,11 +14,15 @@
         </v-alert>
 
         <div v-else-if="video">
-          <v-card elevation="2" class="mb-4">
-            <media-player .title="video.title" .src="videoSources">
-              <media-provider></media-provider>
-              <media-video-layout .thumbnails="video.videoThumbnails"></media-video-layout>
-            </media-player>
+          <v-card elevation="2" class="mb-4" v-if="video">
+            <video
+              v-show="video"
+              ref="videoElement"
+              :poster="video.videoThumbnails[0]?.url"
+              controls
+              :src="video.formatStreams[0]?.url"
+              style="width: 100%; max-height: 600px; background: #000"
+            ></video>
           </v-card>
 
           <v-card elevation="1">
@@ -93,6 +97,7 @@ const videoSources = computed(() => {
 
   // Add format streams as fallback
   if (video.value.formatStreams && video.value.formatStreams.length > 0) {
+    console.log("Adding format streams:", video.value.formatStreams);
     video.value.formatStreams.forEach((stream) => {
       if (stream.url) {
         sources.push({
