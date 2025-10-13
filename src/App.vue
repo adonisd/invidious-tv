@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
+import { RouterView } from "vue-router";
 // import HelloWorld from './components/HelloWorld.vue'
-import HeaderBar from './components/HeaderBar.vue'
+import HeaderBar from "./components/HeaderBar.vue";
 </script>
 
 <template>
