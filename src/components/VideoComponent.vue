@@ -16,6 +16,7 @@
         <div v-else-if="video">
           <v-card elevation="2" class="mb-4">
             <video
+              v-show="video"
               ref="videoElement"
               :poster="video.videoThumbnails[0]?.url"
               controls
@@ -78,6 +79,7 @@ let dashPlayer: dashjs.MediaPlayerClass | null = null;
 const invidious = new InvidiousHelper("https://tube.toc.homes");
 
 async function fetchVideo() {
+  console.log("Fetching video for ID:", props.videoId);
   loading.value = true;
   error.value = null;
 
@@ -90,14 +92,16 @@ async function fetchVideo() {
   try {
     const data = await invidious.getVideoById(props.videoId);
     video.value = data;
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     // Prefer hlsUrl, then dashUrl, then first formatStream
     streamUrl.value = data.hlsUrl || data.dashUrl || data.formatStreams[0]?.url || null;
+    console.log("Selected stream URL:", streamUrl.value);
 
     // Initialize player after DOM update
     await nextTick();
     initializePlayer();
+    console.log("Player initialized");
   } catch (e: unknown) {
     error.value = e instanceof Error ? e.message : "Failed to load video.";
   } finally {
@@ -106,26 +110,34 @@ async function fetchVideo() {
 }
 
 function initializePlayer() {
-  if (!videoElement.value || !streamUrl.value) return;
+  if (!videoElement.value || !streamUrl.value) {
+    console.log("No video element or stream URL, cannot initialize player");
+    return;
+  }
 
   const url = streamUrl.value;
+  console.log("Initializing player with URL:", url);
 
-  // Check if it's a DASH manifest
   if (url.includes("/manifest/dash/") || url.endsWith(".mpd")) {
-    // Use dash.js for DASH streams
+    console.log("Initializing DASH player for URL:", url);
     dashPlayer = dashjs.MediaPlayer().create();
     dashPlayer.initialize(videoElement.value, url, true);
   } else if (url.includes(".m3u8")) {
-    // HLS - let native player handle it (works on Safari)
+    // Native HLS support (e.g. Safari)
     videoElement.value.src = url;
   } else {
-    // Direct video file
+    // Direct file (e.g. .mp4)
     videoElement.value.src = url;
   }
 }
 
 onMounted(fetchVideo);
 watch(() => props.videoId, fetchVideo);
+watch(videoElement, (el) => {
+  if (el && streamUrl.value) {
+    initializePlayer();
+  }
+});
 
 onBeforeUnmount(() => {
   if (dashPlayer) {
