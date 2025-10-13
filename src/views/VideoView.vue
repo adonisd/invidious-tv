@@ -12,12 +12,9 @@ import VideoComponent from "@/components/VideoComponent.vue";
 const route = useRoute();
 const videoId = computed(() => route.params.id as string);
 </script>
-
 <style scoped>
-.video-view {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2em 0;
+* {
+  margin-left: 20px;
+  box-sizing: border-box;
 }
 </style>
