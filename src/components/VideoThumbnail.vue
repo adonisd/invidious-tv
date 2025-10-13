@@ -1,5 +1,5 @@
 <template>
-  <v-card class="video-card" elevation="2" hover>
+  <v-card class="video-card" elevation="2" hover style="cursor: pointer">
     <v-img height="160px" :src="thumbnail" cover></v-img>
     <v-card-title>
       {{ author }}
@@ -12,10 +12,15 @@
     <v-card-text>
       <v-divider vertical> </v-divider>
       {{ title }}
+      {{ videoId }}
     </v-card-text>
-
     <!-- TODO HANDLE CREATOR IMAGE IF ANY -->
     <!-- Channel info -->
+    <v-card-actions>
+      <v-btn color="orange-lighten-2" :to="{ name: 'video', params: { id: videoId } }">
+        Explore
+      </v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 
@@ -27,6 +32,7 @@ defineProps<{
   duration: string;
   channel: string;
   author: string;
+  videoId: string;
   creatorImage?: string;
 }>();
 

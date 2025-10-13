@@ -8,6 +8,7 @@
         :views="video.viewCount"
         :channel="video.author"
         :duration="formatDuration(video.lengthSeconds)"
+        :videoId="video.videoId"
       />
     </v-col>
   </v-row>

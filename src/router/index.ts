@@ -22,6 +22,12 @@ const router = createRouter({
       name: "dashboard",
       component: () => import("../views/DashboardView.vue"),
     },
+    {
+      path: "/video/:id",
+      name: "video",
+      component: () => import("../views/VideoView.vue"),
+      props: true,
+    },
   ],
 });
 
