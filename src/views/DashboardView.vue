@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col v-for="video in videos" :key="video.videoId" cols="12" sm="6" md="4" lg="4">
+    <v-col v-for="video in videos" :key="video.videoId" cols="12" sm="6" md="4" lg="3">
       <VideoThumbnail
         :author="video.author"
         :title="video.title"
