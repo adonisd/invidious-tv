@@ -20,7 +20,7 @@
               ref="videoElement"
               :poster="video.videoThumbnails[0]?.url"
               controls
-              :src="video.formatStreams[0]?.url"
+              :src="video.adaptiveFormats[video.adaptiveFormats.length - 1]?.url"
               style="width: 100%; max-height: 600px; background: #000"
             ></video>
           </v-card>
@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { InvidiousHelper } from "@/helper/invidious";
 import type { VideoDetail } from "@/interfaces/videos";
 const props = defineProps<{ videoId: string }>();
@@ -72,44 +72,44 @@ const error = ref<string | null>(null);
 const invidious = new InvidiousHelper("https://tube.toc.homes");
 
 // Compute video sources for VidStack
-const videoSources = computed(() => {
-  if (!video.value) return [];
+// const videoSources = computed(() => {
+//   if (!video.value) return [];
 
-  const sources = [];
+//   const sources = [];
 
-  // Add HLS source if available
-  if (video.value.hlsUrl) {
-    console.log("HLS URL found:", video.value.hlsUrl);
-    sources.push({
-      src: video.value.hlsUrl,
-      type: "application/x-mpegurl",
-    });
-  }
+//   // Add HLS source if available
+//   if (video.value.hlsUrl) {
+//     console.log("HLS URL found:", video.value.hlsUrl);
+//     sources.push({
+//       src: video.value.hlsUrl,
+//       type: "application/x-mpegurl",
+//     });
+//   }
 
-  // Add DASH source if available
-  if (video.value.dashUrl) {
-    console.log("DASH URL found:", video.value.dashUrl);
-    sources.push({
-      src: video.value.dashUrl,
-      type: "application/dash+xml",
-    });
-  }
+//   // Add DASH source if available
+//   if (video.value.dashUrl) {
+//     console.log("DASH URL found:", video.value.dashUrl);
+//     sources.push({
+//       src: video.value.dashUrl,
+//       type: "application/dash+xml",
+//     });
+//   }
 
-  // Add format streams as fallback
-  if (video.value.formatStreams && video.value.formatStreams.length > 0) {
-    console.log("Adding format streams:", video.value.formatStreams);
-    video.value.formatStreams.forEach((stream) => {
-      if (stream.url) {
-        sources.push({
-          src: stream.url,
-          type: stream.type || "video/mp4",
-        });
-      }
-    });
-  }
+//   // Add format streams as fallback
+//   if (video.value.formatStreams && video.value.formatStreams.length > 0) {
+//     console.log("Adding format streams:", video.value.formatStreams);
+//     video.value.formatStreams.forEach((stream) => {
+//       if (stream.url) {
+//         sources.push({
+//           src: stream.url,
+//           type: stream.type || "video/mp4",
+//         });
+//       }
+//     });
+//   }
 
-  return sources;
-});
+//   return sources;
+// });
 
 async function fetchVideo() {
   console.log("Fetching video for ID:", props.videoId);
@@ -118,6 +118,7 @@ async function fetchVideo() {
 
   try {
     const data = await invidious.getVideoById(props.videoId);
+    console.log(JSON.stringify(data));
     video.value = data;
     console.log("Video loaded successfully");
   } catch (e: unknown) {
