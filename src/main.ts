@@ -24,6 +24,12 @@ import "@fontsource/roboto/500-italic.css";
 import "@fontsource/roboto/700-italic.css";
 import "@fontsource/roboto/900-italic.css";
 
+import "vidstack/player/styles/default/theme.css";
+import "vidstack/player/styles/default/layouts/video.css";
+import "vidstack/player";
+import "vidstack/player/layouts/default";
+import "vidstack/player/ui";
+
 const app = createApp(App);
 
 const vuetify = createVuetify({
@@ -53,5 +59,5 @@ const vuetify = createVuetify({
 app.use(createPinia());
 app.use(router);
 app.use(vuetify);
-
+app.config.compilerOptions.isCustomElement = (tag) => tag.startsWith("media-");
 app.mount("#app");
