@@ -1,9 +1,9 @@
 import CopyPlugin from "copy-webpack-plugin";
-import { TransformAsyncModulesPlugin } from "transform-async-modules-webpack-plugin";
+import HtmlWebpackPlugin from "html-webpack-plugin";
 import { VueLoaderPlugin } from "vue-loader";
 import path from "path";
+import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 import { fileURLToPath } from "url";
-import pkgJson from "./package.json" with { type: "json" };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -11,106 +11,93 @@ const __dirname = path.dirname(__filename);
 /** @type {(env: Record<string, string>, argv: { mode?: string }) => (import('webpack').Configuration)[]} */
 const makeConfig = (_env, argv) => [
   {
-    /**
-     * NOTE: Builds with devtool = 'eval' contain very big eval chunks which seem
-     * to cause segfaults (at least) on nodeJS v0.12.2 used on webOS 3.x.
-     */
     devtool: argv.mode === "development" ? "inline-source-map" : "source-map",
-
     entry: {
-      index: "./src/main.ts",
-      // userScript: {
-      //   import: './src/userScript',
-      //   filename: 'webOSUserScripts/[name].js'
-      // }
+      app: "./src/main.ts",
     },
-
+    output: {
+      path: path.resolve(__dirname, "dist"),
+      filename: "[name].js",
+      clean: true,
+      // Force ES5 output for webOS compatibility
+      environment: {
+        arrowFunction: false,
+        bigIntLiteral: false,
+        const: false,
+        destructuring: false,
+        dynamicImport: false,
+        forOf: false,
+        module: false,
+      },
+    },
     resolve: {
       extensions: [".mjs", ".cjs", ".js", ".json", ".ts", ".vue"],
       alias: {
         "@": path.resolve(__dirname, "src"),
       },
+      plugins: [
+        new TsconfigPathsPlugin({
+          configFile: path.resolve(__dirname, "tsconfig.app.json"),
+        }),
+      ],
     },
-
     module: {
       rules: [
         {
           test: /\.vue$/,
           use: "vue-loader",
         },
-        //use babel-loader to transpile js files
+        // Transpile JS files including Vue packages from node_modules
         {
           test: /\.js$/,
           loader: "babel-loader",
+          exclude: {
+            and: [/node_modules/], // Exclude node_modules by default
+            not: [
+              // But include these packages for transpilation
+              /node_modules[\\/]vue/,
+              /node_modules[\\/]@vue/,
+              /node_modules[\\/]vuetify/,
+              /node_modules[\\/]pinia/,
+            ],
+          },
         },
-        /* This configuration is setting up a rule for webpack to handle TypeScript files (.ts). Here's what
-each part of the configuration is doing: */
         {
           test: /\.ts$/,
           loader: "ts-loader",
           options: {
             appendTsSuffixTo: [/\.vue$/],
-            transpileOnly: true,
+            transpileOnly: false,
+            configFile: path.resolve(__dirname, "tsconfig.app.json"),
+            compilerOptions: {
+              // Ensure TypeScript outputs ES5-compatible code
+              target: "ES5",
+              // Don't use optional chaining/nullish coalescing
+              lib: ["ES5", "DOM"],
+            },
           },
           exclude: /node_modules/,
         },
-        // css-loader to bundle all the css files into one file and vue-style-loader
-        // to add all the styles inside the <style> block in `.vue` file.
         {
           test: /\.css$/,
           use: ["vue-style-loader", "css-loader"],
         },
-        // {
-        //   test: /\.[mc]?[jt]s$/i,
-
-        //   loader: "babel-loader",
-        //   exclude: [
-        //     // Some module should not be transpiled by Babel
-        //     // See https://github.com/zloirock/core-js/issues/743#issuecomment-572074215
-        //     // \\ for Windows, / for macOS and Linux
-        //     /node_modules[\\/]core-js/,
-        //     /node_modules[\\/]webpack[\\/]buildin/,
-        //   ],
-        //   options: {
-        //     cacheDirectory: true,
-        //   },
-        //   resolve: {
-        //     // File extension DON'T MATTER in a bundler.
-        //     fullySpecified: false,
-        //   },
-        // },
-        // {
-        //   test: /\.css$/i,
-        //   use: [
-        //     { loader: "style-loader" },
-        //     {
-        //       loader: "css-loader",
-        //       options: { esModule: false, importLoaders: 1 },
-        //     },
-        //     "postcss-loader",
-        //   ],
-        // },
       ],
     },
-
     plugins: [
       new VueLoaderPlugin(),
-      new CopyPlugin({
-        patterns: [
-          { context: "assets", from: "**/*" },
-          // { context: "src", from: "index.html" },
-        ],
+      new HtmlWebpackPlugin({
+        template: path.resolve(__dirname, "index.html"),
+        inject: "body",
       }),
-      // babel doesn't transform top-level await.
-      // webpack transforms it to async modules.
-      // This plugin calls babel again to transform remove the `async` keyword usage after the fact.
-      new TransformAsyncModulesPlugin({
-        // @ts-expect-error Bad types
-        runtime: {
-          version: pkgJson.devDependencies["@babel/plugin-transform-runtime"],
-        },
+      new CopyPlugin({
+        patterns: [{ context: "assets", from: "**/*" }],
       }),
     ],
+    // Optimize for older environments
+    optimization: {
+      minimize: argv.mode === "production",
+    },
   },
 ];
 

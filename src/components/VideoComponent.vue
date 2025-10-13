@@ -14,42 +14,38 @@
         </v-alert>
 
         <div v-else-if="video">
-          <v-card elevation="2" class="mb-4" v-if="video">
+          <v-card elevation="2" class="mb-4" v-if="video && videoPoster && videoSrc">
             <video
               v-show="video"
               ref="videoElement"
-              :poster="video.videoThumbnails[0]?.url"
+              :poster="videoPoster"
               controls
-              :src="video.adaptiveFormats[video.adaptiveFormats.length - 1]?.url"
+              :src="videoSrc"
               style="width: 100%; max-height: 600px; background: #000"
             ></video>
           </v-card>
 
-          <v-card elevation="1">
+          <v-card elevation="1" v-if="video">
             <v-card-title class="text-h5">
-              {{ video.title }}
+              {{ videoTitle }}
             </v-card-title>
 
             <v-card-subtitle class="d-flex flex-wrap align-center ga-2">
-              <span>
+              <span v-if="videoAuthor && videoAuthorUrl">
                 By
-                <a
-                  :href="video.authorUrl"
-                  target="_blank"
-                  class="text-primary text-decoration-none"
-                >
-                  {{ video.author }}
+                <a :href="videoAuthorUrl" target="_blank" class="text-primary text-decoration-none">
+                  {{ videoAuthor }}
                 </a>
               </span>
-              <v-divider vertical></v-divider>
-              <span>{{ video.publishedText }}</span>
-              <v-divider vertical thickness="3"></v-divider>
-              <span>{{ video.viewCount }} views</span>
+              <v-divider vertical v-if="videoPublishedText"></v-divider>
+              <span v-if="videoPublishedText">{{ videoPublishedText }}</span>
+              <v-divider vertical thickness="3" v-if="videoViewCount"></v-divider>
+              <span v-if="videoViewCount">{{ videoViewCount }} views</span>
             </v-card-subtitle>
 
             <v-card-text>
               <v-sheet color="grey-lighten-4" rounded class="pa-4">
-                <div v-html="video.descriptionHtml"></div>
+                <div v-if="videoDescriptionHtml" v-html="videoDescriptionHtml"></div>
               </v-sheet>
             </v-card-text>
           </v-card>
@@ -60,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { InvidiousHelper } from "@/helper/invidious";
 import type { VideoDetail } from "@/interfaces/videos";
 const props = defineProps<{ videoId: string }>();
@@ -71,45 +67,33 @@ const error = ref<string | null>(null);
 
 const invidious = new InvidiousHelper("https://tube.toc.homes");
 
-// Compute video sources for VidStack
-// const videoSources = computed(() => {
-//   if (!video.value) return [];
-
-//   const sources = [];
-
-//   // Add HLS source if available
-//   if (video.value.hlsUrl) {
-//     console.log("HLS URL found:", video.value.hlsUrl);
-//     sources.push({
-//       src: video.value.hlsUrl,
-//       type: "application/x-mpegurl",
-//     });
-//   }
-
-//   // Add DASH source if available
-//   if (video.value.dashUrl) {
-//     console.log("DASH URL found:", video.value.dashUrl);
-//     sources.push({
-//       src: video.value.dashUrl,
-//       type: "application/dash+xml",
-//     });
-//   }
-
-//   // Add format streams as fallback
-//   if (video.value.formatStreams && video.value.formatStreams.length > 0) {
-//     console.log("Adding format streams:", video.value.formatStreams);
-//     video.value.formatStreams.forEach((stream) => {
-//       if (stream.url) {
-//         sources.push({
-//           src: stream.url,
-//           type: stream.type || "video/mp4",
-//         });
-//       }
-//     });
-//   }
-
-//   return sources;
-// });
+// Computed properties for all video.value accesses (with @ts-ignore)
+const videoPoster = computed(() => {
+  return video.value?.videoThumbnails?.[0]?.url;
+});
+const videoSrc = computed(() => {
+  return video.value?.adaptiveFormats?.[
+    video.value?.adaptiveFormats?.length ? video.value.adaptiveFormats.length - 1 : 0
+  ]?.url;
+});
+const videoTitle = computed(() => {
+  return video.value?.title;
+});
+const videoAuthor = computed(() => {
+  return video.value?.author;
+});
+const videoAuthorUrl = computed(() => {
+  return video.value?.authorUrl;
+});
+const videoPublishedText = computed(() => {
+  return video.value?.publishedText;
+});
+const videoViewCount = computed(() => {
+  return video.value?.viewCount;
+});
+const videoDescriptionHtml = computed(() => {
+  return video.value?.descriptionHtml;
+});
 
 async function fetchVideo() {
   console.log("Fetching video for ID:", props.videoId);
@@ -120,6 +104,12 @@ async function fetchVideo() {
     const data = await invidious.getVideoById(props.videoId);
     console.log(JSON.stringify(data));
     video.value = data;
+    if (!video.value) {
+      error.value = "No video data returned.";
+      return;
+    }
+    // All property accesses below should use video.value?.property if needed
+    // Example: video.value?.hlsUrl, video.value?.dashUrl, etc.
     console.log("Video loaded successfully");
   } catch (e: unknown) {
     error.value = e instanceof Error ? e.message : "Failed to load video.";
