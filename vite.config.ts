@@ -1,27 +1,31 @@
 import { fileURLToPath, URL } from "node:url";
-import legacy from "@vitejs/plugin-legacy";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vueDevTools from "vite-plugin-vue-devtools";
+import { viteSingleFile } from "vite-plugin-singlefile";
 
 export default defineConfig({
   base: "./",
-  plugins: [
-    vue(),
-    vueDevTools(),
-    legacy({
-      targets: ["defaults", "not IE 11"],
-      modernPolyfills: true,
-      renderLegacyChunks: true,
-      additionalLegacyPolyfills: ["regenerator-runtime/runtime"],
-    }),
-  ],
+  plugins: [vue(), vueDevTools(), viteSingleFile()],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
   build: {
-    target: "es2015", // Required for legacy plugin to output transpiled code
+    target: "es2015",
+    assetsInlineLimit: 100000000,
+    chunkSizeWarningLimit: 100000000,
+    cssCodeSplit: false,
+    cssMinify: true,
+    minify: true,
+    sourcemap: false,
+    outDir: "dist",
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        inlineDynamicImports: true,
+      },
+    },
   },
 });
