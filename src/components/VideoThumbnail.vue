@@ -1,5 +1,11 @@
 <template>
-  <v-card class="video-card" elevation="2" hover style="cursor: pointer">
+  <v-card
+    class="video-card spatial-item"
+    elevation="2"
+    hover
+    style="cursor: pointer"
+    :to="`/video/${videoId}`"
+  >
     <v-img height="160px" :src="thumbnail" cover></v-img>
     <v-card-title>
       {{ author }}
@@ -16,11 +22,6 @@
     </v-card-text>
     <!-- TODO HANDLE CREATOR IMAGE IF ANY -->
     <!-- Channel info -->
-    <v-card-actions>
-      <v-btn color="orange-lighten-2" :to="{ name: 'video', params: { id: videoId } }">
-        Explore
-      </v-btn>
-    </v-card-actions>
   </v-card>
 </template>
 
@@ -58,7 +59,8 @@ const formatViews = (views: number | string): string => {
   overflow: hidden;
 }
 
-.video-card:hover {
-  transform: translateY(-4px);
+.video-card:hover,
+.spatial-focus {
+  transform: translateY(18px);
 }
 </style>

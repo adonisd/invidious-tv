@@ -1,6 +1,14 @@
 <template>
   <v-row>
-    <v-col v-for="video in videos" :key="video.videoId" cols="12" sm="6" md="4" lg="3">
+    <v-col
+      v-for="video in videos"
+      :key="video.videoId"
+      cols="12"
+      sm="6"
+      md="4"
+      lg="3"
+      :data-video-id="video.videoId"
+    >
       <VideoThumbnail
         :author="video.author"
         :title="video.title"
@@ -15,10 +23,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import VideoThumbnail from "@/components/VideoThumbnail.vue";
 import { InvidiousHelper } from "@/helper/invidious";
 import type { Video as InvidiousVideo } from "@/interfaces/videos";
+import { useRouter } from "vue-router";
+import { useSpatialNavigation } from "@/helper/navigation";
 
 // Helper to format seconds into "m:ss"
 function formatDuration(seconds: number): string {
@@ -38,6 +48,13 @@ interface Video {
 
 const videos = ref<Video[]>([]);
 const invidious = new InvidiousHelper("https://tube.toc.homes");
+useRouter();
+
+// initialize spatial navigation with selector matching the v-col wrapper
+const spatial = useSpatialNavigation({
+  selector: ".spatial-item",
+  straightOnly: false,
+});
 
 onMounted(async () => {
   try {
@@ -52,9 +69,19 @@ onMounted(async () => {
       author: vid.author,
       lengthSeconds: vid.lengthSeconds,
     }));
+
+    // Wait for DOM to update then refresh navigable elements and focus first
+    await nextTick();
+    spatial.init();
+    spatial.refresh();
+    spatial.focusFirst();
   } catch (error) {
     console.error("Failed to fetch popular videos", error);
   }
+});
+
+onUnmounted(() => {
+  spatial.cleanup();
 });
 </script>
 

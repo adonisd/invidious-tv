@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+import DashboardView from "../views/DashboardView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
-      name: "home",
-      component: HomeView,
+      name: "Popular",
+      component: DashboardView,
     },
     {
       path: "/about",
@@ -18,9 +18,9 @@ const router = createRouter({
       component: () => import("../views/AboutView.vue"),
     },
     {
-      path: "/dashboard",
-      name: "dashboard",
-      component: () => import("../views/DashboardView.vue"),
+      path: "/homeview",
+      name: "homeview",
+      component: () => import("../views/HomeView.vue"),
     },
     {
       path: "/video/:id",
