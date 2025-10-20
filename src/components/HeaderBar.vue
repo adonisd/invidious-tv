@@ -1,6 +1,6 @@
 <template>
   <v-layout>
-    <v-navigation-drawer expand-on-hover permanent rail>
+    <v-navigation-drawer permanent>
       <v-list>
         <v-list-item
           prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg"

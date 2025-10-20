@@ -14,4 +14,10 @@ import HeaderBar from "./components/HeaderBar.vue";
     grid-template-columns: auto;
   }
 }
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #121212;
+}
 </style>

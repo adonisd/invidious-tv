@@ -8,7 +8,6 @@
   },
   "scripts": {
     "dev": "vite",
-    "build:webpack": "webpack --mode=production",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "test:unit": "vitest",

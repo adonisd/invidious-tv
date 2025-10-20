@@ -1,10 +1,9 @@
 <template>
   <v-card
     class="video-card spatial-item"
-    elevation="2"
-    hover
     style="cursor: pointer"
     :to="`/video/${videoId}`"
+    elevation="2"
   >
     <v-img height="160px" :src="thumbnail" cover></v-img>
     <v-card-title>
