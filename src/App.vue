@@ -1,6 +1,6 @@
 <template>
   <v-app id="invidious-vue-app" dark>
-    <HeaderBar />
+    <NavigationDrawer />
 
     <v-main>
       <v-container fluid>
@@ -11,5 +11,13 @@
 </template>
 
 <script setup lang="ts">
-import HeaderBar from "./components/HeaderBar.vue";
+import NavigationDrawer from "./components/NavigationDrawer.vue";
 </script>
+
+<style>
+.router-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+</style>
