@@ -208,7 +208,7 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
       event.preventDefault();
       currentFocusedElement.value.classList.add("spatial-active");
       console.log("KeyDown: Activate element");
-      console.log(currentFocusedElement.value);
+      // console.log(currentFocusedElement.value);
       // find first href or onclick in the element or its children and trigger it
       let clickableElement: HTMLElement | null = null;
 
