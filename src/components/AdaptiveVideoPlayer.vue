@@ -14,7 +14,6 @@
 import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
-import "videojs-contrib-dash";
 import type Player from "video.js/dist/types/player";
 
 interface Props {

@@ -13,7 +13,7 @@ export default defineConfig({
     },
   },
   build: {
-    // target: "es2015",
+    target: "es2015",
     // assetsInlineLimit: 100000000,
     // chunkSizeWarningLimit: 100000000,
     cssCodeSplit: false,
