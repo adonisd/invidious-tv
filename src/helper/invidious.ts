@@ -1,45 +1,112 @@
-import { Convert, type Video, type VideoDetail } from "@/interfaces/videos";
+import type { Video } from "@/interfaces/videos";
 
 export class InvidiousHelper {
   private baseUrl: string;
 
-  constructor(baseUrl: string) {
-    this.baseUrl = baseUrl.replace(/\/+$/, ""); // Remove trailing slashes
+  constructor(instanceUrl: string) {
+    this.baseUrl = instanceUrl.replace(/\/$/, ""); // Remove trailing slash
   }
 
-  public async getPopular(): Promise<Video[]> {
-    const url = `${this.baseUrl}/api/v1/popular`;
-
+  /**
+   * Get video details by ID
+   * @param videoId - YouTube video ID
+   * @param local - Whether to use local proxy for streams (fixes CORS issues)
+   */
+  async getVideoById(videoId: string, local: boolean = true): Promise<Video> {
     try {
+      const url = `${this.baseUrl}/api/v1/videos/${videoId}${local ? "?local=true" : ""}`;
+      console.log("Fetching from:", url);
+
       const response = await fetch(url);
+
       if (!response.ok) {
-        throw new Error(
-          `Failed to fetch popular videos: ${response.status} ${response.statusText}`,
-        );
+        throw new Error(`Failed to fetch video: ${response.status} ${response.statusText}`);
       }
 
       const data = await response.json();
-      const returnObject = Convert.toVideo(JSON.stringify(data));
-      return returnObject;
+
+      // Process the DASH URL to ensure it uses HTTPS and includes local parameter
+      if (data.dashUrl) {
+        data.dashUrl = data.dashUrl.replace("http://", "https://");
+        if (local && !data.dashUrl.includes("local=true")) {
+          data.dashUrl += (data.dashUrl.includes("?") ? "&" : "?") + "local=true";
+        }
+      }
+
+      return data;
     } catch (error) {
-      console.error("Error fetching popular videos:", error);
+      console.error("Error fetching video:", error);
       throw error;
     }
   }
+
   /**
-   * Fetch video details by ID from /api/v1/videos/:id
+   * Get proxied video URL
+   * @param videoId - YouTube video ID
+   * @param itag - Format tag
    */
-  public async getVideoById(id: string): Promise<VideoDetail> {
-    const url = `${this.baseUrl}/api/v1/videos/${id}`;
+  getProxiedUrl(videoId: string, itag: string): string {
+    return `${this.baseUrl}/latest_version?id=${videoId}&itag=${itag}&local=true`;
+  }
+
+  // /**
+  //  * Search for videos
+  //  * @param query - Search query
+  //  * @param page - Page number (optional)
+  //  */
+  // async search(query: string, page: number = 1): Promise<any> {
+  //   try {
+  //     const url = `${this.baseUrl}/api/v1/search?q=${encodeURIComponent(query)}&page=${page}`;
+  //     const response = await fetch(url);
+
+  //     if (!response.ok) {
+  //       throw new Error(`Search failed: ${response.status} ${response.statusText}`);
+  //     }
+
+  //     return await response.json();
+  //   } catch (error) {
+  //     console.error("Error searching:", error);
+  //     throw error;
+  //   }
+  // }
+
+  /**
+   * Get trending videos
+   * @param type - Type of trending (music, gaming, news, movies)
+   */
+  async getTrending(type?: string): Promise<Video[]> {
     try {
+      const url = type
+        ? `${this.baseUrl}/api/v1/trending?type=${type}`
+        : `${this.baseUrl}/api/v1/trending`;
+
       const response = await fetch(url);
+
       if (!response.ok) {
-        throw new Error(`Failed to fetch video details: ${response.status} ${response.statusText}`);
+        throw new Error(`Failed to fetch trending: ${response.status}`);
       }
-      const data = await response.json();
-      return data as VideoDetail;
+
+      return await response.json();
     } catch (error) {
-      console.error("Error fetching video details:", error);
+      console.error("Error fetching trending:", error);
+      throw error;
+    }
+  }
+  async getPopular(type?: string): Promise<Video[]> {
+    try {
+      const url = type
+        ? `${this.baseUrl}/api/v1/popular?type=${type}`
+        : `${this.baseUrl}/api/v1/popular`;
+
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch popular: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching popular:", error);
       throw error;
     }
   }
