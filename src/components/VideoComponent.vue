@@ -17,8 +17,8 @@
           <!-- Adaptive Video Player -->
           <v-card elevation="2" class="mb-4">
             <AdaptiveVideoPlayer
-              :dash-url="video.dashUrl"
-              :fallback-url="video.formatStreams[0]?.url"
+              :dash-url="proxiedDashUrl"
+              :fallback-url="proxiedFallbackUrl"
               :poster="video.videoThumbnails[0]?.url"
               :autoplay="false"
             />
@@ -45,6 +45,11 @@
               <span>{{ video.publishedText }}</span>
               <v-divider vertical thickness="3"></v-divider>
               <span>{{ formatViewCount(video.viewCount) }} views</span>
+              <v-divider vertical></v-divider>
+              <v-chip size="small" color="success" variant="outlined">
+                <v-icon start size="small">mdi-check-circle</v-icon>
+                Proxied Playback
+              </v-chip>
             </v-card-subtitle>
 
             <v-card-text>
@@ -53,12 +58,12 @@
               </v-sheet>
             </v-card-text>
 
-            <!-- Quality Information (Optional) -->
+            <!-- Quality Information -->
             <v-expansion-panels v-if="video.adaptiveFormats" class="ma-4">
               <v-expansion-panel>
                 <v-expansion-panel-title>
                   <v-icon start>mdi-quality-high</v-icon>
-                  Available Qualities
+                  Available Qualities ({{ uniqueQualities.length }})
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
                   <v-chip-group column>
@@ -70,7 +75,9 @@
                       variant="outlined"
                     >
                       {{ format.qualityLabel }}
-                      ({{ format.encoding || format.container }})
+                      <span class="text-grey ml-1">
+                        ({{ format.encoding || format.container }})
+                      </span>
                     </v-chip>
                   </v-chip-group>
                 </v-expansion-panel-text>
@@ -86,8 +93,8 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from "vue";
 import { InvidiousHelper } from "@/helper/invidious";
-import type { VideoDetail } from "@/interfaces/videos";
 import AdaptiveVideoPlayer from "@/components/AdaptiveVideoPlayer.vue";
+import type { VideoDetail } from "@/interfaces/videos";
 
 const props = defineProps<{ videoId: string }>();
 
@@ -95,7 +102,23 @@ const video = ref<VideoDetail | null>(null);
 const loading = ref(true);
 const error = ref<string | null>(null);
 
-const invidious = new InvidiousHelper("https://tube.toc.homes");
+const INVIDIOUS_INSTANCE = "https://tube.toc.homes";
+const invidious = new InvidiousHelper(INVIDIOUS_INSTANCE);
+
+// Proxied URLs through Invidious
+const proxiedDashUrl = computed(() => {
+  if (!video.value?.dashUrl) return undefined;
+  // Add local=true to proxy through Invidious
+  return `${video.value.dashUrl}${video.value.dashUrl.includes("?") ? "&" : "?"}local=true`;
+});
+
+const proxiedFallbackUrl = computed(() => {
+  if (!video.value?.formatStreams[0]?.url) return undefined;
+  // Proxy the fallback URL through Invidious
+  const videoId = props.videoId;
+  const itag = video.value.formatStreams[0].itag;
+  return `${INVIDIOUS_INSTANCE}/latest_version?id=${videoId}&itag=${itag}&local=true`;
+});
 
 // Compute unique video qualities
 const uniqueQualities = computed(() => {
@@ -107,12 +130,19 @@ const uniqueQualities = computed(() => {
 
   // Get unique qualities
   const seen = new Set();
-  return videoFormats.filter((format) => {
-    const key = format.qualityLabel;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+  return videoFormats
+    .filter((format) => {
+      const key = format.qualityLabel;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .sort((a, b) => {
+      // Sort by resolution (descending)
+      const resA = parseInt(a.qualityLabel || "0");
+      const resB = parseInt(b.qualityLabel || "0");
+      return resB - resA;
+    });
 });
 
 function formatViewCount(count: number): string {
@@ -133,15 +163,12 @@ async function fetchVideo() {
     const data = await invidious.getVideoById(props.videoId);
     video.value = data;
     console.log("Video loaded successfully");
-    console.log("DASH URL:", data.dashUrl);
-    // change dashUrl to https if http
-    if (data.dashUrl && data.dashUrl.startsWith("http://")) {
-      data.dashUrl = data.dashUrl.replace("http://", "https://");
-    }
-    console.log("Updated DASH URL:", data.dashUrl);
-    console.log("Fallback URL:", data.formatStreams[0]?.url);
+    console.log("Original DASH URL:", data.dashUrl);
+    console.log("Proxied DASH URL:", proxiedDashUrl.value);
+    console.log("Proxied Fallback URL:", proxiedFallbackUrl.value);
   } catch (e: unknown) {
     error.value = e instanceof Error ? e.message : "Failed to load video.";
+    console.error("Error loading video:", e);
   } finally {
     loading.value = false;
   }
@@ -150,7 +177,3 @@ async function fetchVideo() {
 onMounted(fetchVideo);
 watch(() => props.videoId, fetchVideo);
 </script>
-
-<style scoped>
-/* Add any additional styles here */
-</style>

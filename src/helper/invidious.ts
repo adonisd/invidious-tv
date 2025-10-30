@@ -1,4 +1,4 @@
-import type { Video } from "@/interfaces/videos";
+import type { Video, VideoDetail } from "@/interfaces/videos";
 
 export class InvidiousHelper {
   private baseUrl: string;
@@ -12,7 +12,7 @@ export class InvidiousHelper {
    * @param videoId - YouTube video ID
    * @param local - Whether to use local proxy for streams (fixes CORS issues)
    */
-  async getVideoById(videoId: string, local: boolean = true): Promise<Video> {
+  async getVideoById(videoId: string, local: boolean = true): Promise<VideoDetail> {
     try {
       const url = `${this.baseUrl}/api/v1/videos/${videoId}${local ? "?local=true" : ""}`;
       console.log("Fetching from:", url);
