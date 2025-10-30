@@ -121,26 +121,9 @@ watch(
 </script>
 
 <style scoped>
-.video-player-wrapper {
-  width: 100%;
-  max-width: 100%;
-}
-
-.video-js {
-  width: 100%;
-  height: auto;
-  max-height: 600px;
-}
-
-/* Override Video.js default height */
-:deep(.video-js) {
-  font-size: 14px;
-}
-
-/* Ensure proper aspect ratio */
-:deep(.video-js .vjs-tech) {
-  position: relative;
-  width: 100%;
-  height: auto;
+:deep(.vjs-control-bar) {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 </style>
