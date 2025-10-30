@@ -87,10 +87,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, watch, computed, nextTick, onBeforeUnmount } from "vue";
 import { InvidiousHelper } from "@/helper/invidious";
 import AdaptiveVideoPlayer from "@/components/AdaptiveVideoPlayer.vue";
 import type { VideoDetail } from "@/interfaces/videos";
+import { useSpatialNavigation } from "@/helper/navigation";
 
 const props = defineProps<{ videoId: string }>();
 
@@ -170,6 +171,22 @@ async function fetchVideo() {
   }
 }
 
-onMounted(fetchVideo);
+// initialize spatial navigation with selector matching the v-col wrapper
+const spatial = useSpatialNavigation({
+  selector: ".vjs-control",
+  straightOnly: false,
+});
+
+onMounted(async () => {
+  await fetchVideo();
+  await nextTick();
+  spatial.init();
+  spatial.refresh();
+  spatial.focusFirst();
+});
+
+onBeforeUnmount(() => {
+  spatial.cleanup();
+});
 watch(() => props.videoId, fetchVideo);
 </script>
