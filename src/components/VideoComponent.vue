@@ -134,6 +134,11 @@ async function fetchVideo() {
     video.value = data;
     console.log("Video loaded successfully");
     console.log("DASH URL:", data.dashUrl);
+    // change dashUrl to https if http
+    if (data.dashUrl && data.dashUrl.startsWith("http://")) {
+      data.dashUrl = data.dashUrl.replace("http://", "https://");
+    }
+    console.log("Updated DASH URL:", data.dashUrl);
     console.log("Fallback URL:", data.formatStreams[0]?.url);
   } catch (e: unknown) {
     error.value = e instanceof Error ? e.message : "Failed to load video.";
