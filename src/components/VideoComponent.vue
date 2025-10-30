@@ -15,17 +15,13 @@
 
         <div v-else-if="video">
           <!-- Adaptive Video Player -->
-          <v-card elevation="2" class="mb-4">
+          <v-card elevation="2">
             <AdaptiveVideoPlayer
               :dash-url="proxiedDashUrl"
               :fallback-url="proxiedFallbackUrl"
               :poster="video.videoThumbnails[0]?.url"
               :autoplay="false"
             />
-          </v-card>
-
-          <!-- Video Information Card -->
-          <v-card elevation="1">
             <v-card-title class="text-h5">
               {{ video.title }}
             </v-card-title>
