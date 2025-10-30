@@ -12,9 +12,4 @@ import VideoComponent from "@/components/VideoComponent.vue";
 const route = useRoute();
 const videoId = computed(() => route.params.id as string);
 </script>
-<style scoped>
-* {
-  margin-left: 20px;
-  box-sizing: border-box;
-}
-</style>
+<style scoped></style>

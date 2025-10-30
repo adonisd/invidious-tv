@@ -86,12 +86,12 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-html,
+/* html,
 body,
 #app {
   display: contents;
 }
 * {
   box-sizing: border-box;
-}
+} */
 </style>

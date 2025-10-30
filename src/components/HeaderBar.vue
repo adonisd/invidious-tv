@@ -23,10 +23,3 @@
     </v-navigation-drawer>
   </v-layout>
 </template>
-
-<style scoped>
-/* .v-navigation-drawer {
-  height: 100vh;
-  position: relative;
-} */
-</style>

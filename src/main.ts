@@ -1,6 +1,6 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
-import "./assets/main.css";
+// import "./assets/main.css";
 
 import { createApp } from "vue";
 import { createPinia } from "pinia";

@@ -49,17 +49,22 @@ const formatViews = (views: number | string): string => {
 
 <style scoped>
 .video-card {
-  display: flex;
-  flex-direction: column;
+  /* display: flex; */
+  /* flex-direction: column; */
   height: 100%;
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
-  overflow: hidden;
 }
 
 .video-card:hover,
 .spatial-focus {
-  transform: translateY(18px);
+  transform: scale(1.07);
+  color: rgba(47, 0, 69, 0.1) !important;
+}
+.v-card-text,
+.v-card-title,
+.v-card-subtitle {
+  color: white !important;
 }
 </style>
