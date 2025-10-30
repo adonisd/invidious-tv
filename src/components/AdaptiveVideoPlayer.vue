@@ -37,17 +37,22 @@ const initPlayer = () => {
   // Initialize Video.js player
   player = videojs(videoElement.value, {
     fluid: true,
-    responsive: true,
+    responsive: false,
     controls: true,
     preload: "auto",
     autoplay: props.autoplay,
+    enableSmoothSeeking: true,
+    experimentalSvgIcons: true,
+    nativeControlsForTouch: true,
+    playbackRates: [0.5, 1, 1.5, 2],
+    playsinline: true,
     html5: {
       vhs: {
         overrideNative: true,
       },
-      nativeVideoTracks: false,
-      nativeAudioTracks: false,
-      nativeTextTracks: false,
+      nativeVideoTracks: true,
+      nativeAudioTracks: true,
+      nativeTextTracks: true,
     },
   });
 
@@ -105,15 +110,10 @@ watch(
   () => {
     if (player) {
       if (props.dashUrl) {
-        player.src({
-          src: props.dashUrl,
-          type: "application/dash+xml",
-        });
-      } else if (props.fallbackUrl) {
-        player.src({
-          src: props.fallbackUrl,
-          type: "video/mp4",
-        });
+        player.addSourceElement(props.dashUrl, "application/dash+xml");
+      }
+      if (props.fallbackUrl) {
+        player.addSourceElement(props.fallbackUrl, "video/mp4");
       }
     }
   },
