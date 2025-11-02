@@ -7,7 +7,7 @@
 
   <!-- Adaptive Video Player -->
   <v-card elevation="2" v-else-if="video" class="adaptive-video-player">
-    <AdaptiveVideoPlayer
+    <ShakaVideoPlayer
       :dash-url="proxiedDashUrl"
       :fallback-url="proxiedFallbackUrl"
       :poster="video.videoThumbnails[0]?.url"
@@ -29,10 +29,6 @@
       <v-divider vertical thickness="3"></v-divider>
       <span>{{ formatViewCount(video.viewCount) }} views</span>
       <v-divider vertical></v-divider>
-      <v-chip size="small" color="success" variant="outlined">
-        <v-icon start size="small">mdi-check-circle</v-icon>
-        Proxied Playback
-      </v-chip>
     </v-card-subtitle>
 
     <v-card-text>
@@ -40,38 +36,15 @@
         <div v-html="video.descriptionHtml"></div>
       </v-sheet>
     </v-card-text>
-
-    <!-- Quality Information -->
-    <v-expansion-panels v-if="video.adaptiveFormats" class="ma-4">
-      <v-expansion-panel>
-        <v-expansion-panel-title>
-          <v-icon start>mdi-quality-high</v-icon>
-          Available Qualities ({{ uniqueQualities.length }})
-        </v-expansion-panel-title>
-        <v-expansion-panel-text>
-          <v-chip-group column>
-            <v-chip
-              v-for="format in uniqueQualities"
-              :key="format.itag"
-              size="small"
-              color="primary"
-              variant="outlined"
-            >
-              {{ format.qualityLabel }}
-              <span class="text-grey ml-1"> ({{ format.encoding || format.container }}) </span>
-            </v-chip>
-          </v-chip-group>
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-    </v-expansion-panels>
   </v-card>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watch, computed, nextTick, onBeforeUnmount } from "vue";
 import { InvidiousHelper } from "@/helper/invidious";
-import AdaptiveVideoPlayer from "@/components/AdaptiveVideoPlayer.vue";
+// import AdaptiveVideoPlayer from "@/components/AdaptiveVideoPlayer.vue";
 import type { VideoDetail } from "@/interfaces/videos";
+import ShakaVideoPlayer from "@/components/ShakaVideoPlayer.vue";
 import { useSpatialNavigation } from "@/helper/navigation";
 
 const props = defineProps<{ videoId: string }>();
@@ -96,31 +69,6 @@ const proxiedFallbackUrl = computed(() => {
   const videoId = props.videoId;
   const itag = video.value.formatStreams[0].itag;
   return `${INVIDIOUS_INSTANCE}/latest_version?id=${videoId}&itag=${itag}&local=true`;
-});
-
-// Compute unique video qualities
-const uniqueQualities = computed(() => {
-  if (!video.value?.adaptiveFormats) return [];
-
-  const videoFormats = video.value.adaptiveFormats.filter((format) =>
-    format.type?.startsWith("video/"),
-  );
-
-  // Get unique qualities
-  const seen = new Set();
-  return videoFormats
-    .filter((format) => {
-      const key = format.qualityLabel;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    })
-    .sort((a, b) => {
-      // Sort by resolution (descending)
-      const resA = parseInt(a.qualityLabel || "0");
-      const resB = parseInt(b.qualityLabel || "0");
-      return resB - resA;
-    });
 });
 
 function formatViewCount(count: number): string {
@@ -172,11 +120,4 @@ onBeforeUnmount(() => {
 watch(() => props.videoId, fetchVideo);
 </script>
 
-<style scoped>
-.adaptive-video-player {
-  width: 95%;
-  height: auto;
-  margin: 20px;
-  margin-top: 100px;
-}
-</style>
+<style scoped></style>

@@ -20,7 +20,7 @@
   "dependencies": {
     "@fontsource/roboto": "^5.2.8",
     "pinia": "^3.0.3",
-    "video.js": "^8.23.4",
+    "shaka-player": "^4.16.7",
     "vue": "^3.5.22",
     "vue-router": "^4.5.1",
     "vuetify": "^3.10.5"
