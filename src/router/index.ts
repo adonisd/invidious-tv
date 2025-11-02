@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import DashboardView from "../views/DashboardView.vue";
+import VideosListView from "../views/VideosList.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,12 +7,12 @@ const router = createRouter({
     {
       path: "/popular",
       name: "Popular",
-      component: DashboardView,
+      component: VideosListView,
     },
     {
       path: "/trending",
       name: "Trending",
-      component: DashboardView,
+      component: VideosListView,
     },
     {
       path: "/video/:id",
