@@ -1,89 +1,70 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col cols="12">
-        <v-progress-circular
-          v-if="loading"
-          indeterminate
-          color="primary"
-          class="d-flex mx-auto my-8"
-        ></v-progress-circular>
+  <v-progress-circular v-if="loading" indeterminate color="primary"></v-progress-circular>
 
-        <v-alert v-else-if="error" type="error" variant="tonal" class="my-4">
-          {{ error }}
-        </v-alert>
+  <v-alert v-else-if="error" type="error" variant="tonal" class="my-4">
+    {{ error }}
+  </v-alert>
 
-        <div v-else-if="video">
-          <!-- Adaptive Video Player -->
-          <v-card elevation="2">
-            <AdaptiveVideoPlayer
-              :dash-url="proxiedDashUrl"
-              :fallback-url="proxiedFallbackUrl"
-              :poster="video.videoThumbnails[0]?.url"
-              :autoplay="false"
-            />
-            <v-card-title class="text-h5">
-              {{ video.title }}
-            </v-card-title>
+  <!-- Adaptive Video Player -->
+  <v-card elevation="2" v-else-if="video" class="adaptive-video-player">
+    <AdaptiveVideoPlayer
+      :dash-url="proxiedDashUrl"
+      :fallback-url="proxiedFallbackUrl"
+      :poster="video.videoThumbnails[0]?.url"
+      :autoplay="false"
+    />
+    <v-card-title class="text-h5">
+      {{ video.title }}
+    </v-card-title>
 
-            <v-card-subtitle class="d-flex flex-wrap align-center ga-2">
-              <span>
-                By
-                <a
-                  :href="video.authorUrl"
-                  target="_blank"
-                  class="text-primary text-decoration-none"
-                >
-                  {{ video.author }}
-                </a>
-              </span>
-              <v-divider vertical></v-divider>
-              <span>{{ video.publishedText }}</span>
-              <v-divider vertical thickness="3"></v-divider>
-              <span>{{ formatViewCount(video.viewCount) }} views</span>
-              <v-divider vertical></v-divider>
-              <v-chip size="small" color="success" variant="outlined">
-                <v-icon start size="small">mdi-check-circle</v-icon>
-                Proxied Playback
-              </v-chip>
-            </v-card-subtitle>
+    <v-card-subtitle class="d-flex flex-wrap align-center ga-2">
+      <span>
+        By
+        <a :href="video.authorUrl" target="_blank" class="text-primary text-decoration-none">
+          {{ video.author }}
+        </a>
+      </span>
+      <v-divider vertical></v-divider>
+      <span>{{ video.publishedText }}</span>
+      <v-divider vertical thickness="3"></v-divider>
+      <span>{{ formatViewCount(video.viewCount) }} views</span>
+      <v-divider vertical></v-divider>
+      <v-chip size="small" color="success" variant="outlined">
+        <v-icon start size="small">mdi-check-circle</v-icon>
+        Proxied Playback
+      </v-chip>
+    </v-card-subtitle>
 
-            <v-card-text>
-              <v-sheet color="grey-lighten-4" rounded class="pa-4">
-                <div v-html="video.descriptionHtml"></div>
-              </v-sheet>
-            </v-card-text>
+    <v-card-text>
+      <v-sheet color="grey-lighten-4" rounded class="pa-4">
+        <div v-html="video.descriptionHtml"></div>
+      </v-sheet>
+    </v-card-text>
 
-            <!-- Quality Information -->
-            <v-expansion-panels v-if="video.adaptiveFormats" class="ma-4">
-              <v-expansion-panel>
-                <v-expansion-panel-title>
-                  <v-icon start>mdi-quality-high</v-icon>
-                  Available Qualities ({{ uniqueQualities.length }})
-                </v-expansion-panel-title>
-                <v-expansion-panel-text>
-                  <v-chip-group column>
-                    <v-chip
-                      v-for="format in uniqueQualities"
-                      :key="format.itag"
-                      size="small"
-                      color="primary"
-                      variant="outlined"
-                    >
-                      {{ format.qualityLabel }}
-                      <span class="text-grey ml-1">
-                        ({{ format.encoding || format.container }})
-                      </span>
-                    </v-chip>
-                  </v-chip-group>
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-            </v-expansion-panels>
-          </v-card>
-        </div>
-      </v-col>
-    </v-row>
-  </v-container>
+    <!-- Quality Information -->
+    <v-expansion-panels v-if="video.adaptiveFormats" class="ma-4">
+      <v-expansion-panel>
+        <v-expansion-panel-title>
+          <v-icon start>mdi-quality-high</v-icon>
+          Available Qualities ({{ uniqueQualities.length }})
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <v-chip-group column>
+            <v-chip
+              v-for="format in uniqueQualities"
+              :key="format.itag"
+              size="small"
+              color="primary"
+              variant="outlined"
+            >
+              {{ format.qualityLabel }}
+              <span class="text-grey ml-1"> ({{ format.encoding || format.container }}) </span>
+            </v-chip>
+          </v-chip-group>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+    </v-expansion-panels>
+  </v-card>
 </template>
 
 <script setup lang="ts">
@@ -190,3 +171,12 @@ onBeforeUnmount(() => {
 });
 watch(() => props.videoId, fetchVideo);
 </script>
+
+<style scoped>
+.adaptive-video-player {
+  width: 95%;
+  height: auto;
+  margin: 20px;
+  margin-top: 100px;
+}
+</style>

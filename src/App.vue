@@ -1,11 +1,14 @@
 <template>
   <v-app id="invidious-vue-app" dark>
-    <NavigationDrawer />
-    <v-main>
-      <v-container fluid class="fill-height d-flex justify-center align-center">
-        <RouterView />
-      </v-container>
-    </v-main>
+    <div class="app-layout">
+      <NavigationDrawer />
+
+      <v-main class="main-content">
+        <v-container fluid class="fill-height">
+          <RouterView />
+        </v-container>
+      </v-main>
+    </div>
   </v-app>
 </template>
 
@@ -13,21 +16,29 @@
 import NavigationDrawer from "./components/NavigationDrawer.vue";
 </script>
 
-<style>
-.router-view {
+<style scoped>
+/* Parent layout: navigation drawer + main side by side */
+.app-layout {
   display: flex;
-  flex-direction: column;
-  height: 100%;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden; /* prevent page scrollbars; we'll handle inside main */
 }
 
-/* Ensure main takes full viewport height and allows scrolling */
-.v-main {
+/* Main takes the remaining space next to the drawer */
+.main-content {
+  flex: 1;
   display: flex;
-  min-height: 100vh;
   flex-direction: column;
+  overflow-y: auto; /* enables vertical scrolling */
+  height: 100vh;
+  margin: 0 auto;
 }
 
-.v-main .v-container {
-  overflow-y: auto;
+/* Optional: ensure router content stretches properly */
+.v-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 </style>
