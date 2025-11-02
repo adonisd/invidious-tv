@@ -94,4 +94,8 @@ body,
 * {
   box-sizing: border-box;
 } */
+
+#app {
+  color: rgba(0, 0, 0, 0) !important;
+}
 </style>

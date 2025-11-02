@@ -24,6 +24,7 @@ import NavigationDrawer from "./components/NavigationDrawer.vue";
 .v-main {
   display: flex;
   min-height: 100vh;
+  flex-direction: column;
 }
 
 .v-main .v-container {
