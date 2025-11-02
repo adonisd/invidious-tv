@@ -17,18 +17,21 @@
       {{ video.title }}
     </v-card-title>
 
-    <v-card-subtitle class="d-flex flex-wrap align-center ga-2">
-      <span>
-        By
-        <a :href="video.authorUrl" target="_blank" class="text-primary text-decoration-none">
+    <v-card-subtitle class="d-flex flex-column text-body-2 text-medium-emphasis mt-2" width="100%">
+      <div class="d-flex align-center flex-wrap gap-1">
+        <span>By</span>
+        <a
+          :href="video.authorUrl"
+          target="_blank"
+          class="text-primary font-weight-medium text-decoration-none"
+        >
           {{ video.author }}
         </a>
-      </span>
-      <v-divider vertical></v-divider>
-      <span>{{ video.publishedText }}</span>
-      <v-divider vertical thickness="3"></v-divider>
-      <span>{{ formatViewCount(video.viewCount) }} views</span>
-      <v-divider vertical></v-divider>
+        <v-icon size="small" class="mx-1" color="secondary">mdi-checkbox-blank-circle</v-icon>
+        <span>{{ video.publishedText }}</span>
+        <v-icon size="small" class="mx-1" color="secondary">mdi-checkbox-blank-circle</v-icon>
+        <span>{{ formatViewCount(video.viewCount) }} views</span>
+      </div>
     </v-card-subtitle>
 
     <v-card-text>
