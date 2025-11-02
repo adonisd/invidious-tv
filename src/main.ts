@@ -1,6 +1,5 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
-// import "./assets/main.css";
 
 import { createApp } from "vue";
 import { createPinia } from "pinia";
@@ -27,10 +26,18 @@ import "@fontsource/roboto/700-italic.css";
 import "@fontsource/roboto/900-italic.css";
 
 import "./main.css";
+import { aliases, mdi } from "vuetify/iconsets/mdi";
 
 const app = createApp(App);
 
 const vuetify = createVuetify({
+  icons: {
+    defaultSet: "mdi",
+    aliases,
+    sets: {
+      mdi,
+    },
+  },
   directives,
   components,
   theme: {
@@ -55,7 +62,6 @@ const vuetify = createVuetify({
 });
 
 app.use(createPinia());
-app.use(router);
 app.use(vuetify);
-// app.config.compilerOptions.isCustomElement = (tag) => tag.startsWith("media-");
+app.use(router);
 app.mount("#app");

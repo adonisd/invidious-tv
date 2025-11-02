@@ -1,7 +1,7 @@
 <template>
   <v-progress-circular v-if="loading" indeterminate color="primary"></v-progress-circular>
 
-  <v-alert v-else-if="error" type="error" variant="tonal" class="my-4">
+  <v-alert v-else-if="error" type="error" variant="tonal">
     {{ error }}
   </v-alert>
 
@@ -13,31 +13,39 @@
       :poster="video.videoThumbnails[0]?.url"
       :autoplay="false"
     />
-    <v-card-title class="text-h5">
+    <v-card-title>
       {{ video.title }}
     </v-card-title>
 
-    <v-card-subtitle class="d-flex flex-column text-body-2 text-medium-emphasis mt-2" width="100%">
-      <div class="d-flex align-center flex-wrap gap-1">
-        <span>By</span>
-        <a
-          :href="video.authorUrl"
-          target="_blank"
-          class="text-primary font-weight-medium text-decoration-none"
-        >
-          {{ video.author }}
-        </a>
-        <v-icon size="small" class="mx-1" color="secondary">mdi-checkbox-blank-circle</v-icon>
-        <span>{{ video.publishedText }}</span>
-        <v-icon size="small" class="mx-1" color="secondary">mdi-checkbox-blank-circle</v-icon>
-        <span>{{ formatViewCount(video.viewCount) }} views</span>
+    <v-card-subtitle>
+      <!-- Author Row -->
+      <div class="card-subtitle-layout">
+        <div>
+          <v-avatar size="32" color="primary">
+            <v-icon size="large" icon="mdi-account-circle" color="green-darken-2"></v-icon>
+          </v-avatar>
+          <v-divider vertical thickness="10"></v-divider>
+          <a :href="video.authorUrl" class="text-primary font-weight-medium text-decoration-none">
+            {{ video.author }}
+          </a>
+        </div>
+        <v-divider vertical thickness="2" class="custom-divider"></v-divider>
+        <!-- Metadata Row -->
+        <div>
+          <div>
+            <v-icon size="16" color="medium-emphasis" icon="mdi-clock-outline"></v-icon>
+            <span>{{ video.publishedText }}</span>
+          </div>
+          <div>
+            <v-icon size="16" color="medium-emphasis" icon="mdi-eye-outline"></v-icon>
+            <span> {{ formatViewCount(video.viewCount) }} views</span>
+          </div>
+        </div>
       </div>
     </v-card-subtitle>
 
     <v-card-text>
-      <v-sheet color="grey-lighten-4" rounded class="pa-4">
-        <div v-html="video.descriptionHtml"></div>
-      </v-sheet>
+      <div class="text-body-1" style="white-space: pre-wrap" v-html="video.descriptionHtml"></div>
     </v-card-text>
   </v-card>
 </template>
@@ -123,4 +131,15 @@ onBeforeUnmount(() => {
 watch(() => props.videoId, fetchVideo);
 </script>
 
-<style scoped></style>
+<style>
+.card-subtitle-layout {
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.custom-divider {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+</style>
