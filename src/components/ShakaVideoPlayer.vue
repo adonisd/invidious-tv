@@ -1,13 +1,7 @@
 <template>
   <div class="video-player-wrapper">
     <div ref="videoContainer" class="shaka-video-container">
-      <video
-        ref="videoElement"
-        class="shaka-video"
-        preload="auto"
-        :poster="poster"
-        playsinline
-      ></video>
+      <video ref="videoElement" class="shaka-video" preload="auto" :poster="poster"></video>
     </div>
   </div>
 </template>
@@ -58,11 +52,12 @@ async function initPlayer() {
       "mute",
       "volume",
       "spacer",
+      "captions",
       "overflow_menu",
       "fullscreen",
     ],
     overflowMenuButtons: ["quality", "captions", "language", "playback_rate"],
-    addBigPlayButton: true,
+    addBigPlayButton: false,
   });
 
   // Add event listener for player errors
@@ -73,7 +68,7 @@ async function initPlayer() {
       await player.load(props.dashUrl);
       console.log("DASH source loaded!");
     } else if (props.fallbackUrl) {
-      videoElement.value.src = props.fallbackUrl;
+      if (videoElement.value) videoElement.value.src = props.fallbackUrl;
     }
 
     // Auto adaptation for bitrate
@@ -90,9 +85,10 @@ async function initPlayer() {
     });
 
     if (props.autoplay) {
-      await videoElement.value.play().catch((err) => {
-        console.warn("Autoplay failed:", err);
-      });
+      if (videoElement.value)
+        await videoElement.value.play().catch((err) => {
+          console.warn("Autoplay failed:", err);
+        });
     }
   } catch (error) {
     console.error("Error loading video:", error);
@@ -103,7 +99,6 @@ async function initPlayer() {
     }
   }
 }
-
 /** Handle player error events */
 function onErrorEvent(event: Event) {
   const errorObj = event as unknown as shaka.util.Error;
@@ -156,6 +151,6 @@ watch(
 .shaka-video {
   width: 100%;
   height: auto;
-  display: block;
+  /* display: block; */
 }
 </style>
