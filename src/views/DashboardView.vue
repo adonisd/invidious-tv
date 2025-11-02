@@ -27,7 +27,7 @@ import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import VideoThumbnail from "@/components/VideoThumbnail.vue";
 import { InvidiousHelper } from "@/helper/invidious";
 import type { Video as InvidiousVideo } from "@/interfaces/videos";
-import { useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useSpatialNavigation } from "@/helper/navigation";
 
 // Helper to format seconds into "m:ss"
@@ -48,8 +48,7 @@ interface Video {
 
 const videos = ref<Video[]>([]);
 const invidious = new InvidiousHelper("https://tube.toc.homes");
-useRouter();
-
+const route = useRoute();
 // initialize spatial navigation with selector matching the v-col wrapper
 const spatial = useSpatialNavigation({
   selector: ".spatial-item",
@@ -58,7 +57,14 @@ const spatial = useSpatialNavigation({
 
 onMounted(async () => {
   try {
-    const response: InvidiousVideo[] = await invidious.getPopular();
+    let response: InvidiousVideo[] = [];
+
+    if (route.name === "Popular") {
+      response = await invidious.getPopular();
+    } else if (route.name === "Trending") {
+      console.log("getting trending");
+      response = await invidious.getTrending();
+    }
 
     // Map API data to component-friendly format
     videos.value = response.map((vid) => ({
