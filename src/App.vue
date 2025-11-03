@@ -24,7 +24,7 @@ const $route = useRoute();
   display: flex;
   height: 100vh;
   width: 100%;
-  overflow: hidden; /* prevent page scrollbars; we'll handle inside main */
+  overflow: hidden;
 }
 
 /* Main takes the remaining space next to the drawer */
@@ -32,12 +32,11 @@ const $route = useRoute();
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto; /* enables vertical scrolling */
+  overflow-y: auto;
   height: 100vh;
   margin: 0 auto;
 }
 
-/* Optional: ensure router content stretches properly */
 .v-container {
   flex: 1;
   display: flex;
