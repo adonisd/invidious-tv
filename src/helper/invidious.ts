@@ -86,7 +86,7 @@ export class InvidiousHelper {
 
   async getAuthFeed(): Promise<Video[]> {
     try {
-      const url = `/api/v1/auth/feed`;
+      const url = "/api/v1/auth/feed";
       const response = await this.authenticatedRequest(url);
       console.log(response);
       return response.data as Video[];
@@ -165,7 +165,6 @@ export class InvidiousHelper {
     if (!token) {
       throw new Error("Not authenticated. Please call authorize() first.");
     }
-
     const url = `${this.baseUrl}${endpoint}`;
     const response = await fetch(url, {
       ...options,

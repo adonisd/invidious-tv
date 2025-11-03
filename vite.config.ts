@@ -7,7 +7,20 @@ import vuetify from "vite-plugin-vuetify";
 
 export default defineConfig({
   base: "./",
-  plugins: [vue(), vuetify({ autoImport: true }), vueDevTools(), viteSingleFile()],
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: {
+          whitespace: "condense",
+        },
+      },
+    }),
+    vuetify({ autoImport: true }),
+    vueDevTools(),
+    viteSingleFile({
+      removeViteModuleLoader: true,
+    }),
+  ],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
@@ -15,18 +28,29 @@ export default defineConfig({
   },
   build: {
     target: "es2015",
-    // assetsInlineLimit: 100000000,
-    // chunkSizeWarningLimit: 100000000,
     cssCodeSplit: false,
     cssMinify: true,
-    minify: true,
+    minify: "terser", // Use terser for better minification
+    terserOptions: {
+      compress: {
+        drop_console: true, // Remove console.logs in production
+        drop_debugger: true,
+        pure_funcs: ["console.log", "console.info"], // Remove specific console methods
+      },
+    },
     sourcemap: false,
     outDir: "dist",
     emptyOutDir: true,
+    // Increase chunk size limit warnings since you're making a single file
+    chunkSizeWarningLimit: 5000,
     rollupOptions: {
       output: {
         inlineDynamicImports: true,
+        manualChunks: undefined,
       },
     },
+  },
+  optimizeDeps: {
+    include: ["vue", "vuetify"],
   },
 });
