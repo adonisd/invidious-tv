@@ -25,7 +25,7 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-const invidiousHelper = new InvidiousHelper("https://tube.toc.homes");
+const invidiousHelper = new InvidiousHelper();
 
 const isLoading = ref(true);
 const error = ref("");

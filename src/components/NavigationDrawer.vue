@@ -59,7 +59,7 @@
 import { InvidiousHelper } from "@/helper/invidious";
 import { computed, ref } from "vue";
 
-const invidiousHelper = new InvidiousHelper("https://tube.toc.homes");
+const invidiousHelper = new InvidiousHelper();
 
 const token = ref(invidiousHelper.getToken());
 const isLoggedIn = computed(() => !!token.value);

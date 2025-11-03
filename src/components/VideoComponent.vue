@@ -54,7 +54,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, computed, nextTick } from "vue";
-import { InvidiousHelper } from "@/helper/invidious";
+import { baseUrl, InvidiousHelper } from "@/helper/invidious";
 // import AdaptiveVideoPlayer from "@/components/AdaptiveVideoPlayer.vue";
 import type { VideoDetail } from "@/interfaces/videos";
 import ShakaVideoPlayer from "@/components/ShakaVideoPlayer.vue";
@@ -65,8 +65,7 @@ const video = ref<VideoDetail | null>(null);
 const loading = ref(true);
 const error = ref<string | null>(null);
 
-const INVIDIOUS_INSTANCE = "https://tube.toc.homes";
-const invidious = new InvidiousHelper(INVIDIOUS_INSTANCE);
+const invidious = new InvidiousHelper();
 
 // Proxied URLs through Invidious
 const proxiedDashUrl = computed(() => {
@@ -80,7 +79,7 @@ const proxiedFallbackUrl = computed(() => {
   // Proxy the fallback URL through Invidious
   const videoId = props.videoId;
   const itag = video.value.formatStreams[0].itag;
-  return `${INVIDIOUS_INSTANCE}/latest_version?id=${videoId}&itag=${itag}&local=true`;
+  return `${baseUrl}/latest_version?id=${videoId}&itag=${itag}&local=true`;
 });
 
 function formatViewCount(count: number): string {

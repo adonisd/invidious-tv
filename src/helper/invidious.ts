@@ -1,12 +1,14 @@
 import type { Video, VideoDetail } from "@/interfaces/videos";
 
+export const baseUrl = "https://tube.toc.homes";
+
 export class InvidiousHelper {
   public isLoggedin?: boolean;
   public username?: string;
   private baseUrl: string;
 
-  constructor(instanceUrl: string) {
-    this.baseUrl = instanceUrl.replace(/\/$/, ""); // Remove trailing slash
+  constructor() {
+    this.baseUrl = baseUrl;
   }
 
   /**

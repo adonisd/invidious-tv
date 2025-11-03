@@ -44,7 +44,7 @@ interface Video {
 }
 
 const videos = ref<Video[]>([]);
-const invidious = new InvidiousHelper("https://tube.toc.homes");
+const invidious = new InvidiousHelper();
 const route = useRoute();
 // initialize spatial navigation with selector matching the v-col wrapper
 // const spatial = useSpatialNavigation({
