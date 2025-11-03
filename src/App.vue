@@ -20,7 +20,7 @@ import { onMounted, nextTick, onBeforeUnmount, watch } from "vue";
 const $route = useRoute();
 const spatial = useSpatialNavigation({
   straightOnly: false,
-  selectors: [".spatial-item"],
+  selectors: [".spatial-item", ".shaka-tooltip"],
 });
 
 onMounted(async () => {
@@ -66,5 +66,25 @@ onBeforeUnmount(() => {
   flex: 1;
   display: flex;
   flex-direction: column;
+}
+</style>
+
+<style>
+* {
+  font-family: "Roboto", sans-serif;
+}
+
+.spatial-focus {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  transform: scale(1.07);
+}
+
+.spatial-focus.shaka-tooltip {
+  /* Your CSS styles here */
+  background-color: rgba(var(--v-theme-primary), 0.2);
+  border: 1px solid rgba(var(--v-theme-primary), 0.2);
+  border-radius: 25%;
 }
 </style>

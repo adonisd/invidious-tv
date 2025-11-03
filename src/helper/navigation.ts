@@ -20,11 +20,7 @@ interface ElementRect {
 type Direction = "left" | "right" | "up" | "down";
 
 interface NavigationConfig {
-  /**
-   * Optional list of extra selectors to add to default focusable list.
-   * If not provided, defaults to all focusable elements (buttons, links, inputs, etc.).
-   */
-  selectors?: string[];
+  selectors: string[];
 
   straightOnly?: boolean;
   straightOverlapThreshold?: number;
@@ -44,28 +40,15 @@ const KEYMAPPING: Record<string, Direction> = {
   Down: "down",
 };
 
-// Default focusable elements — used when no selector is provided
-const DEFAULT_FOCUSABLE_SELECTORS = [
-  "a[href]",
-  "button",
-  "input",
-  "select",
-  "textarea",
-  "[tabindex]",
-  "[role='button']",
-  "[data-focusable]",
-];
-
-export const useSpatialNavigation = (config: NavigationConfig = {}) => {
+export const useSpatialNavigation = (config: NavigationConfig) => {
   const currentFocusedElement = ref<HTMLElement | null>(null);
   const navigableElements = ref<HTMLElement[]>([]);
   const isInitialized = ref(false);
 
   /** Get combined selector string (default + user-defined) */
   const getSelectorString = (): string => {
-    const extraSelectors = config.selectors || [];
-    const allSelectors = [...DEFAULT_FOCUSABLE_SELECTORS, ...extraSelectors];
-    return allSelectors.join(", ");
+    const selectors = config.selectors || [];
+    return selectors.join(", ");
   };
 
   const getRect = (elem: HTMLElement): ElementRect => {

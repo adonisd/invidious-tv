@@ -11,8 +11,18 @@
     <v-divider></v-divider>
 
     <v-list density="compact" nav>
-      <v-list-item prepend-icon="mdi-fire" title="Popular" to="/popular"></v-list-item>
-      <v-list-item prepend-icon="mdi-trending-up" title="Trending" to="/trending"></v-list-item>
+      <v-list-item
+        prepend-icon="mdi-fire"
+        title="Popular"
+        to="/popular"
+        class="spatial-item"
+      ></v-list-item>
+      <v-list-item
+        prepend-icon="mdi-trending-up"
+        title="Trending"
+        to="/trending"
+        class="spatial-item"
+      ></v-list-item>
     </v-list>
   </v-navigation-drawer>
 </template>

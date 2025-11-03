@@ -25,7 +25,6 @@ import "@fontsource/roboto/500-italic.css";
 import "@fontsource/roboto/700-italic.css";
 import "@fontsource/roboto/900-italic.css";
 
-import "./main.css";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
 
 const app = createApp(App);
