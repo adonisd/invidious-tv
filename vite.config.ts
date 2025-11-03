@@ -30,18 +30,17 @@ export default defineConfig({
     target: "es2015",
     cssCodeSplit: false,
     cssMinify: true,
-    minify: "terser", // Use terser for better minification
+    minify: "terser",
     terserOptions: {
       compress: {
-        drop_console: true, // Remove console.logs in production
+        drop_console: true,
         drop_debugger: true,
-        pure_funcs: ["console.log", "console.info"], // Remove specific console methods
+        pure_funcs: ["console.log", "console.info"],
       },
     },
     sourcemap: false,
     outDir: "dist",
     emptyOutDir: true,
-    // Increase chunk size limit warnings since you're making a single file
     chunkSizeWarningLimit: 5000,
     rollupOptions: {
       output: {
