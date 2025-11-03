@@ -1,3 +1,11 @@
 * {
   font-family: "Roboto", sans-serif;
 }
+
+.spatial-focus {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  transform: scale(1.07);
+  /* color: rgba(var(--v-theme-primary), 0.2); */
+}

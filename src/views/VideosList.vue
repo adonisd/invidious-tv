@@ -25,7 +25,7 @@ import VideoThumbnail from "@/components/VideoThumbnail.vue";
 import { InvidiousHelper } from "@/helper/invidious";
 import type { Video as InvidiousVideo } from "@/interfaces/videos";
 import { useRoute } from "vue-router";
-import { useSpatialNavigation } from "@/helper/navigation";
+// import { useSpatialNavigation } from "@/helper/navigation";
 
 // Helper to format seconds into "m:ss"
 function formatDuration(seconds: number): string {
@@ -47,10 +47,10 @@ const videos = ref<Video[]>([]);
 const invidious = new InvidiousHelper("https://tube.toc.homes");
 const route = useRoute();
 // initialize spatial navigation with selector matching the v-col wrapper
-const spatial = useSpatialNavigation({
-  selector: ".spatial-item",
-  straightOnly: false,
-});
+// const spatial = useSpatialNavigation({
+//   selector: ".spatial-item",
+//   straightOnly: false,
+// });
 
 onMounted(async () => {
   try {
@@ -75,16 +75,16 @@ onMounted(async () => {
 
     // Wait for DOM to update then refresh navigable elements and focus first
     await nextTick();
-    spatial.init();
-    spatial.refresh();
-    spatial.focusFirst();
+    // spatial.init();
+    // spatial.refresh();
+    // spatial.focusFirst();
   } catch (error) {
     console.error("Failed to fetch popular videos", error);
   }
 });
 
 onUnmounted(() => {
-  spatial.cleanup();
+  // spatial.cleanup();
 });
 </script>
 

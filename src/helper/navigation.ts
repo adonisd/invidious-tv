@@ -20,36 +20,57 @@ interface ElementRect {
 type Direction = "left" | "right" | "up" | "down";
 
 interface NavigationConfig {
-  selector: string;
+  /**
+   * Optional list of extra selectors to add to default focusable list.
+   * If not provided, defaults to all focusable elements (buttons, links, inputs, etc.).
+   */
+  selectors?: string[];
+
   straightOnly?: boolean;
   straightOverlapThreshold?: number;
   onNavigate?: (element: HTMLElement, direction: Direction) => void;
-  // Called when the remote 'Back' button is pressed. If not provided, defaults to window.history.back().
   onBack?: () => void;
   onSelect?: (element: HTMLElement) => void;
 }
 
-// Map keyboard event.key values (including common TV remote key names) to navigation directions
 const KEYMAPPING: Record<string, Direction> = {
   ArrowLeft: "left",
   ArrowUp: "up",
   ArrowRight: "right",
   ArrowDown: "down",
-  // Some TV remotes (including LG/webOS) emit these values
   Left: "left",
   Right: "right",
   Up: "up",
   Down: "down",
 };
 
-export const useSpatialNavigation = (config: NavigationConfig) => {
+// Default focusable elements — used when no selector is provided
+const DEFAULT_FOCUSABLE_SELECTORS = [
+  "a[href]",
+  "button",
+  "input",
+  "select",
+  "textarea",
+  "[tabindex]",
+  "[role='button']",
+  "[data-focusable]",
+];
+
+export const useSpatialNavigation = (config: NavigationConfig = {}) => {
   const currentFocusedElement = ref<HTMLElement | null>(null);
   const navigableElements = ref<HTMLElement[]>([]);
   const isInitialized = ref(false);
 
+  /** Get combined selector string (default + user-defined) */
+  const getSelectorString = (): string => {
+    const extraSelectors = config.selectors || [];
+    const allSelectors = [...DEFAULT_FOCUSABLE_SELECTORS, ...extraSelectors];
+    return allSelectors.join(", ");
+  };
+
   const getRect = (elem: HTMLElement): ElementRect => {
     const cr = elem.getBoundingClientRect();
-    const rect: ElementRect = {
+    return {
       element: elem,
       left: cr.left,
       top: cr.top,
@@ -62,22 +83,18 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
         y: cr.top + Math.floor(cr.height / 2),
       },
     };
-    return rect;
   };
 
   const calculateDistance = (from: ElementRect, to: ElementRect, direction: Direction): number => {
     const threshold = config.straightOverlapThreshold || 0.5;
 
-    // Check if elements are aligned based on direction
     const isAligned = (dir: Direction): boolean => {
       if (dir === "left" || dir === "right") {
-        // Check vertical alignment
         return (
           to.top <= from.bottom - from.height * threshold &&
           to.bottom >= from.top + from.height * threshold
         );
       } else {
-        // Check horizontal alignment
         return (
           to.left <= from.right - from.width * threshold &&
           to.right >= from.left + from.width * threshold
@@ -85,7 +102,6 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
       }
     };
 
-    // Calculate distances based on direction
     let primaryDistance: number;
     let secondaryDistance: number;
 
@@ -114,17 +130,13 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
         return Infinity;
     }
 
-    // Penalize non-aligned elements in straightOnly mode
     if (config.straightOnly && !isAligned(direction)) {
       return Infinity;
     }
 
-    // Use Euclidean distance with weighted primary direction
-    const weightedDistance = Math.sqrt(
+    return Math.sqrt(
       Math.pow(Math.max(0, primaryDistance) * 2, 2) + Math.pow(secondaryDistance, 2),
     );
-
-    return weightedDistance;
   };
 
   const findNextElement = (direction: Direction): HTMLElement | null => {
@@ -136,7 +148,7 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
 
     navigableElements.value.forEach((elem) => {
       if (elem === currentFocusedElement.value) return;
-      if (!elem.offsetParent) return; // Skip hidden elements
+      if (!elem.offsetParent) return;
 
       const targetRect = getRect(elem);
       const distance = calculateDistance(currentRect, targetRect, direction);
@@ -153,16 +165,13 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
   const focusElement = (element: HTMLElement | null) => {
     if (!element) return;
 
-    // Remove focus from current element
     if (currentFocusedElement.value) {
       currentFocusedElement.value.classList.remove("spatial-focus");
       currentFocusedElement.value.blur();
     }
 
-    // Set new focus
     currentFocusedElement.value = element;
     element.classList.add("spatial-focus");
-    console.log("Focusing element:", element);
     element.focus();
     element.scrollIntoView({ behavior: "smooth", block: "nearest" });
   };
@@ -179,23 +188,17 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
 
   const handleKeyDown = (event: KeyboardEvent) => {
     const key = event.key;
+    console.log(`KEY: ${key} is pressed`);
 
-    console.log("KeyDown:", key);
-
-    // Handle Back key for TV remotes (common values: Back, BrowserBack, MediaBack, Escape)
-    if (key === "Back" || key === "BrowserBack" || key === "MediaBack" || key === "Escape") {
+    if (["Back", "BrowserBack", "MediaBack", "Escape"].includes(key)) {
       event.preventDefault();
       event.stopPropagation();
-      if (config.onBack) {
-        config.onBack();
-      } else if (window && typeof window.history?.back === "function") {
-        window.history.back();
-      }
+      if (config.onBack) config.onBack();
+      else window.history?.back?.();
       return;
     }
 
     const direction = KEYMAPPING[key];
-
     if (direction) {
       event.preventDefault();
       event.stopPropagation();
@@ -203,27 +206,21 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
       return;
     }
 
-    // Treat OK from remotes as Enter. Many remotes emit "Enter" or "OK".
     if ((key === "Enter" || key === "OK" || key === "Select") && currentFocusedElement.value) {
       event.preventDefault();
       currentFocusedElement.value.classList.add("spatial-active");
-      console.log("KeyDown: Activate element");
-      // console.log(currentFocusedElement.value);
-      // find first href or onclick in the element or its children and trigger it
-      let clickableElement: HTMLElement | null = null;
 
+      let clickable: HTMLElement | null = null;
       if (
         currentFocusedElement.value.tagName === "A" ||
         currentFocusedElement.value.tagName === "BUTTON"
       ) {
-        clickableElement = currentFocusedElement.value;
+        clickable = currentFocusedElement.value;
       } else {
-        clickableElement = currentFocusedElement.value.querySelector("a, button, [onclick]");
+        clickable = currentFocusedElement.value.querySelector("a, button, [onclick]");
       }
 
-      if (clickableElement) {
-        clickableElement.click();
-      }
+      clickable?.click();
       config.onSelect?.(currentFocusedElement.value);
     }
   };
@@ -233,63 +230,50 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
       event.preventDefault();
       event.stopPropagation();
       currentFocusedElement.value.classList.remove("spatial-active");
-
-      // Trigger click
       currentFocusedElement.value.click();
       config.onSelect?.(currentFocusedElement.value);
     }
   };
 
   const updateNavigableElements = () => {
-    const elements = document.querySelectorAll(config.selector);
-    navigableElements.value = Array.from(elements) as HTMLElement[];
+    const selectorString = getSelectorString();
+    const elements = document.querySelectorAll(selectorString);
+    navigableElements.value = Array.from(elements).filter(
+      (el) => el instanceof HTMLElement && !el.hasAttribute("disabled"),
+    ) as HTMLElement[];
 
-    // Ensure all elements are focusable
     navigableElements.value.forEach((elem) => {
-      if (!elem.hasAttribute("tabindex")) {
-        elem.setAttribute("tabindex", "-1");
-      }
+      if (!elem.hasAttribute("tabindex")) elem.setAttribute("tabindex", "-1");
     });
   };
 
   const init = () => {
-    console.log("Initializing spatial navigation");
     if (isInitialized.value) return;
 
     updateNavigableElements();
-
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
 
     isInitialized.value = true;
 
-    // Focus first element if none focused
     if (navigableElements.value.length > 0 && !currentFocusedElement.value) {
-      console.log("Focusing first navigable element");
-      if (navigableElements.value[0]) focusElement(navigableElements.value[0]);
+      focusElement(navigableElements.value[0]!);
     }
+    console.log("spatial navigation loaded");
   };
 
   const cleanup = () => {
     window.removeEventListener("keydown", handleKeyDown);
     window.removeEventListener("keyup", handleKeyUp);
-
-    if (currentFocusedElement.value) {
-      currentFocusedElement.value.classList.remove("spatial-focus");
-    }
-
+    currentFocusedElement.value?.classList.remove("spatial-focus");
     isInitialized.value = false;
   };
 
   const focusFirst = () => {
-    if (navigableElements.value.length > 0) {
-      if (navigableElements.value[0]) focusElement(navigableElements.value[0]);
-    }
+    if (navigableElements.value.length > 0) focusElement(navigableElements.value[0]!);
   };
 
-  const refresh = () => {
-    updateNavigableElements();
-  };
+  const refresh = () => updateNavigableElements();
 
   return {
     init,

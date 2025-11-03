@@ -14,8 +14,33 @@
 <script setup lang="ts">
 import NavigationDrawer from "./components/NavigationDrawer.vue";
 import { useRoute } from "vue-router";
+import { useSpatialNavigation } from "./helper/navigation";
+import { onMounted, nextTick, onBeforeUnmount, watch } from "vue";
 
 const $route = useRoute();
+const spatial = useSpatialNavigation({
+  straightOnly: false,
+  selectors: [".spatial-item"],
+});
+
+onMounted(async () => {
+  await nextTick();
+  spatial.init();
+  spatial.refresh();
+  spatial.focusFirst();
+});
+watch(
+  () => $route.fullPath,
+  async () => {
+    setTimeout(() => {
+      spatial.refresh();
+      spatial.focusFirst();
+    }, 1000);
+  },
+);
+onBeforeUnmount(() => {
+  spatial.cleanup();
+});
 </script>
 
 <style scoped>
