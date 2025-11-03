@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import VideosListView from "../views/VideosList.vue";
+import AuthView from "@/views/AuthView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,6 +20,11 @@ const router = createRouter({
       name: "video",
       component: () => import("../views/VideoView.vue"),
       props: true,
+    },
+    {
+      path: "/auth/callback",
+      name: "auth",
+      component: AuthView,
     },
   ],
 });

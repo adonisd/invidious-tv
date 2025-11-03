@@ -1,6 +1,8 @@
 import type { Video, VideoDetail } from "@/interfaces/videos";
 
 export class InvidiousHelper {
+  public isLoggedin?: boolean;
+  public username?: string;
   private baseUrl: string;
 
   constructor(instanceUrl: string) {
@@ -16,15 +18,11 @@ export class InvidiousHelper {
     try {
       const url = `${this.baseUrl}/api/v1/videos/${videoId}${local ? "?local=true" : ""}`;
       console.log("Fetching from:", url);
-
       const response = await fetch(url);
-
       if (!response.ok) {
         throw new Error(`Failed to fetch video: ${response.status} ${response.statusText}`);
       }
-
       const data = await response.json();
-
       // Process the DASH URL to ensure it uses HTTPS and includes local parameter
       if (data.dashUrl) {
         data.dashUrl = data.dashUrl.replace("http://", "https://");
@@ -32,7 +30,6 @@ export class InvidiousHelper {
           data.dashUrl += (data.dashUrl.includes("?") ? "&" : "?") + "local=true";
         }
       }
-
       return data;
     } catch (error) {
       console.error("Error fetching video:", error);
@@ -49,27 +46,6 @@ export class InvidiousHelper {
     return `${this.baseUrl}/latest_version?id=${videoId}&itag=${itag}&local=true`;
   }
 
-  // /**
-  //  * Search for videos
-  //  * @param query - Search query
-  //  * @param page - Page number (optional)
-  //  */
-  // async search(query: string, page: number = 1): Promise<any> {
-  //   try {
-  //     const url = `${this.baseUrl}/api/v1/search?q=${encodeURIComponent(query)}&page=${page}`;
-  //     const response = await fetch(url);
-
-  //     if (!response.ok) {
-  //       throw new Error(`Search failed: ${response.status} ${response.statusText}`);
-  //     }
-
-  //     return await response.json();
-  //   } catch (error) {
-  //     console.error("Error searching:", error);
-  //     throw error;
-  //   }
-  // }
-
   /**
    * Get trending videos
    * @param type - Type of trending (music, gaming, news, movies)
@@ -79,35 +55,120 @@ export class InvidiousHelper {
       const url = type
         ? `${this.baseUrl}/api/v1/trending?type=${type}`
         : `${this.baseUrl}/api/v1/trending`;
-
       const response = await fetch(url);
-
       if (!response.ok) {
         throw new Error(`Failed to fetch trending: ${response.status}`);
       }
-
       return await response.json();
     } catch (error) {
       console.error("Error fetching trending:", error);
       throw error;
     }
   }
+
   async getPopular(type?: string): Promise<Video[]> {
     try {
       const url = type
         ? `${this.baseUrl}/api/v1/popular?type=${type}`
         : `${this.baseUrl}/api/v1/popular`;
-
       const response = await fetch(url);
-
       if (!response.ok) {
         throw new Error(`Failed to fetch popular: ${response.status}`);
       }
-
       return await response.json();
     } catch (error) {
       console.error("Error fetching popular:", error);
       throw error;
     }
+  }
+
+  /**
+   * Initiate OAuth authorization flow
+   * Opens the authorization URL in a new window/tab
+   * @param callbackUrl - The URL to redirect to after authorization (default: window.location.origin + '/auth/callback')
+   */
+  authorize(callbackUrl?: string): void {
+    const callback = callbackUrl || `${window.location.origin}/auth/callback`;
+    const scopes = ":feed,:subscriptions*,:playlists*,:history*";
+    const authUrl = `${this.baseUrl}/authorize_token?scopes=${scopes}&callback_url=${callback}`;
+    window.location.href = authUrl;
+  }
+
+  /**
+   * Parse the token from callback URL
+   * Call this in your callback route component
+   * @param url - The callback URL (default: window.location.href)
+   * @returns The token or null if not found
+   */
+  parseAuthCallback(url?: string): string | null {
+    const urlToParse = url || window.location.href;
+    const urlObj = new URL(urlToParse);
+
+    // Check for token in query params
+    const token = urlObj.searchParams.get("token");
+    const username = urlObj.searchParams.get("username");
+    if (username) {
+      this.username = username;
+      localStorage.setItem("invidious_user", username);
+    }
+    if (token) {
+      console.log(token);
+      // Store token in localStorage for persistence
+      localStorage.setItem("invidious_token", token);
+      this.isLoggedin = true;
+      return token;
+    }
+
+    return null;
+  }
+
+  /**
+   * Get stored authentication token
+   * @returns The stored token or null
+   */
+  getToken(): string | null {
+    return localStorage.getItem("invidious_token");
+  }
+
+  getUser(): string | null {
+    return localStorage.getItem("invidious_user");
+  }
+
+  /**
+   * Clear stored authentication token
+   */
+  clearToken(): void {
+    localStorage.removeItem("invidious_token");
+  }
+
+  /**
+   * Make authenticated API request
+   * @param endpoint - API endpoint (e.g., '/api/v1/auth/feed')
+   * @param options - Fetch options
+   */
+  async authenticatedRequest(endpoint: string, options: RequestInit = {}) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error("Not authenticated. Please call authorize() first.");
+    }
+
+    const url = `${this.baseUrl}${endpoint}`;
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        ...options.headers,
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        this.clearToken();
+        throw new Error("Authentication expired. Please authorize again.");
+      }
+      throw new Error(`Request failed: ${response.status} ${response.statusText}`);
+    }
+
+    return await response.json();
   }
 }
