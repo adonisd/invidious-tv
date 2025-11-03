@@ -205,18 +205,19 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
 
       clickable?.click();
       config.onSelect?.(currentFocusedElement.value);
+      refresh();
     }
   };
 
-  const handleKeyUp = (event: KeyboardEvent) => {
-    if (event.key === "Enter" && currentFocusedElement.value) {
-      event.preventDefault();
-      event.stopPropagation();
-      currentFocusedElement.value.classList.remove("spatial-active");
-      currentFocusedElement.value.click();
-      config.onSelect?.(currentFocusedElement.value);
-    }
-  };
+  // const handleKeyUp = (event: KeyboardEvent) => {
+  //   if (event.key === "Enter" && currentFocusedElement.value) {
+  //     event.preventDefault();
+  //     event.stopPropagation();
+  //     currentFocusedElement.value.classList.remove("spatial-active");
+  //     currentFocusedElement.value.click();
+  //     config.onSelect?.(currentFocusedElement.value);
+  //   }
+  // };
 
   const updateNavigableElements = () => {
     const selectorString = getSelectorString();
@@ -235,7 +236,7 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
 
     updateNavigableElements();
     window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
+    // window.addEventListener("keyup", handleKeyUp);
 
     isInitialized.value = true;
 
@@ -247,7 +248,7 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
 
   const cleanup = () => {
     window.removeEventListener("keydown", handleKeyDown);
-    window.removeEventListener("keyup", handleKeyUp);
+    // window.removeEventListener("keyup", handleKeyUp);
     currentFocusedElement.value?.classList.remove("spatial-focus");
     isInitialized.value = false;
   };
