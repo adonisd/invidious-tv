@@ -2,10 +2,9 @@
   <v-app id="invidious-vue-app" dark>
     <div class="app-layout">
       <NavigationDrawer />
-
       <v-main class="main-content">
         <v-container fluid class="fill-height">
-          <RouterView />
+          <RouterView :key="$route.fullPath" />
         </v-container>
       </v-main>
     </div>
@@ -14,6 +13,9 @@
 
 <script setup lang="ts">
 import NavigationDrawer from "./components/NavigationDrawer.vue";
+import { useRoute } from "vue-router";
+
+const $route = useRoute();
 </script>
 
 <style scoped>
