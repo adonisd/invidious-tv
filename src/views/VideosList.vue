@@ -3,11 +3,8 @@
     <v-col
       v-for="video in videos"
       :key="video.videoId"
-      cols="12"
-      sm="6"
-      md="4"
-      lg="3"
       :data-video-id="video.videoId"
+      class="custom-col"
     >
       <VideoThumbnail
         :author="video.author"
@@ -91,4 +88,9 @@ onUnmounted(() => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.custom-col {
+  flex: 0 0 25%;
+  max-width: 20%;
+}
+</style>

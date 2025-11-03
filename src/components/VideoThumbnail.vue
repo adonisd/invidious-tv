@@ -6,16 +6,19 @@
       :to="`/video/${videoId}`"
       hover
       rounded
+      height="300px"
     >
       <v-img height="160px" :src="thumbnail" cover></v-img>
       <v-card-title>
-        {{ author }}
+        <div class="video-title-custom">
+          <span>{{ author }}</span>
+
+          <v-chip size="small" variant="tonal" color="primary" label>
+            {{ formatViews(views) }} views
+          </v-chip>
+        </div>
       </v-card-title>
-      <v-card-subtitle>
-        <v-chip size="small" variant="tonal" color="primary" label>
-          {{ formatViews(views) }} views
-        </v-chip>
-      </v-card-subtitle>
+      <v-card-subtitle> </v-card-subtitle>
       <v-card-text>
         <v-divider vertical> </v-divider>
         {{ title }}
@@ -68,5 +71,12 @@ const formatViews = (views: number | string): string => {
 .v-card-title,
 .v-card-subtitle {
   color: white !important;
+}
+
+.video-title-custom {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>
