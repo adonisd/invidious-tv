@@ -82,6 +82,18 @@ export class InvidiousHelper {
     }
   }
 
+  async getAuthFeed(): Promise<Video[]> {
+    try {
+      const url = `/api/v1/auth/feed`;
+      const response = await this.authenticatedRequest(url);
+      console.log(response);
+      return response.data as Video[];
+    } catch (error) {
+      console.error("Error fetching personal feed:", error);
+      throw error;
+    }
+  }
+
   /**
    * Initiate OAuth authorization flow
    * Opens the authorization URL in a new window/tab

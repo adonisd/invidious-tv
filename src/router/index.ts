@@ -16,6 +16,11 @@ const router = createRouter({
       component: VideosListView,
     },
     {
+      path: "/feed",
+      name: "Feed",
+      component: VideosListView,
+    },
+    {
       path: "/video/:id",
       name: "video",
       component: () => import("../views/VideoView.vue"),

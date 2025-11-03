@@ -61,6 +61,9 @@ onMounted(async () => {
     } else if (route.name === "Trending") {
       console.log("getting trending");
       response = await invidious.getTrending();
+    } else if (route.name === "Feed") {
+      console.log("getting feed");
+      response = await invidious.getAuthFeed();
     }
 
     // Map API data to component-friendly format
