@@ -20,7 +20,7 @@ import { onMounted, nextTick, onBeforeUnmount, watch } from "vue";
 const $route = useRoute();
 const spatial = useSpatialNavigation({
   straightOnly: false,
-  selectors: [".spatial-item", ".shaka-tooltip"],
+  selectors: [".spatial-item", ".shaka-tooltip", ".shaka-overflow-button", "button"],
 });
 
 onMounted(async () => {
