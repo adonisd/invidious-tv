@@ -1,11 +1,6 @@
 <template>
   <div>
-    <v-card
-      class="video-card spatial-item"
-      style="cursor: pointer"
-      :to="`/video/${videoId}`"
-      elevation="2"
-    >
+    <v-card class="video-card spatial-item" style="cursor: pointer" :to="`/video/${videoId}`" hover>
       <v-img height="160px" :src="thumbnail" cover></v-img>
       <v-card-title>
         {{ author }}
@@ -62,7 +57,9 @@ const formatViews = (views: number | string): string => {
 .video-card:hover,
 .spatial-focus {
   transform: scale(1.07);
-  color: rgba(47, 0, 69, 0.1) !important;
+}
+.video-card {
+  color: transparent !important;
 }
 .v-card-text,
 .v-card-title,
