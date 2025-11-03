@@ -34,11 +34,13 @@
         <div>
           <div>
             <v-icon size="16" color="medium-emphasis" icon="mdi-clock-outline"></v-icon>
+            <v-divider vertical thickness="10"></v-divider>
             <span>{{ video.publishedText }}</span>
           </div>
           <div>
             <v-icon size="16" color="medium-emphasis" icon="mdi-eye-outline"></v-icon>
-            <span> {{ formatViewCount(video.viewCount) }} views</span>
+            <v-divider vertical thickness="10"></v-divider>
+            <span>{{ formatViewCount(video.viewCount) }} views</span>
           </div>
         </div>
       </div>

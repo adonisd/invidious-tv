@@ -1,6 +1,12 @@
 <template>
   <div>
-    <v-card class="video-card spatial-item" style="cursor: pointer" :to="`/video/${videoId}`" hover>
+    <v-card
+      class="video-card spatial-item"
+      style="cursor: pointer"
+      :to="`/video/${videoId}`"
+      hover
+      rounded
+    >
       <v-img height="160px" :src="thumbnail" cover></v-img>
       <v-card-title>
         {{ author }}
@@ -13,10 +19,7 @@
       <v-card-text>
         <v-divider vertical> </v-divider>
         {{ title }}
-        {{ videoId }}
       </v-card-text>
-      <!-- TODO HANDLE CREATOR IMAGE IF ANY -->
-      <!-- Channel info -->
     </v-card>
   </div>
 </template>

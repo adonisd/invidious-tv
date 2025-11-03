@@ -21,4 +21,7 @@
 .v-list-item-title {
   font-weight: 500 !important;
 }
+.v-list-item__overlay {
+  color: rgba(var(--v-theme-primary), 0.2);
+}
 </style>

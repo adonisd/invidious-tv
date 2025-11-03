@@ -91,17 +91,4 @@ onUnmounted(() => {
 });
 </script>
 
-<style scoped>
-/* html,
-body,
-#app {
-  display: contents;
-}
-* {
-  box-sizing: border-box;
-} */
-
-#app {
-  color: rgba(0, 0, 0, 0) !important;
-}
-</style>
+<style scoped></style>
