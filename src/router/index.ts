@@ -3,10 +3,12 @@ import VideosListView from "../views/VideosList.vue";
 import AuthView from "@/views/AuthView.vue";
 import PlaylistsView from "@/views/PlaylistsView.vue";
 import VideoView from "@/views/VideoView.vue";
+import HistoryView from "@/views/HistoryView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    // PUBLIC CALLS
     {
       path: "/",
       name: "Root",
@@ -22,6 +24,7 @@ const router = createRouter({
       name: "Trending",
       component: VideosListView,
     },
+    // AUTH CALLS
     {
       path: "/feed",
       name: "Feed",
@@ -31,6 +34,11 @@ const router = createRouter({
       path: "/playlists",
       name: "Playlists",
       component: PlaylistsView,
+    },
+    {
+      path: "/history",
+      name: "History",
+      component: HistoryView,
     },
     {
       path: "/video/:id",

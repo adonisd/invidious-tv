@@ -29,7 +29,7 @@ onMounted(async () => {
     } else if (route.name === "Trending") {
       videos.value = await invidious.getTrending();
     } else if (route.name === "Feed") {
-      videos.value = await invidious.getAuthFeed();
+      videos.value = await invidious.getPersonalFeed();
     }
   } catch (error) {
     console.error("Failed to fetch popular videos", error);

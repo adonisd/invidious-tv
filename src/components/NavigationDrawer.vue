@@ -45,6 +45,13 @@
         class="spatial-item"
       ></v-list-item>
       <v-list-item
+        v-if="isLoggedIn"
+        prepend-icon="mdi-history"
+        title="History"
+        to="/history"
+        class="spatial-item"
+      ></v-list-item>
+      <v-list-item
         v-if="!isLoggedIn"
         prepend-icon="mdi-login"
         title="Login"

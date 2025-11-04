@@ -22,7 +22,7 @@ const invidious = new InvidiousHelper();
 
 onMounted(async () => {
   try {
-    const response = await invidious.getAuthPlaylists();
+    const response = await invidious.getPlaylists();
     playlists.value = response;
   } catch (error) {
     console.error("Failed to fetch playlists", error);

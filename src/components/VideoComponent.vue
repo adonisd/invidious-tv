@@ -96,7 +96,7 @@ async function fetchVideo() {
   error.value = null;
 
   try {
-    const data = await invidious.getVideoById(props.videoId);
+    const data = await invidious.getVideoById(props.videoId, true);
     video.value = data;
     console.log("Video loaded successfully");
     console.log("Original DASH URL:", data.dashUrl);

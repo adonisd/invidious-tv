@@ -4,6 +4,8 @@ import type { Video, VideoDetail } from "@/interfaces/videos";
 // export const baseUrl = "https://tube.toc.homes";
 export const baseUrl = "https://invidious.toc.homes:7443";
 
+// TODO implement paging (max_results and page)
+
 export class InvidiousHelper {
   public isLoggedin?: boolean;
   public username?: string;
@@ -18,11 +20,18 @@ export class InvidiousHelper {
    * @param videoId - YouTube video ID
    * @param local - Whether to use local proxy for streams (fixes CORS issues)
    */
-  async getVideoById(videoId: string, local: boolean = true): Promise<VideoDetail> {
+  async getVideoById(videoId: string, local?: boolean, withAuth?: boolean): Promise<VideoDetail> {
     try {
-      const url = `${this.baseUrl}/api/v1/videos/${videoId}${local ? "?local=true" : ""}`;
+      const path = `/api/v1/videos/${videoId}${local ? "?local=true" : ""}`;
+      const url = `${this.baseUrl}${path}`;
       console.log("Fetching from:", url);
-      const response = await fetch(url);
+      let response: Response;
+      if (withAuth) {
+        response = await this.authenticatedRequest(path);
+      } else {
+        response = await fetch(url);
+      }
+
       if (!response.ok) {
         throw new Error(`Failed to fetch video: ${response.status} ${response.statusText}`);
       }
@@ -86,7 +95,7 @@ export class InvidiousHelper {
     }
   }
 
-  async getAuthFeed(): Promise<Video[]> {
+  async getPersonalFeed(): Promise<Video[]> {
     try {
       const url = "/api/v1/auth/feed";
       const response = await this.authenticatedRequest(url);
@@ -97,12 +106,23 @@ export class InvidiousHelper {
     }
   }
 
-  async getAuthPlaylists() {
+  async getPlaylists() {
     try {
       const url = "/api/v1/auth/playlists";
       const response = (await this.authenticatedRequest(url)) as Playlist[];
-      console.log(response);
       return response;
+    } catch (error) {
+      console.error("Error fetching personal feed:", error);
+      throw error;
+    }
+  }
+
+  async getHistory() {
+    try {
+      const url = "/api/v1/auth/history";
+      const response = await this.authenticatedRequest(url);
+      console.log(response);
+      return response as string[];
     } catch (error) {
       console.error("Error fetching personal feed:", error);
       throw error;
