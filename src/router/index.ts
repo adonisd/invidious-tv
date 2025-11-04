@@ -2,13 +2,14 @@ import { createRouter, createWebHistory } from "vue-router";
 import VideosListView from "../views/VideosList.vue";
 import AuthView from "@/views/AuthView.vue";
 import PlaylistsView from "@/views/PlaylistsView.vue";
+import VideoView from "@/views/VideoView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
-      name: "Popular",
+      name: "Root",
       component: VideosListView,
     },
     {
@@ -34,7 +35,7 @@ const router = createRouter({
     {
       path: "/video/:id",
       name: "video",
-      component: () => import("../views/VideoView.vue"),
+      component: VideoView,
       props: true,
     },
     {
