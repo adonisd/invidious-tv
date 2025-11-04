@@ -1,3 +1,5 @@
+import type { Type } from "./shared";
+
 export interface Video {
   type: Type;
   title: string;
@@ -10,10 +12,6 @@ export interface Video {
   published: number;
   publishedText: string;
   viewCount: number;
-}
-
-export enum Type {
-  ShortVideo = "shortVideo",
 }
 
 export interface VideoThumbnail {

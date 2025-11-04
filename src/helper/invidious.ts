@@ -1,6 +1,8 @@
+import type { Playlist } from "@/interfaces/playlists";
 import type { Video, VideoDetail } from "@/interfaces/videos";
 
-export const baseUrl = "https://tube.toc.homes";
+// export const baseUrl = "https://tube.toc.homes";
+export const baseUrl = "https://invidious.toc.homes:7443";
 
 export class InvidiousHelper {
   public isLoggedin?: boolean;
@@ -88,8 +90,19 @@ export class InvidiousHelper {
     try {
       const url = "/api/v1/auth/feed";
       const response = await this.authenticatedRequest(url);
+      return response.notifications as Video[];
+    } catch (error) {
+      console.error("Error fetching personal feed:", error);
+      throw error;
+    }
+  }
+
+  async getAuthPlaylists() {
+    try {
+      const url = "/api/v1/auth/playlists";
+      const response = (await this.authenticatedRequest(url)) as Playlist[];
       console.log(response);
-      return response.data as Video[];
+      return response;
     } catch (error) {
       console.error("Error fetching personal feed:", error);
       throw error;

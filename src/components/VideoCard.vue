@@ -3,40 +3,35 @@
     <v-card
       class="video-card spatial-item"
       style="cursor: pointer"
-      :to="`/video/${videoId}`"
+      :to="`/video/${video.videoId}`"
       hover
       rounded
       height="300px"
     >
-      <v-img height="160px" :src="thumbnail" cover></v-img>
+      <v-img height="160px" :src="video.videoThumbnails[0]?.url" cover></v-img>
       <v-card-title>
         <div class="video-title-custom">
-          <span>{{ author }}</span>
+          <span>{{ video.author }}</span>
 
           <v-chip size="small" variant="tonal" color="primary" label>
-            {{ formatViews(views) }} views
+            {{ formatViews(video.viewCount) }} views
           </v-chip>
         </div>
       </v-card-title>
       <v-card-subtitle> </v-card-subtitle>
       <v-card-text>
         <v-divider vertical> </v-divider>
-        {{ title }}
+        {{ video.title }}
       </v-card-text>
     </v-card>
   </div>
 </template>
 
 <script setup lang="ts">
+import type { Video } from "@/interfaces/videos";
+
 defineProps<{
-  thumbnail: string;
-  title: string;
-  views: number | string;
-  duration: string;
-  channel: string;
-  author: string;
-  videoId: string;
-  creatorImage?: string;
+  video: Video;
 }>();
 
 const formatViews = (views: number | string): string => {
@@ -52,8 +47,7 @@ const formatViews = (views: number | string): string => {
 
 <style scoped>
 .video-card {
-  /* display: flex; */
-  /* flex-direction: column; */
+  color: transparent !important;
   height: 100%;
   transition:
     transform 0.2s ease,
@@ -63,9 +57,6 @@ const formatViews = (views: number | string): string => {
 .video-card:hover,
 .spatial-focus {
   transform: scale(1.07);
-}
-.video-card {
-  color: transparent !important;
 }
 .v-card-text,
 .v-card-title,

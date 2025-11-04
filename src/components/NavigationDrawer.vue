@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer app permanent>
+  <v-navigation-drawer app rail expandOnHover permanent>
     <v-list>
       <v-list-item
         v-if="isLoggedIn"
@@ -35,6 +35,13 @@
         prepend-icon="mdi-rss"
         title="Feed"
         to="/feed"
+        class="spatial-item"
+      ></v-list-item>
+      <v-list-item
+        v-if="isLoggedIn"
+        prepend-icon="mdi-playlist-play"
+        title="Playlists"
+        to="/playlists"
         class="spatial-item"
       ></v-list-item>
       <v-list-item

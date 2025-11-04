@@ -1,93 +1,39 @@
 <template>
-  <v-row>
+  <v-row style="width: 100">
     <v-col
       v-for="video in videos"
       :key="video.videoId"
       :data-video-id="video.videoId"
       class="custom-col"
     >
-      <VideoThumbnail
-        :author="video.author"
-        :title="video.title"
-        :thumbnail="video.thumbnail"
-        :views="video.viewCount"
-        :channel="video.author"
-        :duration="formatDuration(video.lengthSeconds)"
-        :videoId="video.videoId"
-      />
+      <VideoCard :video="video" />
     </v-col>
   </v-row>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, nextTick } from "vue";
-import VideoThumbnail from "@/components/VideoThumbnail.vue";
+import { ref, onMounted } from "vue";
+import VideoCard from "@/components/VideoCard.vue";
 import { InvidiousHelper } from "@/helper/invidious";
-import type { Video as InvidiousVideo } from "@/interfaces/videos";
+import type { Video } from "@/interfaces/videos";
 import { useRoute } from "vue-router";
-// import { useSpatialNavigation } from "@/helper/navigation";
-
-// Helper to format seconds into "m:ss"
-function formatDuration(seconds: number): string {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins}:${secs.toString().padStart(2, "0")}`;
-}
-
-interface Video {
-  videoId: string;
-  title: string;
-  thumbnail: string;
-  viewCount: number;
-  author: string;
-  lengthSeconds: number;
-}
 
 const videos = ref<Video[]>([]);
 const invidious = new InvidiousHelper();
 const route = useRoute();
-// initialize spatial navigation with selector matching the v-col wrapper
-// const spatial = useSpatialNavigation({
-//   selector: ".spatial-item",
-//   straightOnly: false,
-// });
 
 onMounted(async () => {
   try {
-    let response: InvidiousVideo[] = [];
-
     if (route.name === "Popular") {
-      response = await invidious.getPopular();
+      videos.value = await invidious.getPopular();
     } else if (route.name === "Trending") {
-      console.log("getting trending");
-      response = await invidious.getTrending();
+      videos.value = await invidious.getTrending();
     } else if (route.name === "Feed") {
-      console.log("getting feed");
-      response = await invidious.getAuthFeed();
+      videos.value = await invidious.getAuthFeed();
     }
-
-    // Map API data to component-friendly format
-    videos.value = response.map((vid) => ({
-      videoId: vid.videoId,
-      title: vid.title,
-      thumbnail: vid.videoThumbnails[0]?.url ?? "", // fallback if no thumbnail
-      viewCount: vid.viewCount,
-      author: vid.author,
-      lengthSeconds: vid.lengthSeconds,
-    }));
-
-    // Wait for DOM to update then refresh navigable elements and focus first
-    await nextTick();
-    // spatial.init();
-    // spatial.refresh();
-    // spatial.focusFirst();
   } catch (error) {
     console.error("Failed to fetch popular videos", error);
   }
-});
-
-onUnmounted(() => {
-  // spatial.cleanup();
 });
 </script>
 
