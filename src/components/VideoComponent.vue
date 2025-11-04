@@ -55,7 +55,6 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed, nextTick } from "vue";
 import { baseUrl, InvidiousHelper } from "@/helper/invidious";
-// import AdaptiveVideoPlayer from "@/components/AdaptiveVideoPlayer.vue";
 import type { VideoDetail } from "@/interfaces/videos";
 import ShakaVideoPlayer from "@/components/ShakaVideoPlayer.vue";
 
@@ -110,12 +109,6 @@ async function fetchVideo() {
     loading.value = false;
   }
 }
-
-// initialize spatial navigation with selector matching the v-col wrapper
-// const spatial = useSpatialNavigation({
-//   selector: ".vjs-control",
-//   straightOnly: false,
-// });
 
 onMounted(async () => {
   await fetchVideo();

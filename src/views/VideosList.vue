@@ -24,7 +24,7 @@ const route = useRoute();
 
 onMounted(async () => {
   try {
-    if (route.name === "Popular") {
+    if (route.name === "Popular" || route.name === "Root") {
       videos.value = await invidious.getPopular();
     } else if (route.name === "Trending") {
       videos.value = await invidious.getTrending();
