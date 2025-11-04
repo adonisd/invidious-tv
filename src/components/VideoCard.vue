@@ -28,10 +28,10 @@
 </template>
 
 <script setup lang="ts">
-import type { Video } from "@/interfaces/videos";
+import type { Video, VideoDetail } from "@/interfaces/videos";
 
 defineProps<{
-  video: Video;
+  video: Video | VideoDetail;
 }>();
 
 const formatViews = (views: number | string): string => {
