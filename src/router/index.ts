@@ -4,6 +4,7 @@ import AuthView from "@/views/AuthView.vue";
 import PlaylistsView from "@/views/PlaylistsView.vue";
 import VideoView from "@/views/VideoView.vue";
 import HistoryView from "@/views/HistoryView.vue";
+import UserSettingsView from "@/views/UserSettingsView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,6 +40,11 @@ const router = createRouter({
       path: "/history",
       name: "History",
       component: HistoryView,
+    },
+    {
+      path: "/settings",
+      name: "Settings",
+      component: UserSettingsView,
     },
     {
       path: "/video/:id",

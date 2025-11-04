@@ -52,6 +52,13 @@
         class="spatial-item"
       ></v-list-item>
       <v-list-item
+        v-if="isLoggedIn"
+        prepend-icon="mdi-cog"
+        title="Settings"
+        to="/settings"
+        class="spatial-item"
+      ></v-list-item>
+      <v-list-item
         v-if="!isLoggedIn"
         prepend-icon="mdi-login"
         title="Login"

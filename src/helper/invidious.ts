@@ -1,10 +1,13 @@
 import type { Playlist } from "@/interfaces/playlists";
 import type { Video, VideoDetail } from "@/interfaces/videos";
 
-// export const baseUrl = "https://tube.toc.homes";
+// TODO implement paging (max_results and page)
+// TODO make baseURL configurable
 export const baseUrl = "https://invidious.toc.homes:7443";
 
-// TODO implement paging (max_results and page)
+export interface UserSettings {
+  showShorts: boolean;
+}
 
 export class InvidiousHelper {
   public isLoggedin?: boolean;
@@ -179,6 +182,15 @@ export class InvidiousHelper {
 
   getUser(): string | null {
     return localStorage.getItem("invidious_user");
+  }
+  getUserSettings(): UserSettings | undefined {
+    const settingsString = localStorage.getItem("invidious_settings");
+    if (settingsString) {
+      const settings = JSON.parse(settingsString) as UserSettings;
+      return settings;
+    } else {
+      return undefined;
+    }
   }
 
   /**
