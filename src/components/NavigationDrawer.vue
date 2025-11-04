@@ -64,17 +64,15 @@
 
 <script setup lang="ts">
 import { InvidiousHelper } from "@/helper/invidious";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
+import { useRoute } from "vue-router";
 
 const invidiousHelper = new InvidiousHelper();
 
 const token = ref(invidiousHelper.getToken());
 const isLoggedIn = computed(() => !!token.value);
 
-// const username = computed(() => (token.value ? token.value.split("username=")[1] : ""));
-// console.log(`USERNAME: ${username.value}`);
-
-const handleLogin = () => {
+const handleLogin = async () => {
   invidiousHelper.authorize();
 };
 
@@ -82,6 +80,15 @@ const handleLogout = () => {
   invidiousHelper.clearToken();
   token.value = null;
 };
+
+const $route = useRoute();
+
+watch(
+  () => $route.fullPath,
+  () => {
+    token.value = invidiousHelper.getToken();
+  },
+);
 </script>
 
 <style>
