@@ -5,6 +5,7 @@ import PlaylistsView from "@/views/PlaylistsView.vue";
 import VideoView from "@/views/VideoView.vue";
 import HistoryView from "@/views/HistoryView.vue";
 import UserSettingsView from "@/views/UserSettingsView.vue";
+import ChannelView from "@/views/ChannelView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -50,6 +51,12 @@ const router = createRouter({
       path: "/video/:id",
       name: "video",
       component: VideoView,
+      props: true,
+    },
+    {
+      path: "/channel/:id",
+      name: "channel",
+      component: ChannelView,
       props: true,
     },
     {
