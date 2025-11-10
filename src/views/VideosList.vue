@@ -23,6 +23,10 @@ const invidious = new InvidiousHelper();
 const route = useRoute();
 
 onMounted(async () => {
+  // BUG: only trending returns videos with type "video", all the other endpoints return type "shortVideo" for all video types
+  // BUG: ALL SHORTS SHOW LENGTHINMS = 0;
+  const userSettings = invidious.getUserSettings();
+  const showShorts = userSettings ? userSettings.showShorts : true;
   try {
     if (route.name === "Popular" || route.name === "Root") {
       videos.value = await invidious.getPopular();
@@ -30,6 +34,9 @@ onMounted(async () => {
       videos.value = await invidious.getTrending();
     } else if (route.name === "Feed") {
       videos.value = await invidious.getPersonalFeed();
+    }
+    if (!showShorts) {
+      videos.value = videos.value.filter((video) => video.lengthSeconds !== 0);
     }
   } catch (error) {
     console.error("Failed to fetch popular videos", error);

@@ -16,6 +16,10 @@
           <v-chip size="small" variant="tonal" color="primary" label>
             {{ formatViews(video.viewCount) }} views
           </v-chip>
+          <!-- TODO SHOW THIS BETTER -->
+          <!-- <v-chip size="small" variant="tonal" color="primary" label>
+            {{ video.lengthSeconds }} length
+          </v-chip> -->
         </div>
       </v-card-title>
       <v-card-subtitle> </v-card-subtitle>
