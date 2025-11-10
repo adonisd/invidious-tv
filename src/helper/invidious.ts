@@ -4,6 +4,7 @@ import type { Video, VideoDetail } from "@/interfaces/videos";
 // TODO implement paging (max_results and page)
 // TODO make baseURL configurable
 export const baseUrl = "https://invidious.toc.homes:7443";
+// export const baseUrl = "https://tube.toc.homes";
 
 export interface UserSettings {
   showShorts: boolean;
