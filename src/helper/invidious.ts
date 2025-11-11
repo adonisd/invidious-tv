@@ -382,9 +382,10 @@ export class InvidiousHelper {
       }
       throw new Error(`Request failed: ${response.status} ${response.statusText}`);
     }
-    if (options.method !== "GET") {
+    try {
+      return await response.json();
+    } catch {
       return response;
     }
-    return await response.json();
   }
 }
