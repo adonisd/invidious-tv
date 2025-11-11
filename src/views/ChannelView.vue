@@ -60,7 +60,7 @@
             class="px-6 text-none font-weight-medium"
             @click="buttonClicked"
           >
-            {{ isSubscribed ? "Unsubscribe" : "Subscribe" }}
+            {{ buttonLabel }}
           </v-btn>
         </v-col>
       </v-row>
@@ -170,7 +170,7 @@ const activeTab = ref("videos");
 const route = useRoute();
 const channelId = computed(() => route.params.id as string);
 const isSubscribed = ref(false);
-
+const buttonLabel = computed(() => (isSubscribed.value ? "Unsubscribe" : "Subscribe"));
 const tabs = ["videos", "podcasts", "releases", "shorts", "streams", "playlists"];
 
 // Content for each tab
@@ -192,8 +192,23 @@ watch(activeTab, async (newTab) => {
   await loadTabContent(newTab);
 });
 
-function buttonClicked() {
-  console.log("button clicked");
+async function buttonClicked() {
+  if (isSubscribed.value) {
+    if (!channel.value?.authorId) {
+      console.error("No authorId found for channel:", channel.value);
+      return;
+    }
+    await invidious.subscribetToUcid(channel.value.authorId);
+    console.log("User subscribed to:", channel.value.author);
+  } else {
+    if (!channel.value?.authorId) {
+      console.error("No authorId found for channel:", channel.value);
+      return;
+    }
+    await invidious.removeSubscriptionToUcid(channel.value.authorId);
+    console.log("User unsubscribed from:", channel.value.author);
+  }
+  isSubscribed.value = !isSubscribed.value;
 }
 
 async function loadChannel() {
