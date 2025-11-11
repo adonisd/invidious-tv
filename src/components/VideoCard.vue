@@ -3,7 +3,7 @@
     <v-card
       class="video-card spatial-item"
       style="cursor: pointer"
-      :to="`/video/${video.videoId}`"
+      :to="disableInteraction ? undefined : `/video/${video.videoId}`"
       hover
       rounded
       height="300px"
@@ -36,6 +36,7 @@ import type { Video, VideoDetail } from "@/interfaces/videos";
 
 defineProps<{
   video: Video | VideoDetail;
+  disableInteraction?: boolean;
 }>();
 
 const formatViews = (views: number | string): string => {

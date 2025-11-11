@@ -29,7 +29,6 @@ export class InvidiousHelper {
   async getVideoById(videoId: string, local?: boolean, withAuth?: boolean): Promise<VideoDetail> {
     const path = `/api/v1/videos/${videoId}${local ? "?local=true" : ""}`;
     const url = `${this.baseUrl}${path}`;
-    console.log("Fetching from:", url);
     let response: Response;
     if (withAuth) {
       response = await this.authenticatedRequest(path);
