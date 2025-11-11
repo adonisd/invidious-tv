@@ -253,7 +253,6 @@ export class InvidiousHelper {
     try {
       const url = "/api/v1/auth/subscriptions";
       const response = await this.authenticatedRequest(url);
-      console.log(response);
       return response as UserSubscription[];
     } catch (error) {
       console.error("Error fetching subscription feed:", error);
@@ -267,7 +266,6 @@ export class InvidiousHelper {
       const response = await this.authenticatedRequest(url, {
         method: "POST",
       });
-      console.log(response);
       return response;
     } catch (error) {
       console.error("Error fetching subscription feed:", error);
@@ -281,7 +279,6 @@ export class InvidiousHelper {
       const response = await this.authenticatedRequest(url, {
         method: "DELETE",
       });
-      console.log(response);
       return response;
     } catch (error) {
       console.error("Error fetching subscription feed:", error);
@@ -376,6 +373,8 @@ export class InvidiousHelper {
       },
     });
 
+    console.log("Request sent");
+
     if (!response.ok) {
       if (response.status === 401) {
         this.clearToken();
@@ -383,7 +382,9 @@ export class InvidiousHelper {
       }
       throw new Error(`Request failed: ${response.status} ${response.statusText}`);
     }
-
+    if (options.method !== "GET") {
+      return response;
+    }
     return await response.json();
   }
 }
