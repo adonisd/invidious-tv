@@ -119,33 +119,45 @@ export class InvidiousHelper {
       if (!response.ok) {
         throw new Error(`Failed to fetch Channel playlist details: ${response.status}`);
       }
-      return response.json() as unknown as Playlist[];
+      const returnObj = (await response.json()) as unknown as {
+        playlists: Playlist[];
+      };
+      console.log(`Found ${returnObj.playlists.length} playlists`);
+      return returnObj.playlists;
     } catch (error) {
       console.error("Error fetching Channel playlist details:", error);
       throw error;
     }
   }
 
-  async getChannelPodcasts(id: string): Promise<Video[]> {
+  async getChannelPodcasts(id: string): Promise<Playlist[]> {
     try {
       const response = await fetch(`${this.baseUrl}/api/v1/channels/${id}/podcasts`);
       if (!response.ok) {
         throw new Error(`Failed to fetch Channel podcasts details: ${response.status}`);
       }
-      return response.json() as unknown as Video[];
+      const returnObj = (await response.json()) as unknown as {
+        playlists: Playlist[];
+      };
+      console.log(`Found ${returnObj.playlists.length} playlists`);
+      return returnObj.playlists;
     } catch (error) {
       console.error("Error fetching Channel podcasts details:", error);
       throw error;
     }
   }
 
-  async getChannelReleases(id: string): Promise<Video[]> {
+  async getChannelReleases(id: string): Promise<Playlist[]> {
     try {
       const response = await fetch(`${this.baseUrl}/api/v1/channels/${id}/releases`);
       if (!response.ok) {
         throw new Error(`Failed to fetch Channel releases details: ${response.status}`);
       }
-      return response.json() as unknown as Video[];
+      const returnObj = (await response.json()) as unknown as {
+        playlists: Playlist[];
+      };
+      console.log(`Found ${returnObj.playlists.length} playlists`);
+      return returnObj.playlists;
     } catch (error) {
       console.error("Error fetching Channel releases details:", error);
       throw error;
@@ -158,7 +170,11 @@ export class InvidiousHelper {
       if (!response.ok) {
         throw new Error(`Failed to fetch Channel shorts details: ${response.status}`);
       }
-      return response.json() as unknown as Video[];
+      const returnObj = (await response.json()) as unknown as {
+        videos: Video[];
+      };
+      console.log(`Found ${returnObj.videos.length} videos`);
+      return returnObj.videos;
     } catch (error) {
       console.error("Error fetching Channel shorts details:", error);
       throw error;
@@ -171,7 +187,11 @@ export class InvidiousHelper {
       if (!response.ok) {
         throw new Error(`Failed to fetch Channel streams details: ${response.status}`);
       }
-      return response.json() as unknown as Video[];
+      const returnObj = (await response.json()) as unknown as {
+        videos: Video[];
+      };
+      console.log(`Found ${returnObj.videos.length} videos`);
+      return returnObj.videos;
     } catch (error) {
       console.error("Error fetching Channel streams details:", error);
       throw error;
@@ -184,7 +204,11 @@ export class InvidiousHelper {
       if (!response.ok) {
         throw new Error(`Failed to fetch Channel videos details: ${response.status}`);
       }
-      return response.json() as unknown as Video[];
+      const returnObj = (await response.json()) as unknown as {
+        videos: Video[];
+      };
+      console.log(`Found ${returnObj.videos.length} videos`);
+      return returnObj.videos;
     } catch (error) {
       console.error("Error fetching Channel videos details:", error);
       throw error;
