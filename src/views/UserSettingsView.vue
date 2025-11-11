@@ -1,24 +1,42 @@
 <template>
   <h1 v-if="user === null">What are you doing here and how did you get here?</h1>
   <div v-else>
-    <v-card elevation="2">
-      <form>
-        <v-container>
-          <v-row>
-            <v-col>
-              <v-switch :label="`Show Shorts`" v-model="showShorts"></v-switch>
-            </v-col>
-            <v-col>
-              <h3>Subscriptions:</h3>
-              <div v-if="subscriptions.length === 0">No subscriptions found.</div>
-              <v-chip v-for="sub in subscriptions" :key="sub.authorId" class="ma-2" label>
-                {{ sub }}
-              </v-chip>
-            </v-col>
-          </v-row>
-        </v-container>
-      </form>
-    </v-card>
+    <form>
+      <v-container>
+        <v-row>
+          <v-col>
+            <v-switch :label="`Show Shorts`" v-model="showShorts"></v-switch>
+          </v-col>
+          <v-col cols="12">
+            <h3 class="mb-4">Subscriptions</h3>
+            <div v-if="subscriptions.length === 0" class="text-center pa-4 text-grey">
+              No subscriptions found.
+            </div>
+            <v-list v-else>
+              <v-list-item v-for="sub in subscriptions" :key="sub.authorId" class="mb-2">
+                <template v-slot:prepend>
+                  <v-avatar color="primary">
+                    <span class="text-white">{{ sub.author.charAt(0).toUpperCase() }}</span>
+                  </v-avatar>
+                </template>
+                <v-list-item-title>{{ sub.author }}</v-list-item-title>
+                <template v-slot:append>
+                  <v-btn
+                    color="error"
+                    variant="outlined"
+                    size="small"
+                    @click="invidious.removeSubscriptionToUcid(sub.authorId)"
+                    :loading="unsubscribingIds.includes(sub.authorId)"
+                  >
+                    Unsubscribe
+                  </v-btn>
+                </template>
+              </v-list-item>
+            </v-list>
+          </v-col>
+        </v-row>
+      </v-container>
+    </form>
   </div>
 </template>
 
@@ -31,6 +49,8 @@ const user = ref<string>();
 const settings = ref<UserSettings>();
 const invidious = new InvidiousHelper();
 settings.value = invidious.getUserSettings();
+
+const unsubscribingIds = ref<string[]>([]);
 
 const subscriptions = ref<UserSubscription[]>([]);
 onMounted(async () => {
