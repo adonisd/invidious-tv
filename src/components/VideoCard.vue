@@ -12,17 +12,17 @@
       <v-card-title>
         <div class="video-title-custom">
           <span>{{ video.author }}</span>
-
-          <v-chip size="small" variant="tonal" color="primary" label>
-            {{ formatViews(video.viewCount) }} views
-          </v-chip>
-          <!-- TODO SHOW THIS BETTER -->
-          <!-- <v-chip size="small" variant="tonal" color="primary" label>
-            {{ video.lengthSeconds }} length
-          </v-chip> -->
         </div>
       </v-card-title>
-      <v-card-subtitle> </v-card-subtitle>
+      <v-card-subtitle>
+        <v-chip size="small" variant="tonal" color="primary" label>
+          {{ formatViews(video.viewCount) }} views
+        </v-chip>
+        <span style="margin-left: 2px"></span>
+        <v-chip size="small" variant="tonal" color="secondary" label>
+          {{ formateLength(video.lengthSeconds) }}
+        </v-chip>
+      </v-card-subtitle>
       <v-card-text>
         <v-divider vertical> </v-divider>
         {{ video.title }}
@@ -47,6 +47,12 @@ const formatViews = (views: number | string): string => {
     return `${(num / 1000).toFixed(1)}K`;
   }
   return num.toString();
+};
+
+const formateLength = (seconds: number): string => {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
 };
 </script>
 
