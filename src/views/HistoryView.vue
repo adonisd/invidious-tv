@@ -32,7 +32,7 @@ onMounted(async () => {
       }
     }
   } catch (error) {
-    console.error("Failed to fetch playlists", error);
+    console.error("Failed to fetch videos", error);
   }
 });
 </script>
