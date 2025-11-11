@@ -198,15 +198,15 @@ async function buttonClicked() {
       console.error("No authorId found for channel:", channel.value);
       return;
     }
-    await invidious.subscribetToUcid(channel.value.authorId);
-    console.log("User subscribed to:", channel.value.author);
+    await invidious.removeSubscriptionToUcid(channel.value.authorId);
+    console.log("User unsubscribed from:", channel.value.author);
   } else {
     if (!channel.value?.authorId) {
       console.error("No authorId found for channel:", channel.value);
       return;
     }
-    await invidious.removeSubscriptionToUcid(channel.value.authorId);
-    console.log("User unsubscribed from:", channel.value.author);
+    await invidious.subscribetToUcid(channel.value.authorId);
+    console.log("User subscribed to:", channel.value.author);
   }
   isSubscribed.value = !isSubscribed.value;
 }
