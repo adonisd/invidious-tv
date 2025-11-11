@@ -60,7 +60,7 @@
             class="px-6 text-none font-weight-medium"
             @click="buttonClicked"
           >
-            {{ channel.joined ? "Unsubscribe" : "Subscribe" }}
+            {{ isSubscribed ? "Unsubscribe" : "Subscribe" }}
           </v-btn>
         </v-col>
       </v-row>
@@ -169,6 +169,7 @@ const loading = ref(true);
 const activeTab = ref("videos");
 const route = useRoute();
 const channelId = computed(() => route.params.id as string);
+const isSubscribed = ref(false);
 
 const tabs = ["videos", "podcasts", "releases", "shorts", "streams", "playlists"];
 
@@ -202,6 +203,10 @@ async function loadChannel() {
     if (!data) throw new Error("Couldn't get channel");
     channel.value = data;
     activeTab.value = data.tabs[0] || "videos";
+    console.log(`Checking subscription status for channel ID: ${channel.value.authorId}`);
+    const subscriptionsList = await invidious.getUserSubscriptionList();
+    isSubscribed.value = subscriptionsList.some((sub) => sub.authorId === channel.value?.authorId);
+    console.log("isSubscribed:", isSubscribed.value);
   } catch (error) {
     console.error(error);
   } finally {
@@ -212,7 +217,6 @@ async function loadChannel() {
 async function loadTabContent(tab: string) {
   if (!channelId.value) return;
 
-  // loading.value = true;
   try {
     switch (tab) {
       case "videos":
