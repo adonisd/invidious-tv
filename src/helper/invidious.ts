@@ -27,33 +27,28 @@ export class InvidiousHelper {
    * @param local - Whether to use local proxy for streams (fixes CORS issues)
    */
   async getVideoById(videoId: string, local?: boolean, withAuth?: boolean): Promise<VideoDetail> {
-    try {
-      const path = `/api/v1/videos/${videoId}${local ? "?local=true" : ""}`;
-      const url = `${this.baseUrl}${path}`;
-      console.log("Fetching from:", url);
-      let response: Response;
-      if (withAuth) {
-        response = await this.authenticatedRequest(path);
-      } else {
-        response = await fetch(url);
-      }
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch video: ${response.status} ${response.statusText}`);
-      }
-      const data = await response.json();
-      // Process the DASH URL to ensure it uses HTTPS and includes local parameter
-      if (data.dashUrl) {
-        data.dashUrl = data.dashUrl.replace("http://", "https://");
-        if (local && !data.dashUrl.includes("local=true")) {
-          data.dashUrl += (data.dashUrl.includes("?") ? "&" : "?") + "local=true";
-        }
-      }
-      return data;
-    } catch (error) {
-      console.error("Error fetching video:", error);
-      throw error;
+    const path = `/api/v1/videos/${videoId}${local ? "?local=true" : ""}`;
+    const url = `${this.baseUrl}${path}`;
+    console.log("Fetching from:", url);
+    let response: Response;
+    if (withAuth) {
+      response = await this.authenticatedRequest(path);
+    } else {
+      response = await fetch(url);
     }
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch video: ${response.status} ${response.statusText}`);
+    }
+    const data = await response.json();
+    // Process the DASH URL to ensure it uses HTTPS and includes local parameter
+    if (data.dashUrl) {
+      data.dashUrl = data.dashUrl.replace("http://", "https://");
+      if (local && !data.dashUrl.includes("local=true")) {
+        data.dashUrl += (data.dashUrl.includes("?") ? "&" : "?") + "local=true";
+      }
+    }
+    return data;
   }
 
   /**
@@ -70,220 +65,155 @@ export class InvidiousHelper {
    * @param type - Type of trending (music, gaming, news, movies)
    */
   async getTrending(type?: string): Promise<Video[]> {
-    try {
-      const url = type
-        ? `${this.baseUrl}/api/v1/trending?type=${type}`
-        : `${this.baseUrl}/api/v1/trending`;
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch trending: ${response.status}`);
-      }
-      return await response.json();
-    } catch (error) {
-      console.error("Error fetching trending:", error);
-      throw error;
+    const url = type
+      ? `${this.baseUrl}/api/v1/trending?type=${type}`
+      : `${this.baseUrl}/api/v1/trending`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch trending: ${response.status}`);
     }
+    return await response.json();
   }
 
   async getPopular(type?: string): Promise<Video[]> {
-    try {
-      const url = type
-        ? `${this.baseUrl}/api/v1/popular?type=${type}`
-        : `${this.baseUrl}/api/v1/popular`;
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch popular: ${response.status}`);
-      }
-      return await response.json();
-    } catch (error) {
-      console.error("Error fetching popular:", error);
-      throw error;
+    const url = type
+      ? `${this.baseUrl}/api/v1/popular?type=${type}`
+      : `${this.baseUrl}/api/v1/popular`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch popular: ${response.status}`);
     }
+    return await response.json();
   }
 
   async getChannelDetails(id: string): Promise<Channel> {
-    try {
-      const response = await fetch(`${this.baseUrl}/api/v1/channels/${id}`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch Channel details: ${response.status}`);
-      }
-      return response.json() as unknown as Channel;
-    } catch (error) {
-      console.error("Error fetching Channel details:", error);
-      throw error;
+    const response = await fetch(`${this.baseUrl}/api/v1/channels/${id}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch Channel details: ${response.status}`);
     }
+    return response.json() as unknown as Channel;
   }
 
   async getChannelPlaylists(id: string): Promise<Playlist[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/api/v1/channels/${id}/playlists`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch Channel playlist details: ${response.status}`);
-      }
-      const returnObj = (await response.json()) as unknown as {
-        playlists: Playlist[];
-      };
-      console.log(`Found ${returnObj.playlists.length} playlists`);
-      return returnObj.playlists;
-    } catch (error) {
-      console.error("Error fetching Channel playlist details:", error);
-      throw error;
+    const response = await fetch(`${this.baseUrl}/api/v1/channels/${id}/playlists`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch Channel playlist details: ${response.status}`);
     }
+    const returnObj = (await response.json()) as unknown as {
+      playlists: Playlist[];
+    };
+    console.log(`Found ${returnObj.playlists.length} playlists`);
+    return returnObj.playlists;
   }
 
   async getChannelPodcasts(id: string): Promise<Playlist[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/api/v1/channels/${id}/podcasts`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch Channel podcasts details: ${response.status}`);
-      }
-      const returnObj = (await response.json()) as unknown as {
-        playlists: Playlist[];
-      };
-      console.log(`Found ${returnObj.playlists.length} playlists`);
-      return returnObj.playlists;
-    } catch (error) {
-      console.error("Error fetching Channel podcasts details:", error);
-      throw error;
+    const response = await fetch(`${this.baseUrl}/api/v1/channels/${id}/podcasts`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch Channel podcasts details: ${response.status}`);
     }
+    const returnObj = (await response.json()) as unknown as {
+      playlists: Playlist[];
+    };
+    console.log(`Found ${returnObj.playlists.length} playlists`);
+    return returnObj.playlists;
   }
 
   async getChannelReleases(id: string): Promise<Playlist[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/api/v1/channels/${id}/releases`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch Channel releases details: ${response.status}`);
-      }
-      const returnObj = (await response.json()) as unknown as {
-        playlists: Playlist[];
-      };
-      console.log(`Found ${returnObj.playlists.length} playlists`);
-      return returnObj.playlists;
-    } catch (error) {
-      console.error("Error fetching Channel releases details:", error);
-      throw error;
+    const response = await fetch(`${this.baseUrl}/api/v1/channels/${id}/releases`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch Channel releases details: ${response.status}`);
     }
+    const returnObj = (await response.json()) as unknown as {
+      playlists: Playlist[];
+    };
+    console.log(`Found ${returnObj.playlists.length} playlists`);
+    return returnObj.playlists;
   }
 
   async getChannelShorts(id: string): Promise<Video[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/api/v1/channels/${id}/shorts`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch Channel shorts details: ${response.status}`);
-      }
-      const returnObj = (await response.json()) as unknown as {
-        videos: Video[];
-      };
-      console.log(`Found ${returnObj.videos.length} videos`);
-      return returnObj.videos;
-    } catch (error) {
-      console.error("Error fetching Channel shorts details:", error);
-      throw error;
+    const response = await fetch(`${this.baseUrl}/api/v1/channels/${id}/shorts`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch Channel shorts details: ${response.status}`);
     }
+    const returnObj = (await response.json()) as unknown as {
+      videos: Video[];
+    };
+    console.log(`Found ${returnObj.videos.length} videos`);
+    return returnObj.videos;
   }
 
   async getChannelStreams(id: string): Promise<Video[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/api/v1/channels/${id}/streams`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch Channel streams details: ${response.status}`);
-      }
-      const returnObj = (await response.json()) as unknown as {
-        videos: Video[];
-      };
-      console.log(`Found ${returnObj.videos.length} videos`);
-      return returnObj.videos;
-    } catch (error) {
-      console.error("Error fetching Channel streams details:", error);
-      throw error;
+    const response = await fetch(`${this.baseUrl}/api/v1/channels/${id}/streams`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch Channel streams details: ${response.status}`);
     }
+    const returnObj = (await response.json()) as unknown as {
+      videos: Video[];
+    };
+    console.log(`Found ${returnObj.videos.length} videos`);
+    return returnObj.videos;
   }
 
   async getChannelVideos(id: string): Promise<Video[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/api/v1/channels/${id}/videos`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch Channel videos details: ${response.status}`);
-      }
-      const returnObj = (await response.json()) as unknown as {
-        videos: Video[];
-      };
-      console.log(`Found ${returnObj.videos.length} videos`);
-      return returnObj.videos;
-    } catch (error) {
-      console.error("Error fetching Channel videos details:", error);
-      throw error;
+    const response = await fetch(`${this.baseUrl}/api/v1/channels/${id}/videos`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch Channel videos details: ${response.status}`);
     }
+    const returnObj = (await response.json()) as unknown as {
+      videos: Video[];
+    };
+    console.log(`Found ${returnObj.videos.length} videos`);
+    return returnObj.videos;
   }
 
   async getPersonalFeed(): Promise<Video[]> {
-    try {
-      const url = "/api/v1/auth/feed";
-      const response = await this.authenticatedRequest(url);
-      return response.notifications as Video[];
-    } catch (error) {
-      console.error("Error fetching personal feed:", error);
-      throw error;
-    }
+    const url = "/api/v1/auth/feed";
+    const response = await this.authenticatedRequest(url);
+    return response.notifications as Video[];
   }
 
   async getPlaylists() {
-    try {
-      const url = "/api/v1/auth/playlists";
-      const response = (await this.authenticatedRequest(url)) as Playlist[];
-      return response;
-    } catch (error) {
-      console.error("Error fetching personal feed:", error);
-      throw error;
-    }
+    const url = "/api/v1/auth/playlists";
+    const response = (await this.authenticatedRequest(url)) as Playlist[];
+    return response;
   }
 
   async getHistory() {
-    try {
-      const url = "/api/v1/auth/history";
-      const response = await this.authenticatedRequest(url);
-      return response as string[];
-    } catch (error) {
-      console.error("Error fetching personal feed:", error);
-      throw error;
-    }
+    const url = "/api/v1/auth/history";
+    const response = await this.authenticatedRequest(url);
+    return response as string[];
+  }
+
+  async markVideoAsWatched(id: string) {
+    const url = `/api/v1/auth/history/${id}`;
+    await this.authenticatedRequest(url, { method: "POST" });
+  }
+
+  async deleteVideoFromHistory(id: string) {
+    const url = `/api/v1/auth/history/${id}`;
+    await this.authenticatedRequest(url, { method: "DELETE" });
   }
 
   async getUserSubscriptionList() {
-    try {
-      const url = "/api/v1/auth/subscriptions";
-      const response = await this.authenticatedRequest(url);
-      return response as UserSubscription[];
-    } catch (error) {
-      console.error("Error fetching subscription feed:", error);
-      throw error;
-    }
+    const url = "/api/v1/auth/subscriptions";
+    const response = await this.authenticatedRequest(url);
+    return response as UserSubscription[];
   }
 
   async subscribetToUcid(id: string) {
-    try {
-      const url = `/api/v1/auth/subscriptions/${id}`;
-      const response = await this.authenticatedRequest(url, {
-        method: "POST",
-      });
-      return response;
-    } catch (error) {
-      console.error("Error fetching subscription feed:", error);
-      throw error;
-    }
+    const url = `/api/v1/auth/subscriptions/${id}`;
+    const response = await this.authenticatedRequest(url, {
+      method: "POST",
+    });
+    return response;
   }
 
   async removeSubscriptionToUcid(id: string) {
-    try {
-      const url = `/api/v1/auth/subscriptions/${id}`;
-      const response = await this.authenticatedRequest(url, {
-        method: "DELETE",
-      });
-      return response;
-    } catch (error) {
-      console.error("Error fetching subscription feed:", error);
-      throw error;
-    }
+    const url = `/api/v1/auth/subscriptions/${id}`;
+    const response = await this.authenticatedRequest(url, {
+      method: "DELETE",
+    });
+    return response;
   }
 
   /**
@@ -372,8 +302,6 @@ export class InvidiousHelper {
         Authorization: `Bearer ${token}`,
       },
     });
-
-    console.log("Request sent");
 
     if (!response.ok) {
       if (response.status === 401) {
