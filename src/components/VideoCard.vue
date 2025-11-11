@@ -9,22 +9,24 @@
       height="300px"
     >
       <v-img height="160px" :src="video.videoThumbnails[0]?.url" cover></v-img>
-      <v-card-title>
-        <div class="video-title-custom">
-          <span>{{ video.author }}</span>
-        </div>
-      </v-card-title>
-      <v-card-subtitle>
-        <v-chip size="small" variant="tonal" color="primary" label>
-          {{ formatViews(video.viewCount) }} views
-        </v-chip>
-        <span style="margin-left: 2px"></span>
-        <v-chip size="small" variant="tonal" color="secondary" label>
-          {{ formateLength(video.lengthSeconds) }}
-        </v-chip>
-      </v-card-subtitle>
+      <v-card-item>
+        <v-card-title>
+          <v-avatar size="25" class="elevation-2" v-if="author">
+            <v-img :src="author.authorThumbnails[0]?.url"></v-img>
+          </v-avatar>
+          {{ video.author }}
+        </v-card-title>
+        <v-card-subtitle>
+          <v-chip size="small" variant="tonal" color="primary" label>
+            {{ formatViews(video.viewCount) }} views
+          </v-chip>
+          <span style="margin-left: 2px"></span>
+          <v-chip size="small" variant="tonal" color="secondary" label>
+            {{ formateLength(video.lengthSeconds) }}
+          </v-chip>
+        </v-card-subtitle>
+      </v-card-item>
       <v-card-text>
-        <v-divider vertical> </v-divider>
         {{ video.title }}
       </v-card-text>
     </v-card>
@@ -32,12 +34,17 @@
 </template>
 
 <script setup lang="ts">
+import { InvidiousHelper } from "@/helper/invidious";
+import type { Channel } from "@/interfaces/channels";
 import type { Video, VideoDetail } from "@/interfaces/videos";
+import { onMounted, ref } from "vue";
 
-defineProps<{
+const props = defineProps<{
   video: Video | VideoDetail;
   disableInteraction?: boolean;
 }>();
+
+const author = ref<Channel | null>(null);
 
 const formatViews = (views: number | string): string => {
   const num = typeof views === "string" ? parseInt(views) : views;
@@ -54,6 +61,10 @@ const formateLength = (seconds: number): string => {
   const secs = seconds % 60;
   return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
 };
+const invidious = new InvidiousHelper();
+onMounted(async () => {
+  author.value = await invidious.getChannelDetails(props.video.authorId);
+});
 </script>
 
 <style scoped>
@@ -75,10 +86,10 @@ const formateLength = (seconds: number): string => {
   color: white !important;
 }
 
-.video-title-custom {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+.v-card-title {
+  font-size: medium;
+}
+.v-card-text {
+  font-size: small;
 }
 </style>

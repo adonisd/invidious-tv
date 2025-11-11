@@ -46,7 +46,7 @@ onMounted(async () => {
 
 <style scoped>
 .custom-col {
-  flex: 0 0 25%;
-  max-width: 20%;
+  flex: 0 0 22%;
+  max-width: 22%;
 }
 </style>
