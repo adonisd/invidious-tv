@@ -58,8 +58,9 @@
             size="large"
             rounded="pill"
             class="px-6 text-none font-weight-medium"
+            @click="buttonClicked"
           >
-            Subscribe
+            {{ channel.joined ? "Unsubscribe" : "Subscribe" }}
           </v-btn>
         </v-col>
       </v-row>
@@ -189,6 +190,10 @@ onMounted(async () => {
 watch(activeTab, async (newTab) => {
   await loadTabContent(newTab);
 });
+
+function buttonClicked() {
+  console.log("button clicked");
+}
 
 async function loadChannel() {
   loading.value = true;

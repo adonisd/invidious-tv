@@ -1,5 +1,6 @@
 import type { Channel } from "@/interfaces/channels";
 import type { Playlist } from "@/interfaces/playlists";
+import type { UserSubscription } from "@/interfaces/user";
 import type { Video, VideoDetail } from "@/interfaces/videos";
 
 // TODO implement paging (max_results and page)
@@ -241,10 +242,49 @@ export class InvidiousHelper {
     try {
       const url = "/api/v1/auth/history";
       const response = await this.authenticatedRequest(url);
-      console.log(response);
       return response as string[];
     } catch (error) {
       console.error("Error fetching personal feed:", error);
+      throw error;
+    }
+  }
+
+  async getUserSubscriptionList() {
+    try {
+      const url = "/api/v1/auth/subscriptions";
+      const response = await this.authenticatedRequest(url);
+      console.log(response);
+      return response as UserSubscription[];
+    } catch (error) {
+      console.error("Error fetching subscription feed:", error);
+      throw error;
+    }
+  }
+
+  async subscribetToUcid(id: string) {
+    try {
+      const url = `/api/v1/auth/subscriptions/${id}`;
+      const response = await this.authenticatedRequest(url, {
+        method: "POST",
+      });
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.error("Error fetching subscription feed:", error);
+      throw error;
+    }
+  }
+
+  async removeSubscriptionToUcid(id: string) {
+    try {
+      const url = `/api/v1/auth/subscriptions/${id}`;
+      const response = await this.authenticatedRequest(url, {
+        method: "DELETE",
+      });
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.error("Error fetching subscription feed:", error);
       throw error;
     }
   }
