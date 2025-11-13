@@ -168,7 +168,7 @@ export class InvidiousHelper {
   async getPersonalFeed(): Promise<Video[]> {
     const url = "/api/v1/auth/feed";
     const response = await this.authenticatedRequest(url);
-    return response.notifications as Video[];
+    return response.videos as Video[];
   }
 
   async getPlaylists() {
