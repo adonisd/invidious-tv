@@ -74,13 +74,29 @@
       ></v-list-item>
     </v-list>
   </v-navigation-drawer>
+
+  <v-app-bar style="background: transparent">
+    <v-card-text>
+      <v-text-field
+        v-model="searchQuery"
+        append-inner-icon="mdi-magnify"
+        density="compact"
+        label="Search"
+        variant="solo"
+        hide-details
+        single-line
+        @click:append-inner="handleSearch"
+      ></v-text-field>
+    </v-card-text>
+  </v-app-bar>
 </template>
 
 <script setup lang="ts">
 import { InvidiousHelper } from "@/helper/invidious";
 import { computed, ref, watch } from "vue";
-import { useRoute } from "vue-router";
-
+import { useRoute, useRouter } from "vue-router";
+const searchQuery = ref("");
+const router = useRouter();
 const invidiousHelper = new InvidiousHelper();
 
 const token = ref(invidiousHelper.getToken());
@@ -93,6 +109,17 @@ const handleLogin = async () => {
 const handleLogout = () => {
   invidiousHelper.clearToken();
   token.value = null;
+};
+
+const handleSearch = () => {
+  console.log("Handling Search:", searchQuery.value);
+  router.push({
+    name: "Search",
+    query: {
+      // TODO ADD FILTERS
+      query: searchQuery.value,
+    },
+  });
 };
 
 const $route = useRoute();
