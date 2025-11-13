@@ -1,5 +1,7 @@
 import type { Channel } from "@/interfaces/channels";
+import type { HashTag } from "@/interfaces/hashtags";
 import type { Playlist } from "@/interfaces/playlists";
+import type { SearchParams } from "@/interfaces/search";
 import type { UserSubscription } from "@/interfaces/user";
 import type { Video, VideoDetail } from "@/interfaces/videos";
 
@@ -61,9 +63,9 @@ export class InvidiousHelper {
 
   /**
    * Get trending videos
-   * @param type - Type of trending (music, gaming, news, movies)
+   * @param type - Type of trending (type: "music", "gaming", "movies", "default")
    */
-  async getTrending(type?: string): Promise<Video[]> {
+  async getTrending(type?: "music" | "gaming" | "movies" | "default"): Promise<Video[]> {
     const url = type
       ? `${this.baseUrl}/api/v1/trending?type=${type}`
       : `${this.baseUrl}/api/v1/trending`;
@@ -220,6 +222,61 @@ export class InvidiousHelper {
       method: "DELETE",
     });
     return response;
+  }
+
+  async search(searchParams: SearchParams) {
+    const params = new URLSearchParams();
+
+    // Add required parameter q
+    params.append("q", searchParams.query);
+
+    // Add optional parameters if they exist
+    if (searchParams.page !== undefined) {
+      params.append("page", String(searchParams.page));
+    }
+
+    if (searchParams.sort) {
+      params.append("sort", searchParams.sort);
+    }
+
+    if (searchParams.date) {
+      params.append("date", searchParams.date);
+    }
+
+    if (searchParams.duration) {
+      params.append("duration", searchParams.duration);
+    }
+
+    if (searchParams.type) {
+      params.append("type", searchParams.type);
+    }
+
+    if (searchParams.features) {
+      // Handle both single feature and array of features
+      const featuresStr = Array.isArray(searchParams.features)
+        ? searchParams.features.join(",")
+        : searchParams.features;
+      params.append("features", featuresStr);
+    }
+
+    if (searchParams.region) {
+      params.append("region", searchParams.region);
+    }
+
+    const url = `api/v1/search?${params.toString()}`;
+    const response = await fetch(`${this.baseUrl}/${url}`);
+    return (await response.json()) as Video | Playlist | Channel | HashTag[];
+  }
+
+  async getSearchSuggestions(query: string) {
+    const params = new URLSearchParams();
+    params.append("q", query);
+    const url = `api/v1/search?${params.toString()}`;
+    const response = await fetch(`${this.baseUrl}/${url}`);
+    return (await response.json()) as {
+      query: string;
+      suggestions: string[];
+    };
   }
 
   /**
