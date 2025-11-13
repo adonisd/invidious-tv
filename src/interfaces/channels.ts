@@ -1,6 +1,8 @@
+import type { Type } from "./shared";
 import type { Video } from "./videos";
 
 export interface Channel {
+  type: Type;
   author: string;
   authorId: string;
   authorUrl: string;

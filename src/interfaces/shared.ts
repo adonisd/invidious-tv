@@ -3,4 +3,6 @@ export enum Type {
   InvidiousPlaylist = "invidiousPlaylist",
   Video = "video",
   HashTag = "hashtag",
+  Channel = "channel",
+  Playlist = "playlist",
 }

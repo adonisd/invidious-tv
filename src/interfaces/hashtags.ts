@@ -1,4 +1,4 @@
-import type { Type } from "typescript";
+import type { Type } from "./shared";
 
 export interface HashTag {
   type: Type;

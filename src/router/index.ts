@@ -6,6 +6,7 @@ import VideoView from "@/views/VideoView.vue";
 import HistoryView from "@/views/HistoryView.vue";
 import UserSettingsView from "@/views/UserSettingsView.vue";
 import ChannelView from "@/views/ChannelView.vue";
+import SearchView from "@/views/SearchView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -63,6 +64,22 @@ const router = createRouter({
       path: "/auth/callback",
       name: "auth",
       component: AuthView,
+    },
+    {
+      path: "/search",
+      name: "Search",
+      component: SearchView,
+      // Props function to pass query params as props
+      props: (route) => ({
+        query: route.query.query as string,
+        page: route.query.page ? Number(route.query.page) : undefined,
+        sort: route.query.sort as string | undefined,
+        date: route.query.date as string | undefined,
+        duration: route.query.duration as string | undefined,
+        type: route.query.type as string | undefined,
+        features: route.query.features ? (route.query.features as string).split(",") : undefined,
+        region: route.query.region as string | undefined,
+      }),
     },
   ],
 });
