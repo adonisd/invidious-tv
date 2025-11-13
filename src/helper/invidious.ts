@@ -165,10 +165,17 @@ export class InvidiousHelper {
     return returnObj.videos;
   }
 
-  async getPersonalFeed(): Promise<Video[]> {
-    const url = "/api/v1/auth/feed";
+  async getPersonalFeed(max_results?: number, page?: number): Promise<Video[]> {
+    const params: Record<string, string> = {};
+    if (typeof max_results === "number") params.max_results = String(max_results);
+    if (typeof page === "number") params.page = String(page);
+
+    const query = Object.keys(params).length ? `?${new URLSearchParams(params).toString()}` : "";
+    const url = `/api/v1/auth/feed${query}`;
     const response = await this.authenticatedRequest(url);
-    return response.videos as Video[];
+    // response should be an object containing `videos`
+    const returnObj = response as { videos: Video[] };
+    return returnObj.videos as Video[];
   }
 
   async getPlaylists() {
