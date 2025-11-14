@@ -12,17 +12,17 @@
     </v-row>
 
     <!-- Loading indicator -->
-    <v-row v-if="loading" class="justify-center my-4">
+    <div v-if="loading" class="text-center my-4">
       <v-progress-circular indeterminate color="primary"></v-progress-circular>
-    </v-row>
+    </div>
 
-    <!-- Intersection observer target -->
-    <div ref="loadMoreTrigger" style="height: 1px"></div>
+    <!-- Intersection observer target - placed outside v-row -->
+    <div ref="loadMoreTrigger" style="height: 20px; width: 100%; background: red"></div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import VideoCard from "@/components/VideoCard.vue";
 import { InvidiousHelper } from "@/helper/invidious";
 import type { Video } from "@/interfaces/videos";
@@ -46,7 +46,6 @@ const loadVideos = async (page: number) => {
 
   try {
     let newVideos: Video[] = [];
-
     if (route.name === "Popular" || route.name === "Root") {
       newVideos = await invidious.getPopular();
     } else if (route.name === "Trending") {
@@ -75,21 +74,39 @@ const loadVideos = async (page: number) => {
 };
 
 const setupIntersectionObserver = () => {
+  console.log("Setting up intersection observer for infinite scroll");
   observer = new IntersectionObserver(
     (entries) => {
       const entry = entries[0];
-      if (!entry) return;
+      if (!entry) {
+        console.warn("No intersection entry found");
+        return;
+      }
+
+      console.log("Intersection detected:", {
+        isIntersecting: entry.isIntersecting,
+        intersectionRatio: entry.intersectionRatio,
+        loading: loading.value,
+        hasMorePages: hasMorePages.value,
+      });
+
       if (entry.isIntersecting && !loading.value && hasMorePages.value) {
+        console.log("Loading more videos...");
         loadVideos(currentPage.value + 1);
       }
     },
     {
+      root: null, // Use viewport as root
       rootMargin: "200px", // Start loading 200px before reaching the trigger
+      threshold: 0.1, // Trigger when 10% of the element is visible
     },
   );
 
   if (loadMoreTrigger.value) {
+    console.log("Observing trigger element:", loadMoreTrigger.value);
     observer.observe(loadMoreTrigger.value);
+  } else {
+    console.error("loadMoreTrigger ref is null!");
   }
 };
 
@@ -99,6 +116,8 @@ onMounted(async () => {
 
   // Setup infinite scroll only for Feed route (since that's the only one with pagination)
   if (route.name === "Feed") {
+    // Wait for DOM to be fully updated before setting up observer
+    await nextTick();
     setupIntersectionObserver();
   }
 });
