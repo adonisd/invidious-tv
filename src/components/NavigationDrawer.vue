@@ -76,18 +76,20 @@
   </v-navigation-drawer>
 
   <v-app-bar style="background: transparent">
-    <v-card-text>
-      <v-text-field
-        v-model="searchQuery"
-        append-inner-icon="mdi-magnify"
-        density="compact"
-        label="Search"
-        variant="solo"
-        hide-details
-        single-line
-        @click:append-inner="handleSearch"
-      ></v-text-field>
-    </v-card-text>
+    <v-autocomplete
+      label="Search"
+      v-model="searchQuery"
+      :items="predictions"
+      append-inner-icon="mdi-magnify"
+      density="comfortable"
+      variant="solo"
+      hide-details
+      hide-no-data
+      single-line
+      @update:search="handleSearchInput"
+      @click:append-inner="handleSearch"
+    >
+    </v-autocomplete>
   </v-app-bar>
 </template>
 
@@ -95,13 +97,13 @@
 import { InvidiousHelper } from "@/helper/invidious";
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-const searchQuery = ref("");
+const searchQuery = ref<string>("");
+const predictions = ref<string[]>([]);
 const router = useRouter();
 const invidiousHelper = new InvidiousHelper();
 
 const token = ref(invidiousHelper.getToken());
 const isLoggedIn = computed(() => !!token.value);
-
 const handleLogin = async () => {
   invidiousHelper.authorize();
 };
@@ -111,13 +113,39 @@ const handleLogout = () => {
   token.value = null;
 };
 
+const handleSearchInput = async (value: string) => {
+  // TODO Make this more elaborate (If channel do this if video do that if playlist do that)
+  searchQuery.value = value;
+  if (value.length > 2) {
+    const suggestions = await invidiousHelper.getSearchSuggestions(value);
+    console.log("Search Predictions:", suggestions);
+    predictions.value = suggestions
+      .map((item) => {
+        if ("title" in item) {
+          return item.title;
+        } else if ("author" in item) {
+          return item.author;
+        } else {
+          return "";
+        }
+      })
+      .filter((item) => item !== "");
+  }
+};
+
 const handleSearch = () => {
-  console.log("Handling Search:", searchQuery.value);
+  const query = searchQuery.value;
+
+  console.log("Handling Search:", query);
+  if (!searchQuery.value) {
+    console.warn("Search query is empty.");
+    return;
+  }
   router.push({
     name: "Search",
     query: {
       // TODO ADD FILTERS
-      query: searchQuery.value,
+      query: query,
     },
   });
 };
