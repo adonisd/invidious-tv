@@ -265,7 +265,7 @@ export class InvidiousHelper {
 
     const url = `api/v1/search?${params.toString()}`;
     const response = await fetch(`${this.baseUrl}/${url}`);
-    return (await response.json()) as Video | Playlist | Channel | HashTag[];
+    return (await response.json()) as (Video | Playlist | Channel | HashTag)[];
   }
 
   async getSearchSuggestions(query: string) {
@@ -273,10 +273,7 @@ export class InvidiousHelper {
     params.append("q", query);
     const url = `api/v1/search?${params.toString()}`;
     const response = await fetch(`${this.baseUrl}/${url}`);
-    return (await response.json()) as {
-      query: string;
-      suggestions: string[];
-    };
+    return (await response.json()) as (Video | Playlist | Channel | HashTag)[];
   }
 
   /**
