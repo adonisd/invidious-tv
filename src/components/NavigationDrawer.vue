@@ -3,7 +3,7 @@
     <v-list>
       <v-list-item
         v-if="isLoggedIn"
-        prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg"
+        :prepend-avatar="avatar"
         :subtitle="invidiousHelper.getUser() || 'guest'"
         title="Logged In"
       ></v-list-item>
@@ -75,19 +75,27 @@
     </v-list>
   </v-navigation-drawer>
 
-  <v-app-bar style="background: transparent">
+  <v-app-bar style="background: transparent; box-shadow: none" flat>
     <v-autocomplete
-      label="Search"
-      v-model="searchQuery"
+      v-model="selectedQuery"
+      v-model:search="searchInput"
       :items="predictions"
-      append-inner-icon="mdi-magnify"
+      :loading="loading"
+      label="Search"
       density="comfortable"
       variant="solo"
       hide-details
       hide-no-data
       single-line
-      @update:search="handleSearchInput"
-      @click:append-inner="handleSearch"
+      autocomplete="off"
+      @click:prepend-inner="handleSearch"
+      @update:model-value="handleSearch"
+      menu-icon=""
+      prepend-inner-icon="mdi-magnify"
+      style="max-width: 350px"
+      theme="dark"
+      auto-select-first
+      class="search-bar"
     >
     </v-autocomplete>
   </v-app-bar>
@@ -97,13 +105,17 @@
 import { InvidiousHelper } from "@/helper/invidious";
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-const searchQuery = ref<string>("");
+
+const searchInput = ref<string | undefined>(undefined);
+const selectedQuery = ref<string | null>(null);
 const predictions = ref<string[]>([]);
+const loading = ref(false);
 const router = useRouter();
 const invidiousHelper = new InvidiousHelper();
 
 const token = ref(invidiousHelper.getToken());
 const isLoggedIn = computed(() => !!token.value);
+
 const handleLogin = async () => {
   invidiousHelper.authorize();
 };
@@ -113,11 +125,42 @@ const handleLogout = () => {
   token.value = null;
 };
 
-const handleSearchInput = async (value: string) => {
+const avatar = computed(() => {
+  // TODO Figure out if invidious has profile pictures if not maybe use gravatar or randomuser or implement upload
+  const randomNum = Math.floor(Math.random() * 99) + 1;
+  // return randomly men or women
+  const gender = Math.random() < 0.5 ? "men" : "women";
+  return `https://randomuser.me/api/portraits/${gender}/${randomNum}.jpg`;
+});
+
+// Watch search input and fetch predictions
+watch(searchInput, (val) => {
+  if (!val) {
+    setTimeout(() => (predictions.value = []), 300);
+  } else {
+    if (val !== selectedQuery.value) {
+      fetchPredictions(val);
+    }
+  }
+});
+
+const fetchPredictions = async (value: string) => {
   // TODO Make this more elaborate (If channel do this if video do that if playlist do that)
-  searchQuery.value = value;
-  if (value.length > 2) {
+  if (value.length <= 2) {
+    predictions.value = [];
+    return;
+  }
+
+  loading.value = true;
+
+  try {
     const suggestions = await invidiousHelper.getSearchSuggestions(value);
+
+    // Drop response if search input changed (race condition)
+    if (value !== searchInput.value) {
+      return;
+    }
+
     console.log("Search Predictions:", suggestions);
     predictions.value = suggestions
       .map((item) => {
@@ -130,17 +173,23 @@ const handleSearchInput = async (value: string) => {
         }
       })
       .filter((item) => item !== "");
+  } catch (error) {
+    console.error("Error fetching predictions:", error);
+    predictions.value = [];
+  } finally {
+    loading.value = false;
   }
 };
 
 const handleSearch = () => {
-  const query = searchQuery.value;
+  const query = selectedQuery.value || searchInput.value;
 
   console.log("Handling Search:", query);
-  if (!searchQuery.value) {
+  if (!query) {
     console.warn("Search query is empty.");
     return;
   }
+
   router.push({
     name: "Search",
     query: {
@@ -167,5 +216,22 @@ watch(
 }
 .v-list-item__overlay {
   color: rgba(var(--v-theme-primary), 0.2);
+}
+
+.search-bar {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 25px;
+}
+
+.search-bar input {
+  height: 100%;
+  background-color: transparent;
+  border: none;
+  padding: 0 !important;
+}
+
+.search-bar .v-field__input {
+  padding: 0px;
 }
 </style>

@@ -173,11 +173,15 @@ export class InvidiousHelper {
     if (typeof page === "number") params.page = String(page);
 
     const query = Object.keys(params).length ? `?${new URLSearchParams(params).toString()}` : "";
+    console.log(`QUERY: ${query}`);
     const url = `/api/v1/auth/feed${query}`;
     const response = await this.authenticatedRequest(url);
     // response should be an object containing `videos`
-    const returnObj = response as { videos: Video[] };
-    return returnObj.videos as Video[];
+
+    const returnObj = response as { videos: Video[]; notifications: Video[] };
+    console.log(`Number of notifications: ${returnObj.notifications.length}`);
+    console.log(`Number of videos: ${returnObj.videos.length}`);
+    return [...returnObj.notifications, ...returnObj.videos] as Video[];
   }
 
   async getPlaylists() {
