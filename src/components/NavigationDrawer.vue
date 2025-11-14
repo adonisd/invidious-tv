@@ -74,8 +74,13 @@
       ></v-list-item>
     </v-list>
   </v-navigation-drawer>
-
-  <v-app-bar style="background: transparent; box-shadow: none" flat>
+  <v-app-bar
+    scroll-behavior="fully-hide"
+    scroll-target="main.v-main.main-content"
+    flat
+    floating
+    class="app-bar"
+  >
     <v-autocomplete
       v-model="selectedQuery"
       v-model:search="searchInput"
@@ -83,6 +88,7 @@
       :loading="loading"
       label="Search"
       density="comfortable"
+      flat
       variant="solo"
       hide-details
       hide-no-data
@@ -95,7 +101,7 @@
       style="max-width: 350px"
       theme="dark"
       auto-select-first
-      class="search-bar"
+      class="autocomplete-search-bar"
     >
     </v-autocomplete>
   </v-app-bar>
@@ -217,21 +223,23 @@ watch(
 .v-list-item__overlay {
   color: rgba(var(--v-theme-primary), 0.2);
 }
-
-.search-bar {
+.app-bar {
+  justify-content: center;
+  background-color: transparent;
+}
+.autocomplete-search-bar {
   margin-left: auto;
   margin-right: auto;
-  margin-top: 25px;
 }
 
-.search-bar input {
+.autocomplete-search-bar input {
   height: 100%;
   background-color: transparent;
   border: none;
   padding: 0 !important;
 }
 
-.search-bar .v-field__input {
+.autocomplete-search-bar .v-field__input {
   padding: 0px;
 }
 </style>
