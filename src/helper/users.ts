@@ -124,7 +124,10 @@ export class LocalUsers {
 
   public toggleShowShorts(username: string): void {
     const settings = this.getUserSettings(username);
-    localStorage.setItem(this.STORAGE_USER_SETTINGS_PREFIX + username, JSON.stringify(!settings));
+    localStorage.setItem(
+      this.STORAGE_USER_SETTINGS_PREFIX + username,
+      JSON.stringify({ ...settings, showShorts: !settings?.showShorts }),
+    );
   }
 
   public setSettings(username: string, settings: UserSettings): void {

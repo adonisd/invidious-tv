@@ -82,7 +82,7 @@ const showShorts = computed({
   set: (val) => {
     if (settings.value) {
       settings.value.showShorts = val;
-      localStorage.setItem("invidious_settings", JSON.stringify(settings.value));
+      localUsers.toggleShowShorts(user.value || "guest");
     }
   },
 });

@@ -60,17 +60,22 @@
         class="spatial-item"
       ></v-list-item>
       <v-list-item
-        v-if="isLoggedIn"
         prepend-icon="mdi-cog"
         title="Settings"
         to="/settings"
         class="spatial-item"
       ></v-list-item>
       <v-list-item
+        prepend-icon="mdi-account"
+        title="Switch User"
+        to="/"
+        class="spatial-item"
+      ></v-list-item>
+      <v-list-item
         v-if="!isLoggedIn"
         prepend-icon="mdi-login"
         title="Login"
-        @click="handleLogin"
+        @click="users.authorize()"
         class="spatial-item"
       ></v-list-item>
       <v-list-item
@@ -128,7 +133,7 @@ const loading = ref(false);
 const router = useRouter();
 const invidiousHelper = new InvidiousHelper();
 const users = new LocalUsers();
-const currentUser = ref(users.getCurrentUser() || "guest");
+const currentUser = computed(() => users.getCurrentUser());
 const settings = ref(users.getUserSettings(currentUser.value || "guest"));
 const token = ref(settings.value ? settings.value.token : null);
 const isLoggedIn = computed(() => !!token.value);
@@ -142,10 +147,6 @@ watch(route, (newRoute) => {
     hideTopBar.value = false;
   }
 });
-
-const handleLogin = async () => {
-  users.authorize();
-};
 
 const handleLogout = () => {
   users.clearToken(currentUser.value || "guest");
