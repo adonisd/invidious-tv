@@ -6,20 +6,20 @@ export interface UserSettings {
 }
 
 export class LocalUsers {
-  private static STORAGE_USERS_LIST = "invidious_users_list";
-  private static STORAGE_CURRENT_USER = "invidious_current_user";
-  private static STORAGE_USER_SETTINGS_PREFIX = "invidious_user_settings_";
+  private STORAGE_USERS_LIST = "invidious_users_list";
+  private STORAGE_CURRENT_USER = "invidious_current_user";
+  private STORAGE_USER_SETTINGS_PREFIX = "invidious_user_settings_";
 
   constructor() {
     this.addGuestUser();
   }
 
-  public static getUsersList(): string[] {
+  getUsersList(): string[] {
     const users = localStorage.getItem(this.STORAGE_USERS_LIST);
     return users ? JSON.parse(users) : [];
   }
 
-  public static addUser(username: string): void {
+  addUser(username: string): void {
     const users = this.getUsersList();
     if (!users.includes(username)) {
       users.push(username);
@@ -27,15 +27,15 @@ export class LocalUsers {
     }
   }
 
-  public static setCurrentUser(username: string): void {
+  setCurrentUser(username: string): void {
     localStorage.setItem(this.STORAGE_CURRENT_USER, username);
   }
 
-  public static getCurrentUser(): string | null {
+  getCurrentUser(): string | null {
     return localStorage.getItem(this.STORAGE_CURRENT_USER);
   }
 
-  public static removeUser(username: string): void {
+  removeUser(username: string): void {
     let users = this.getUsersList();
     users = users.filter((user) => user !== username);
     localStorage.setItem(this.STORAGE_USERS_LIST, JSON.stringify(users));
@@ -45,7 +45,7 @@ export class LocalUsers {
     }
   }
 
-  public static clearAllUsers(): void {
+  clearAllUsers(): void {
     localStorage.removeItem(this.STORAGE_USERS_LIST);
     localStorage.removeItem(this.STORAGE_CURRENT_USER);
   }
@@ -76,22 +76,32 @@ export class LocalUsers {
     const token = urlObj.searchParams.get("token");
     const username = urlObj.searchParams.get("username");
     if (username) {
-      LocalUsers.addUser(username);
-      LocalUsers.setCurrentUser(username);
+      this.addUser(username);
+      this.setCurrentUser(username);
     }
     if (token) {
+      // check if user settings exist, if not create default
+      const existingSettings = this.getUserSettings(username || "default");
+      if (!existingSettings) {
+        localStorage.setItem(
+          this.STORAGE_USER_SETTINGS_PREFIX + (username || "default"),
+          JSON.stringify({ showShorts: true }),
+        );
+      } else {
+        localStorage.setItem(
+          this.STORAGE_USER_SETTINGS_PREFIX + (username || "default"),
+          JSON.stringify({ token, showShorts: existingSettings.showShorts || true }),
+        );
+      }
       console.log(token);
-      localStorage.setItem(
-        LocalUsers.STORAGE_USER_SETTINGS_PREFIX + (username || "default"),
-        JSON.stringify({ token, showShorts: true }),
-      );
+
       return token;
     }
     return null;
   }
 
   public getUserSettings(username: string): UserSettings | undefined {
-    const settingsStr = localStorage.getItem(LocalUsers.STORAGE_USER_SETTINGS_PREFIX + username);
+    const settingsStr = localStorage.getItem(this.STORAGE_USER_SETTINGS_PREFIX + username);
     if (settingsStr) {
       return JSON.parse(settingsStr);
     }
@@ -100,24 +110,21 @@ export class LocalUsers {
 
   public toggleShowShorts(username: string): void {
     const settings = this.getUserSettings(username);
-    localStorage.setItem(
-      LocalUsers.STORAGE_USER_SETTINGS_PREFIX + username,
-      JSON.stringify(!settings),
-    );
+    localStorage.setItem(this.STORAGE_USER_SETTINGS_PREFIX + username, JSON.stringify(!settings));
   }
 
   // add guest user without token
   public addGuestUser(): void {
     const guestUsername = "guest";
     // check if guest user already exists
-    const users = LocalUsers.getUsersList();
+    const users = this.getUsersList();
     if (users.includes(guestUsername)) {
       return;
     }
-    LocalUsers.addUser(guestUsername);
-    LocalUsers.setCurrentUser(guestUsername);
+    this.addUser(guestUsername);
+    this.setCurrentUser(guestUsername);
     localStorage.setItem(
-      LocalUsers.STORAGE_USER_SETTINGS_PREFIX + guestUsername,
+      this.STORAGE_USER_SETTINGS_PREFIX + guestUsername,
       JSON.stringify({ showShorts: true }),
     );
   }

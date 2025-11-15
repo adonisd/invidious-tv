@@ -20,12 +20,12 @@
 </template>
 
 <script setup lang="ts">
-import { InvidiousHelper } from "@/helper/invidious";
+import { LocalUsers } from "@/helper/users";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-const invidiousHelper = new InvidiousHelper();
+const localUsers = new LocalUsers();
 
 const isLoading = ref(true);
 const error = ref("");
@@ -35,7 +35,7 @@ onMounted(() => {
   console.log("Search params:", window.location.search);
 
   try {
-    const token = invidiousHelper.parseAuthCallback();
+    const token = localUsers.parseAuthCallback();
 
     if (token) {
       console.log("Authentication successful! Token:", token.substring(0, 10) + "...");
