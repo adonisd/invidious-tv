@@ -12,6 +12,7 @@
       :fallback-url="proxiedFallbackUrl"
       :poster="video.videoThumbnails[0]?.url"
       :autoplay="false"
+      :videoId="videoId"
     />
     <v-card-title>
       {{ video.title }}

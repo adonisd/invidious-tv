@@ -7,20 +7,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, watch } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch, computed } from "vue";
 import shaka from "shaka-player/dist/shaka-player.ui"; // UI version
 import "shaka-player/dist/controls.css"; // Shaka default styles
+import { InvidiousHelper } from "@/helper/invidious";
 
 interface Props {
   dashUrl?: string;
   fallbackUrl?: string;
   poster?: string;
   autoplay?: boolean;
+  videoId: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   autoplay: false,
 });
+
+const invidiousHelper = new InvidiousHelper();
+
+const token = ref(invidiousHelper.getToken());
+const isLoggedIn = computed(() => !!token.value);
 
 const videoElement = ref<HTMLVideoElement | null>(null);
 const videoContainer = ref<HTMLDivElement | null>(null);
@@ -40,6 +47,10 @@ async function initPlayer() {
 
   // Create Shaka Player instance
   player = new shaka.Player(videoElement.value);
+  if (!player) {
+    console.error("Failed to create Shaka Player instance.");
+    return;
+  }
 
   // Create UI overlay (adds quality selector, captions, etc.)
   ui = new shaka.ui.Overlay(player, videoContainer.value, videoElement.value);
@@ -130,6 +141,18 @@ watch(
   () => [props.dashUrl, props.fallbackUrl],
   () => initPlayer(),
 );
+
+// Trigger when video starts playing
+onMounted(() => {
+  if (videoElement.value) {
+    videoElement.value.addEventListener("playing", async () => {
+      if (isLoggedIn.value) {
+        console.log("User is logged in, marking video as watched");
+        await invidiousHelper.markVideoAsWatched(props.videoId);
+      }
+    });
+  }
+});
 </script>
 
 <style scoped>
