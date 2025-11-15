@@ -286,7 +286,7 @@ export class InvidiousHelper {
    * @param callbackUrl - The URL to redirect to after authorization (default: window.location.origin + '/auth/callback')
    */
   authorize(callbackUrl?: string): void {
-    const callback = callbackUrl || `${window.location.origin}/auth/callback`;
+    const callback = callbackUrl || `${window.location.origin}/callback`;
     const scopes = ":feed,:subscriptions*,:playlists*,:history*";
     const authUrl = `${this.baseUrl}/authorize_token?scopes=${scopes}&callback_url=${callback}`;
     window.location.href = authUrl;

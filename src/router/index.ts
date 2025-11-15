@@ -61,7 +61,7 @@ const router = createRouter({
       props: true,
     },
     {
-      path: "/auth/callback",
+      path: "/callback",
       name: "auth",
       component: AuthView,
     },
