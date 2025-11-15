@@ -55,7 +55,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, computed, nextTick } from "vue";
-import { baseUrl, InvidiousHelper } from "@/helper/invidious";
+import { InvidiousHelper } from "@/helper/invidious";
 import type { VideoDetail } from "@/interfaces/videos";
 import ShakaVideoPlayer from "@/components/ShakaVideoPlayer.vue";
 
@@ -79,7 +79,7 @@ const proxiedFallbackUrl = computed(() => {
   // Proxy the fallback URL through Invidious
   const videoId = props.videoId;
   const itag = video.value.formatStreams[0].itag;
-  return `${baseUrl}/latest_version?id=${videoId}&itag=${itag}&local=true`;
+  return `${invidious.baseUrl}/latest_version?id=${videoId}&itag=${itag}&local=true`;
 });
 
 function formatViewCount(count: number): string {

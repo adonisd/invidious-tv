@@ -1,4 +1,4 @@
-import { baseUrl } from "./invidious";
+import { InvidiousHelper } from "./invidious";
 
 export interface UserSettings {
   token?: string;
@@ -70,6 +70,8 @@ export class LocalUsers {
    * @param callbackUrl - The URL to redirect to after authorization (default: window.location.origin + '/auth/callback')
    */
   authorize(callbackUrl?: string): void {
+    const invidious = new InvidiousHelper();
+    const baseUrl = invidious.baseUrl;
     const callback = callbackUrl || `${window.location.origin}/callback`;
     const scopes = ":feed,:subscriptions*,:playlists*,:history*";
     const authUrl = `${baseUrl}/authorize_token?scopes=${scopes}&callback_url=${callback}`;

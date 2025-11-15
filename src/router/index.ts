@@ -8,6 +8,7 @@ import UserSettingsView from "@/views/UserSettingsView.vue";
 import ChannelView from "@/views/ChannelView.vue";
 import SearchView from "@/views/SearchView.vue";
 import LandingView from "@/views/LandingView.vue";
+import WeclomeView from "@/views/WeclomeView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,6 +18,11 @@ const router = createRouter({
       path: "/",
       name: "Root",
       component: LandingView,
+    },
+    {
+      path: "/welcome",
+      name: "Welcome",
+      component: WeclomeView,
     },
     {
       path: "/popular",

@@ -5,18 +5,24 @@ import type { SearchParams } from "@/interfaces/search";
 import type { UserSubscription } from "@/interfaces/user";
 import type { Video, VideoDetail } from "@/interfaces/videos";
 import { LocalUsers } from "./users";
+import { useRouter } from "vue-router";
 
 // TODO implement paging (max_results and page)
-// TODO make baseURL configurable
-export const baseUrl = "https://invidious.toc.homes:7443";
-// export const baseUrl = "https://tube.toc.homes";
+export const INVIDIOUS_BASE_URL_KEY = "invidious_base_url";
 
 export class InvidiousHelper {
   public isLoggedin?: boolean;
   public username?: string;
-  private baseUrl: string;
+  public baseUrl?: string;
 
   constructor() {
+    const router = useRouter();
+    const baseUrl = localStorage.getItem(INVIDIOUS_BASE_URL_KEY);
+    if (!baseUrl) {
+      console.warn("No Invidious base URL set, redirecting to Welcome view");
+      if (router.currentRoute.value.name !== "Welcome") router.push({ name: "Welcome" });
+      return;
+    }
     this.baseUrl = baseUrl;
   }
 
@@ -56,6 +62,11 @@ export class InvidiousHelper {
    */
   getProxiedUrl(videoId: string, itag: string): string {
     return `${this.baseUrl}/latest_version?id=${videoId}&itag=${itag}&local=true`;
+  }
+
+  setBaseUrl(url: string) {
+    localStorage.setItem(INVIDIOUS_BASE_URL_KEY, url);
+    this.baseUrl = url;
   }
 
   /**
