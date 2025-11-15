@@ -55,6 +55,31 @@
         </v-col>
       </v-row>
 
+      <!-- All Results Tab -->
+      <div v-if="activeTab === 'videos' && videos.length">
+        <v-row>
+          <v-col v-for="video in videos" :key="video.videoId" class="custom-col">
+            <VideoCard :video="video"></VideoCard>
+          </v-col>
+        </v-row>
+      </div>
+
+      <div v-else-if="activeTab === 'channels' && channels.length">
+        <v-row>
+          <v-col v-for="channel in channels" :key="channel.authorId" class="custom-col">
+            <ChannelCard :channel="channel"></ChannelCard>
+          </v-col>
+        </v-row>
+      </div>
+
+      <div v-else-if="activeTab === 'playlists' && playlists.length">
+        <v-row>
+          <v-col v-for="playlist in playlists" :key="playlist.authorId" class="custom-col">
+            <PlaylistCard :playlist="playlist"></PlaylistCard>
+          </v-col>
+        </v-row>
+      </div>
+
       <!-- Error State -->
       <v-row v-else-if="error" class="mt-4">
         <v-col>
@@ -68,14 +93,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch, onUnmounted } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { InvidiousHelper } from "@/helper/invidious";
 import type { Video } from "@/interfaces/videos";
+import VideoCard from "@/components/VideoCard.vue";
 import type { Playlist } from "@/interfaces/playlists";
 import type { Channel } from "@/interfaces/channels";
 import type { SearchParams } from "@/interfaces/search";
 import type { HashTag } from "@/interfaces/hashtags";
+import PlaylistCard from "@/components/PlaylistCard.vue";
+import ChannelCard from "@/components/ChannelCard.vue";
 
 const props = defineProps<SearchParams>();
 
@@ -145,14 +173,6 @@ const performSearch = async (page: number = 1) => {
   }
 };
 
-// const handlePageChange = (page: number) => {
-//   currentPage.value = page;
-//   router.push({
-//     query: { ...route.query, page: String(page) },
-//   });
-//   window.scrollTo({ top: 0, behavior: "smooth" });
-// };
-
 const removeFilter = (filter: string) => {
   const query = { ...route.query };
 
@@ -178,12 +198,6 @@ watch(
 
 onMounted(() => {
   performSearch(currentPage.value);
-});
-
-onUnmounted(() => {
-  // if (observer) {
-  //   observer.disconnect();
-  // }
 });
 </script>
 
