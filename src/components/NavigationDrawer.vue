@@ -4,7 +4,7 @@
       <v-list-item
         v-if="isLoggedIn"
         :prepend-avatar="avatar"
-        :subtitle="invidiousHelper.getUser() || 'guest'"
+        :subtitle="currentUser"
         title="Logged In"
       ></v-list-item>
       <v-list-item
@@ -117,6 +117,7 @@
 
 <script setup lang="ts">
 import { InvidiousHelper } from "@/helper/invidious";
+import { LocalUsers } from "@/helper/users";
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
@@ -126,8 +127,10 @@ const predictions = ref<string[]>([]);
 const loading = ref(false);
 const router = useRouter();
 const invidiousHelper = new InvidiousHelper();
-
-const token = ref(invidiousHelper.getToken());
+const users = new LocalUsers();
+const currentUser = ref(users.getCurrentUser() || "guest");
+const settings = ref(users.getUserSettings(currentUser.value || "guest"));
+const token = ref(settings.value ? settings.value.token : null);
 const isLoggedIn = computed(() => !!token.value);
 const hideTopBar = ref(false);
 const route = useRoute();
@@ -141,11 +144,11 @@ watch(route, (newRoute) => {
 });
 
 const handleLogin = async () => {
-  invidiousHelper.authorize();
+  users.authorize();
 };
 
 const handleLogout = () => {
-  invidiousHelper.clearToken();
+  users.clearToken(currentUser.value || "guest");
   token.value = null;
 };
 
@@ -228,7 +231,7 @@ const $route = useRoute();
 watch(
   () => $route.fullPath,
   () => {
-    token.value = invidiousHelper.getToken();
+    token.value = users.getUserSettings(currentUser.value || "guest")?.token || null;
   },
 );
 </script>

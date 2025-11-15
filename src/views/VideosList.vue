@@ -21,9 +21,15 @@ import { useRoute } from "vue-router";
 import VideoCard from "@/components/VideoCard.vue";
 import { InvidiousHelper } from "@/helper/invidious";
 import type { Video } from "@/interfaces/videos";
+import { LocalUsers } from "@/helper/users";
 
 const route = useRoute();
 const invidious = new InvidiousHelper();
+const users = new LocalUsers();
+const currentUser = users.getCurrentUser() || "guest";
+if (!currentUser || currentUser === "guest") {
+  console.warn("User not logged in - some features may be limited.");
+}
 
 const videos = ref<Video[]>([]);
 const loading = ref(false);
@@ -49,7 +55,7 @@ const fetchVideos = async () => {
   console.log("➡ Starting fetch for page:", page.value);
 
   try {
-    const userSettings = invidious.getUserSettings();
+    const userSettings = users.getUserSettings(currentUser);
     const showShorts = userSettings ? userSettings.showShorts : true;
 
     let fetched: Video[] = [];

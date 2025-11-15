@@ -11,6 +11,7 @@ import { ref, onMounted, onBeforeUnmount, watch, computed } from "vue";
 import shaka from "shaka-player/dist/shaka-player.ui"; // UI version
 import "shaka-player/dist/controls.css"; // Shaka default styles
 import { InvidiousHelper } from "@/helper/invidious";
+import { LocalUsers } from "@/helper/users";
 
 interface Props {
   dashUrl?: string;
@@ -25,9 +26,10 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const invidiousHelper = new InvidiousHelper();
+const localUsers = new LocalUsers();
+const currentUser = ref(localUsers.getCurrentUser());
 
-const token = ref(invidiousHelper.getToken());
-const isLoggedIn = computed(() => !!token.value);
+const isLoggedIn = computed(() => currentUser.value !== null && currentUser.value !== "guest");
 
 const videoElement = ref<HTMLVideoElement | null>(null);
 const videoContainer = ref<HTMLDivElement | null>(null);

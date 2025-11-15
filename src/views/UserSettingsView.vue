@@ -41,14 +41,32 @@
 </template>
 
 <script setup lang="ts">
-import { InvidiousHelper, type UserSettings } from "@/helper/invidious";
+import { InvidiousHelper } from "@/helper/invidious";
+import { LocalUsers, type UserSettings } from "@/helper/users";
 import type { UserSubscription } from "@/interfaces/user";
 import { computed, onMounted, ref } from "vue";
 
 const user = ref<string>();
 const settings = ref<UserSettings>();
 const invidious = new InvidiousHelper();
-settings.value = invidious.getUserSettings();
+
+const localUsers = new LocalUsers();
+const currentUser = localUsers.getCurrentUser();
+if (!currentUser) {
+  user.value = "guest";
+} else {
+  user.value = currentUser;
+}
+const defaultSettings: UserSettings = {
+  showShorts: true,
+};
+const currentSettings = localUsers.getUserSettings(user.value);
+if (!currentSettings) {
+  localUsers.setSettings(user.value, defaultSettings);
+  settings.value = defaultSettings;
+} else {
+  settings.value = currentSettings;
+}
 
 const unsubscribingIds = ref<string[]>([]);
 

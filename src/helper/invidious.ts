@@ -4,15 +4,12 @@ import type { Playlist } from "@/interfaces/playlists";
 import type { SearchParams } from "@/interfaces/search";
 import type { UserSubscription } from "@/interfaces/user";
 import type { Video, VideoDetail } from "@/interfaces/videos";
+import { LocalUsers } from "./users";
 
 // TODO implement paging (max_results and page)
 // TODO make baseURL configurable
 export const baseUrl = "https://invidious.toc.homes:7443";
 // export const baseUrl = "https://tube.toc.homes";
-
-export interface UserSettings {
-  showShorts: boolean;
-}
 
 export class InvidiousHelper {
   public isLoggedin?: boolean;
@@ -281,83 +278,21 @@ export class InvidiousHelper {
   }
 
   /**
-   * Initiate OAuth authorization flow
-   * Opens the authorization URL in a new window/tab
-   * @param callbackUrl - The URL to redirect to after authorization (default: window.location.origin + '/auth/callback')
-   */
-  authorize(callbackUrl?: string): void {
-    const callback = callbackUrl || `${window.location.origin}/callback`;
-    const scopes = ":feed,:subscriptions*,:playlists*,:history*";
-    const authUrl = `${this.baseUrl}/authorize_token?scopes=${scopes}&callback_url=${callback}`;
-    window.location.href = authUrl;
-  }
-
-  /**
-   * Parse the token from callback URL
-   * Call this in your callback route component
-   * @param url - The callback URL (default: window.location.href)
-   * @returns The token or null if not found
-   */
-  parseAuthCallback(url?: string): string | null {
-    const urlToParse = url || window.location.href;
-    const urlObj = new URL(urlToParse);
-
-    // Check for token in query params
-    const token = urlObj.searchParams.get("token");
-    const username = urlObj.searchParams.get("username");
-    if (username) {
-      this.username = username;
-      localStorage.setItem("invidious_user", username);
-    }
-    if (token) {
-      console.log(token);
-      // Store token in localStorage for persistence
-      localStorage.setItem("invidious_token", token);
-      this.isLoggedin = true;
-      return token;
-    }
-
-    return null;
-  }
-
-  /**
-   * Get stored authentication token
-   * @returns The stored token or null
-   */
-  getToken(): string | null {
-    return localStorage.getItem("invidious_token");
-  }
-
-  getUser(): string | null {
-    return localStorage.getItem("invidious_user");
-  }
-  getUserSettings(): UserSettings | undefined {
-    const settingsString = localStorage.getItem("invidious_settings");
-    if (settingsString) {
-      const settings = JSON.parse(settingsString) as UserSettings;
-      return settings;
-    } else {
-      return undefined;
-    }
-  }
-
-  /**
-   * Clear stored authentication token
-   */
-  clearToken(): void {
-    localStorage.removeItem("invidious_token");
-  }
-
-  /**
    * Make authenticated API request
    * @param endpoint - API endpoint (e.g., '/api/v1/auth/feed')
    * @param options - Fetch options
    */
   async authenticatedRequest(endpoint: string, options: RequestInit = {}) {
-    const token = this.getToken();
-    if (!token) {
+    const localUsers = new LocalUsers();
+    const currentUser = localUsers.getCurrentUser();
+    if (currentUser === "guest" || !currentUser) {
       throw new Error("Not authenticated. Please call authorize() first.");
     }
+    const settings = localUsers.getUserSettings(currentUser);
+    if (!settings) {
+      throw new Error("Authenticated but no settings?");
+    }
+    const token = settings.token;
     const url = `${this.baseUrl}${endpoint}`;
     const response = await fetch(url, {
       ...options,
@@ -369,7 +304,7 @@ export class InvidiousHelper {
 
     if (!response.ok) {
       if (response.status === 401) {
-        this.clearToken();
+        localUsers.clearToken(currentUser);
         throw new Error("Authentication expired. Please authorize again.");
       }
       throw new Error(`Request failed: ${response.status} ${response.statusText}`);

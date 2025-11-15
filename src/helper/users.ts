@@ -1,7 +1,7 @@
 import { baseUrl } from "./invidious";
 
 export interface UserSettings {
-  token: string;
+  token?: string;
   showShorts?: boolean;
 }
 
@@ -31,8 +31,12 @@ export class LocalUsers {
     localStorage.setItem(this.STORAGE_CURRENT_USER, username);
   }
 
-  getCurrentUser(): string | null {
-    return localStorage.getItem(this.STORAGE_CURRENT_USER);
+  getCurrentUser(): string | undefined {
+    const settingsString = localStorage.getItem(this.STORAGE_CURRENT_USER);
+    if (!settingsString) {
+      return undefined;
+    }
+    return settingsString;
   }
 
   removeUser(username: string): void {
@@ -48,6 +52,16 @@ export class LocalUsers {
   clearAllUsers(): void {
     localStorage.removeItem(this.STORAGE_USERS_LIST);
     localStorage.removeItem(this.STORAGE_CURRENT_USER);
+  }
+
+  clearToken(username: string): void {
+    const currentSettings = this.getUserSettings(username);
+    if (currentSettings) {
+      localStorage.setItem(
+        this.STORAGE_USER_SETTINGS_PREFIX + username,
+        JSON.stringify({ showShorts: currentSettings.showShorts || true }),
+      );
+    }
   }
 
   /**
@@ -85,7 +99,7 @@ export class LocalUsers {
       if (!existingSettings) {
         localStorage.setItem(
           this.STORAGE_USER_SETTINGS_PREFIX + (username || "default"),
-          JSON.stringify({ showShorts: true }),
+          JSON.stringify({ token, showShorts: true }),
         );
       } else {
         localStorage.setItem(
@@ -100,17 +114,21 @@ export class LocalUsers {
     return null;
   }
 
-  public getUserSettings(username: string): UserSettings | undefined {
+  public getUserSettings(username: string): UserSettings | null {
     const settingsStr = localStorage.getItem(this.STORAGE_USER_SETTINGS_PREFIX + username);
     if (settingsStr) {
       return JSON.parse(settingsStr);
     }
-    return undefined;
+    return null;
   }
 
   public toggleShowShorts(username: string): void {
     const settings = this.getUserSettings(username);
     localStorage.setItem(this.STORAGE_USER_SETTINGS_PREFIX + username, JSON.stringify(!settings));
+  }
+
+  public setSettings(username: string, settings: UserSettings): void {
+    localStorage.setItem(this.STORAGE_USER_SETTINGS_PREFIX + username, JSON.stringify(settings));
   }
 
   // add guest user without token
