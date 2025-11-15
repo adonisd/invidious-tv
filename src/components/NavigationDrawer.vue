@@ -19,6 +19,14 @@
 
     <v-list density="compact" nav>
       <v-list-item
+        v-if="hideTopBar"
+        prepend-icon="mdi-magnify"
+        title="Search"
+        @click="hideTopBar = !hideTopBar"
+        class="spatial-item"
+      >
+      </v-list-item>
+      <v-list-item
         prepend-icon="mdi-fire"
         title="Popular"
         to="/popular"
