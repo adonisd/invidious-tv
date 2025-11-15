@@ -80,6 +80,7 @@
     flat
     floating
     class="app-bar"
+    v-if="!hideTopBar"
   >
     <v-autocomplete
       v-model="selectedQuery"
@@ -90,7 +91,6 @@
       density="comfortable"
       flat
       variant="solo"
-      hide-details
       hide-no-data
       single-line
       autocomplete="off"
@@ -121,6 +121,16 @@ const invidiousHelper = new InvidiousHelper();
 
 const token = ref(invidiousHelper.getToken());
 const isLoggedIn = computed(() => !!token.value);
+const hideTopBar = ref(false);
+const route = useRoute();
+watch(route, (newRoute) => {
+  console.log("Route changed:", newRoute);
+  if (newRoute.name?.toString().toLocaleLowerCase() === "video") {
+    hideTopBar.value = true;
+  } else {
+    hideTopBar.value = false;
+  }
+});
 
 const handleLogin = async () => {
   invidiousHelper.authorize();
@@ -225,11 +235,13 @@ watch(
 }
 .app-bar {
   justify-content: center;
-  background-color: transparent;
+  background-color: transparent !important;
+  height: 42px;
 }
 .autocomplete-search-bar {
   margin-left: auto;
   margin-right: auto;
+  margin-top: 35px;
 }
 
 .autocomplete-search-bar input {
