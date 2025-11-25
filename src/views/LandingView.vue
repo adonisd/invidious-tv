@@ -67,20 +67,27 @@
 import { LocalUsers } from "@/helper/users";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-
+import { userState } from "@/stores/users";
 const users = ref<string[]>([]);
 const localUsers = new LocalUsers();
 const router = useRouter();
 
 onMounted(() => {
   // Get all users from LocalUsers
-  users.value = localUsers.getUsersList();
+  const usersList = localUsers.getUsersList();
+  // put guest user at the end of the list
+  if (usersList.includes("guest")) {
+    usersList.splice(usersList.indexOf("guest"), 1);
+    usersList.push("guest");
+  }
+  users.value = usersList;
 });
 
 function selectUser(username: string) {
   console.log("Selected user:", username);
   // Set current user using LocalUsers
-  localUsers.setCurrentUser(username);
+  //localUsers.setCurrentUser(username);
+  userState.switchUser(username);
   router.push({ name: "Popular" });
 }
 

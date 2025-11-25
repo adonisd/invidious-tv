@@ -5,7 +5,8 @@
       <v-container>
         <v-row>
           <v-col>
-            <v-switch :label="`Show Shorts`" v-model="showShorts"></v-switch>
+            <v-switch label="Show Shorts" v-model="showShorts"></v-switch>
+            <v-text-field label="Base URL" v-model="baseUrl"></v-text-field>
           </v-col>
           <v-col cols="12">
             <h3 class="mb-4">Subscriptions</h3>
@@ -41,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { InvidiousHelper } from "@/helper/invidious";
+import { InvidiousHelper, INVIDIOUS_BASE_URL_KEY } from "@/helper/invidious";
 import { LocalUsers, type UserSettings } from "@/helper/users";
 import type { UserSubscription } from "@/interfaces/user";
 import { computed, onMounted, ref } from "vue";
@@ -72,9 +73,12 @@ const unsubscribingIds = ref<string[]>([]);
 
 const subscriptions = ref<UserSubscription[]>([]);
 onMounted(async () => {
-  const subscriptionsList = await invidious.getUserSubscriptionList();
-  console.log(subscriptionsList);
-  subscriptions.value = subscriptionsList;
+  try {
+    const subscription = await invidious.getUserSubscriptionList();
+    subscriptions.value = subscription;
+  } catch (error) {
+    console.warn("Failed to fetch subscriptions:", error);
+  }
 });
 
 const showShorts = computed({
@@ -84,6 +88,14 @@ const showShorts = computed({
       settings.value.showShorts = val;
       localUsers.toggleShowShorts(user.value || "guest");
     }
+  },
+});
+
+const baseUrl = computed({
+  get: () => localStorage.getItem(INVIDIOUS_BASE_URL_KEY),
+  set: (val) => {
+    console.log("Setting base URL:", val);
+    localStorage.setItem(INVIDIOUS_BASE_URL_KEY, val || "");
   },
 });
 </script>
