@@ -125,6 +125,7 @@ import { InvidiousHelper } from "@/helper/invidious";
 import { LocalUsers } from "@/helper/users";
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { userState } from "@/stores/users";
 
 const searchInput = ref<string | undefined>(undefined);
 const selectedQuery = ref<string | null>(null);
@@ -133,10 +134,10 @@ const loading = ref(false);
 const router = useRouter();
 const invidiousHelper = new InvidiousHelper();
 const users = new LocalUsers();
-const currentUser = computed(() => users.getCurrentUser());
-const settings = ref(users.getUserSettings(currentUser.value || "guest"));
-const token = ref(settings.value ? settings.value.token : null);
-const isLoggedIn = computed(() => !!token.value);
+
+const currentUser = computed(() => userState.currentUser);
+const isLoggedIn = computed(() => userState.isLoggedIn);
+
 const hideTopBar = ref(false);
 const route = useRoute();
 watch(route, (newRoute) => {
@@ -149,8 +150,7 @@ watch(route, (newRoute) => {
 });
 
 const handleLogout = () => {
-  users.clearToken(currentUser.value || "guest");
-  token.value = null;
+  userState.logout();
 };
 
 const avatar = computed(() => {
@@ -226,15 +226,6 @@ const handleSearch = () => {
     },
   });
 };
-
-const $route = useRoute();
-
-watch(
-  () => $route.fullPath,
-  () => {
-    token.value = users.getUserSettings(currentUser.value || "guest")?.token || null;
-  },
-);
 </script>
 
 <style>
