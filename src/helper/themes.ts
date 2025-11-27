@@ -111,6 +111,8 @@ export interface ThemeSelector {
   [key: string]: ThemeName;
 }
 
+export const themesMap = Object.keys(themes);
+
 export const themeSelector: ThemeSelector = {
   dark: "dark",
   dracula: "dracula",

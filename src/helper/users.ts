@@ -1,9 +1,16 @@
 import { InvidiousHelper } from "./invidious";
+import { themeSelector, type ThemeName } from "./themes";
 
 export interface UserSettings {
   token?: string;
   showShorts?: boolean;
+  activeTheme: ThemeName;
 }
+
+export const defaultSettings: UserSettings = {
+  showShorts: true,
+  activeTheme: themeSelector.catppuccinMocha!,
+};
 
 export class LocalUsers {
   private STORAGE_USERS_LIST = "invidious_users_list";
@@ -59,7 +66,7 @@ export class LocalUsers {
     if (currentSettings) {
       localStorage.setItem(
         this.STORAGE_USER_SETTINGS_PREFIX + username,
-        JSON.stringify({ showShorts: currentSettings.showShorts || true }),
+        JSON.stringify(currentSettings),
       );
     }
   }
@@ -101,12 +108,12 @@ export class LocalUsers {
       if (!existingSettings) {
         localStorage.setItem(
           this.STORAGE_USER_SETTINGS_PREFIX + (username || "default"),
-          JSON.stringify({ token, showShorts: true }),
+          JSON.stringify({ token, ...defaultSettings }),
         );
       } else {
         localStorage.setItem(
           this.STORAGE_USER_SETTINGS_PREFIX + (username || "default"),
-          JSON.stringify({ token, showShorts: existingSettings.showShorts || true }),
+          JSON.stringify({ token, ...existingSettings }),
         );
       }
       console.log(token);
@@ -132,6 +139,14 @@ export class LocalUsers {
     );
   }
 
+  public changeTheme(username: string, theme: ThemeName): void {
+    const settings = this.getUserSettings(username);
+    localStorage.setItem(
+      this.STORAGE_USER_SETTINGS_PREFIX + username,
+      JSON.stringify({ ...settings, activeTheme: theme }),
+    );
+  }
+
   public setSettings(username: string, settings: UserSettings): void {
     localStorage.setItem(this.STORAGE_USER_SETTINGS_PREFIX + username, JSON.stringify(settings));
   }
@@ -148,7 +163,7 @@ export class LocalUsers {
     this.setCurrentUser(guestUsername);
     localStorage.setItem(
       this.STORAGE_USER_SETTINGS_PREFIX + guestUsername,
-      JSON.stringify({ showShorts: true }),
+      JSON.stringify(defaultSettings),
     );
   }
 }

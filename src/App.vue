@@ -92,32 +92,27 @@ body {
   border-radius: 25%;
 }
 
-/* Reduce overlay opacity for better text visibility */
 .v-btn__overlay,
 .v-list-item__overlay,
 .v-card__overlay {
-  opacity: 0.08 !important; /* Default is usually 0.12-0.16 */
+  opacity: 0.08 !important;
 }
 
-/* Hover state */
 .v-btn:hover .v-btn__overlay,
 .v-list-item:hover .v-list-item__overlay {
   opacity: 0.12 !important;
 }
 
-/* Active/pressed state */
 .v-btn:active .v-btn__overlay,
 .v-list-item:active .v-list-item__overlay {
   opacity: 0.18 !important;
 }
 
-/* Focus state */
 .v-btn:focus .v-btn__overlay,
 .v-list-item:focus .v-list-item__overlay {
   opacity: 0.1 !important;
 }
 
-/* Ripple effect opacity */
 .v-ripple__container {
   opacity: 0.2 !important;
 }

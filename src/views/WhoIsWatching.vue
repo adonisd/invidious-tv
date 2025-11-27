@@ -8,14 +8,7 @@
 
       <v-row justify="center" class="user-grid">
         <!-- All Users from LocalUsers -->
-        <v-col
-          v-for="(user, index) in users"
-          :key="user"
-          cols="6"
-          sm="4"
-          md="3"
-          class="text-center"
-        >
+        <v-col v-for="user in users" :key="user" cols="6" sm="4" md="3" class="text-center">
           <v-hover v-slot="{ isHovering, props }">
             <v-card
               v-bind="props"
@@ -24,7 +17,7 @@
               :class="{ 'user-card-hover': isHovering }"
               @click="selectUser(user)"
             >
-              <v-avatar :size="100" :color="user === 'guest' ? 'blue-grey' : getUserColor(index)">
+              <v-avatar :size="100">
                 <v-icon v-if="user === 'guest'" size="60" color="white"> mdi-account </v-icon>
                 <span v-else class="text-h4 text-white font-weight-bold">
                   {{ getUserInitial(user) }}
@@ -68,9 +61,11 @@ import { LocalUsers } from "@/helper/users";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { userState } from "@/stores/users";
+import { useTheme } from "vuetify";
 const users = ref<string[]>([]);
 const localUsers = new LocalUsers();
 const router = useRouter();
+const theme = useTheme();
 
 onMounted(() => {
   // Get all users from LocalUsers
@@ -85,10 +80,15 @@ onMounted(() => {
 
 function selectUser(username: string) {
   console.log("Selected user:", username);
-  // Set current user using LocalUsers
-  //localUsers.setCurrentUser(username);
   userState.switchUser(username);
   router.push({ name: "Popular" });
+
+  const userSettings = localUsers.getUserSettings(username);
+  if (!userSettings) {
+    return;
+  }
+  console.log("Setting THEME to: ", userSettings.activeTheme);
+  theme.global.name.value = userSettings.activeTheme;
 }
 
 function addUser() {
@@ -97,24 +97,6 @@ function addUser() {
 
 function getUserInitial(username: string): string {
   return username.charAt(0).toUpperCase();
-}
-
-function getUserColor(index: number): string {
-  const colors = [
-    "red",
-    "pink",
-    "purple",
-    "deep-purple",
-    "indigo",
-    "blue",
-    "cyan",
-    "teal",
-    "green",
-    "orange",
-  ];
-  const color = colors[index % colors.length];
-  if (!color) return "blue";
-  return color;
 }
 </script>
 

@@ -6,7 +6,15 @@
         <v-row>
           <v-col>
             <v-switch label="Show Shorts" v-model="showShorts"></v-switch>
-            <v-text-field label="Base URL" v-model="baseUrl"></v-text-field>
+            <v-text-field label="Base URL" variant="outlined" v-model="baseUrl"></v-text-field>
+            <v-select
+              v-model="selectedTheme"
+              :items="themesMap"
+              label="Theme"
+              item-title="label"
+              item-value="value"
+              @update:model-value="changeTheme"
+            ></v-select>
           </v-col>
           <v-col cols="12">
             <h3 class="mb-4">Subscriptions</h3>
@@ -43,24 +51,25 @@
 
 <script setup lang="ts">
 import { InvidiousHelper, INVIDIOUS_BASE_URL_KEY } from "@/helper/invidious";
-import { LocalUsers, type UserSettings } from "@/helper/users";
+import { themesMap, type ThemeName } from "@/helper/themes";
+import { defaultSettings, LocalUsers, type UserSettings } from "@/helper/users";
 import type { UserSubscription } from "@/interfaces/user";
 import { computed, onMounted, ref } from "vue";
+import { useTheme } from "vuetify";
 
+const theme = useTheme();
 const user = ref<string>();
 const settings = ref<UserSettings>();
 const invidious = new InvidiousHelper();
-
 const localUsers = new LocalUsers();
+
 const currentUser = localUsers.getCurrentUser();
 if (!currentUser) {
   user.value = "guest";
 } else {
   user.value = currentUser;
 }
-const defaultSettings: UserSettings = {
-  showShorts: true,
-};
+
 const currentSettings = localUsers.getUserSettings(user.value);
 if (!currentSettings) {
   localUsers.setSettings(user.value, defaultSettings);
@@ -70,9 +79,11 @@ if (!currentSettings) {
 }
 
 const unsubscribingIds = ref<string[]>([]);
-
 const subscriptions = ref<UserSubscription[]>([]);
+const selectedTheme = ref<ThemeName>(settings.value.activeTheme);
+
 onMounted(async () => {
+  theme.global.name.value = selectedTheme.value;
   try {
     const subscription = await invidious.getUserSubscriptionList();
     subscriptions.value = subscription;
@@ -80,6 +91,12 @@ onMounted(async () => {
     console.warn("Failed to fetch subscriptions:", error);
   }
 });
+
+// Change theme function
+const changeTheme = (newTheme: ThemeName) => {
+  theme.global.name.value = newTheme;
+  localUsers.changeTheme(user.value || "guest", newTheme);
+};
 
 const showShorts = computed({
   get: () => settings.value?.showShorts ?? true,

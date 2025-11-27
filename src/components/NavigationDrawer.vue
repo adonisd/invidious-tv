@@ -140,12 +140,24 @@ const isLoggedIn = computed(() => userState.isLoggedIn);
 
 const hideTopBar = ref(false);
 const route = useRoute();
+
 watch(route, (newRoute) => {
   console.log("Route changed:", newRoute);
   if (newRoute.name?.toString().toLocaleLowerCase() === "video") {
     hideTopBar.value = true;
   } else {
     hideTopBar.value = false;
+  }
+});
+
+// Watch search input and fetch predictions
+watch(searchInput, (val) => {
+  if (!val) {
+    setTimeout(() => (predictions.value = []), 300);
+  } else {
+    if (val !== selectedQuery.value) {
+      fetchPredictions(val);
+    }
   }
 });
 
@@ -159,17 +171,6 @@ const avatar = computed(() => {
   // return randomly men or women
   const gender = Math.random() < 0.5 ? "men" : "women";
   return `https://randomuser.me/api/portraits/${gender}/${randomNum}.jpg`;
-});
-
-// Watch search input and fetch predictions
-watch(searchInput, (val) => {
-  if (!val) {
-    setTimeout(() => (predictions.value = []), 300);
-  } else {
-    if (val !== selectedQuery.value) {
-      fetchPredictions(val);
-    }
-  }
 });
 
 const fetchPredictions = async (value: string) => {
