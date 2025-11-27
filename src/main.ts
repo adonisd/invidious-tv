@@ -25,6 +25,7 @@ import "@fontsource/roboto/700-italic.css";
 import "@fontsource/roboto/900-italic.css";
 
 import { aliases, mdi } from "vuetify/iconsets/mdi";
+import { themes, themeSelector } from "./helper/themes";
 
 const app = createApp(App);
 
@@ -39,22 +40,12 @@ const vuetify = createVuetify({
   directives,
   components,
   theme: {
-    defaultTheme: "dark",
-    themes: {
-      dark: {
-        colors: {
-          background: "#121212",
-          surface: "#1E1E1E",
-          primary: "#BB86FC",
-          "primary-darken-1": "#3700B3",
-          secondary: "#03DAC6",
-          "secondary-darken-1": "#018786",
-          error: "#CF6679",
-          info: "#2196F3",
-          success: "#4CAF50",
-          warning: "#FB8C00",
-        },
-      },
+    defaultTheme: themeSelector.catppuccinMocha,
+    themes,
+    variations: {
+      colors: ["primary", "secondary", "success", "error", "warning", "info"],
+      lighten: 5,
+      darken: 5,
     },
   },
 });
