@@ -13,17 +13,45 @@
 
 <script setup lang="ts">
 import NavigationDrawer from "./components/NavigationDrawer.vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useSpatialNavigation } from "./helper/navigation";
-import { onMounted, nextTick, onBeforeUnmount, watch } from "vue";
+import { onMounted, nextTick, onBeforeUnmount, watch, ref } from "vue";
+import { LocalUsers } from "./helper/users";
 
 const $route = useRoute();
 const spatial = useSpatialNavigation({
   straightOnly: false,
   selectors: [".spatial-item", ".shaka-tooltip", ".shaka-overflow-button", "button"],
 });
+const router = useRouter();
+const localUsers = new LocalUsers();
+
+const isLoading = ref(true);
+const error = ref("");
 
 onMounted(async () => {
+  console.log("Current URL:", window.location.href);
+  console.log("Search params:", window.location.search);
+
+  try {
+    const token = localUsers.parseAuthCallback();
+
+    if (token) {
+      console.log("Authentication successful! Token:", token.substring(0, 10) + "...");
+      // Give user feedback before redirecting
+      setTimeout(() => {
+        router.push("/");
+      }, 500);
+    } else {
+      console.error("No token found in URL");
+      error.value = "No authentication token found in the URL";
+      isLoading.value = false;
+    }
+  } catch (e) {
+    console.error("Error parsing token:", e);
+    error.value = "Failed to parse authentication token";
+    isLoading.value = false;
+  }
   await nextTick();
   spatial.init();
   spatial.refresh();
