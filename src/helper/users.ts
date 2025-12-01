@@ -66,7 +66,7 @@ export class LocalUsers {
     if (currentSettings) {
       localStorage.setItem(
         this.STORAGE_USER_SETTINGS_PREFIX + username,
-        JSON.stringify(currentSettings),
+        JSON.stringify({ ...currentSettings, token: undefined }),
       );
     }
   }
