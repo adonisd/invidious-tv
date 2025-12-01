@@ -79,7 +79,7 @@ export class LocalUsers {
   authorize(callbackUrl?: string): void {
     const invidious = new InvidiousHelper();
     const baseUrl = invidious.baseUrl;
-    const callback = callbackUrl || `${window.location.origin}/callback`;
+    const callback = callbackUrl || `${window.location.origin}/invid-webos/#/callback`;
     const scopes = ":feed,:subscriptions*,:playlists*,:history*";
     const authUrl = `${baseUrl}/authorize_token?scopes=${scopes}&callback_url=${callback}`;
     window.location.href = authUrl;
