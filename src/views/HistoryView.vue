@@ -7,9 +7,16 @@
       class="custom-col"
     >
       <!-- Add click listener -->
-      <div @click="openDeleteDialog(video)">
-        <VideoCard :video="video" :disable-interaction="true" />
-      </div>
+      <v-card>
+        <VideoCard :video="video" />
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="success" variant="outlined" @click="handleRewatch(video.videoId)"
+            >Re-watch</v-btn
+          >
+          <v-btn color="error" variant="outlined" @click="openDeleteDialog(video)">Delete</v-btn>
+        </v-card-actions>
+      </v-card>
     </v-col>
   </v-row>
 
@@ -32,9 +39,12 @@ import VideoCard from "@/components/VideoCard.vue";
 import { InvidiousHelper } from "@/helper/invidious";
 import type { VideoDetail } from "@/interfaces/videos";
 import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 
 const videos = ref<VideoDetail[]>([]);
 const invidious = new InvidiousHelper();
+
+const router = useRouter();
 
 // dialog states
 const showDialog = ref(false);
@@ -61,6 +71,15 @@ async function confirmDelete() {
   // Placeholder for future delete logic
   showDialog.value = false;
   selectedVideo.value = null;
+}
+
+function handleRewatch(videoId: string) {
+  router.push({
+    name: "video",
+    params: {
+      id: videoId,
+    },
+  });
 }
 
 onMounted(async () => {
