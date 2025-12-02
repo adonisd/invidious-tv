@@ -4,7 +4,11 @@
       <NavigationDrawer />
       <v-main class="main-content">
         <v-container fluid class="fill-height">
-          <RouterView :key="$route.fullPath" />
+          <RouterView v-slot="{ Component }">
+            <v-fade-transition hide-on-leave>
+              <component :is="Component" :key="$route.fullPath" />
+            </v-fade-transition>
+          </RouterView>
         </v-container>
       </v-main>
     </div>
