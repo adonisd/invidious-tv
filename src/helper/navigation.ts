@@ -193,17 +193,14 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
       event.preventDefault();
       currentFocusedElement.value.classList.add("spatial-active");
 
-      let clickable: HTMLElement | null = null;
-      if (
-        currentFocusedElement.value.tagName === "A" ||
-        currentFocusedElement.value.tagName === "BUTTON"
-      ) {
-        clickable = currentFocusedElement.value;
-      } else {
-        clickable = currentFocusedElement.value.querySelector("a, button, [onclick]");
-      }
+      // Dispatch a proper mouse event that Vue will recognize
+      const clickEvent = new MouseEvent("click", {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+      });
+      currentFocusedElement.value.dispatchEvent(clickEvent);
 
-      clickable?.click();
       config.onSelect?.(currentFocusedElement.value);
       refresh();
     }

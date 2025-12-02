@@ -13,7 +13,7 @@
             <v-card
               v-bind="props"
               :elevation="isHovering ? 12 : 2"
-              class="user-card mx-auto"
+              class="user-card mx-auto spatial-item"
               :class="{ 'user-card-hover': isHovering }"
               @click="selectUser(user)"
             >
@@ -38,7 +38,7 @@
             <v-card
               v-bind="props"
               :elevation="isHovering ? 12 : 2"
-              class="user-card mx-auto add-user-card"
+              class="user-card mx-auto add-user-card spatial-item"
               :class="{ 'user-card-hover': isHovering }"
               @click="addUser"
             >

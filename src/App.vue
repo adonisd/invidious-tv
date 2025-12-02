@@ -110,7 +110,7 @@ body {
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
-  transform: scale(1.07);
+  transform: scale(1.2);
 }
 
 .spatial-focus.shaka-tooltip {
