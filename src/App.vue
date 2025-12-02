@@ -18,13 +18,22 @@ import { useSpatialNavigation } from "./helper/navigation";
 import { onMounted, nextTick, onBeforeUnmount, watch, ref } from "vue";
 import { LocalUsers } from "./helper/users";
 
+const localUsers = new LocalUsers();
 const $route = useRoute();
+const router = useRouter();
 const spatial = useSpatialNavigation({
   straightOnly: false,
-  selectors: [".spatial-item", ".shaka-tooltip", ".shaka-overflow-button", "button"],
+  selectors: [
+    ".spatial-item",
+    ".shaka-tooltip",
+    ".shaka-overflow-button",
+    "button",
+    "input",
+    "v-field__input",
+    "select",
+    "v-select__selection",
+  ],
 });
-const router = useRouter();
-const localUsers = new LocalUsers();
 
 const isLoading = ref(true);
 const error = ref("");

@@ -14,6 +14,7 @@
               item-title="label"
               item-value="value"
               @update:model-value="changeTheme"
+              class="spatial-item"
             ></v-select>
           </v-col>
           <v-col cols="12">
@@ -25,10 +26,16 @@
               <v-list-item v-for="sub in subscriptions" :key="sub.authorId" class="mb-2">
                 <template v-slot:prepend>
                   <v-avatar color="primary">
-                    <span class="text-white">{{ sub.author.charAt(0).toUpperCase() }}</span>
+                    <span class="text-white">
+                      {{ sub.author.charAt(0).toUpperCase() }}
+                    </span>
                   </v-avatar>
                 </template>
-                <v-list-item-title>{{ sub.author }}</v-list-item-title>
+                <v-list-item-title
+                  ><a :href="`/#/channel/${sub.authorId}`" class="spatial-item">{{
+                    sub.author
+                  }}</a></v-list-item-title
+                >
                 <template v-slot:append>
                   <v-btn
                     color="error"
