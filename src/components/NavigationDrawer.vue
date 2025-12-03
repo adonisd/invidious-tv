@@ -29,47 +29,47 @@
       <v-list-item
         prepend-icon="mdi-fire"
         title="Popular"
-        to="/popular"
         class="spatial-item"
+        @click="router.push('Popular')"
       ></v-list-item>
       <v-list-item
         prepend-icon="mdi-trending-up"
         title="Trending"
-        to="/trending"
         class="spatial-item"
+        @click="router.push('Trending')"
       ></v-list-item>
       <v-list-item
         v-if="isLoggedIn"
         prepend-icon="mdi-rss"
         title="Feed"
-        to="/feed"
         class="spatial-item"
+        @click="router.push('Feed')"
       ></v-list-item>
       <v-list-item
         v-if="isLoggedIn"
         prepend-icon="mdi-playlist-play"
         title="Playlists"
-        to="/playlists"
         class="spatial-item"
+        @click="router.push('Playlists')"
       ></v-list-item>
       <v-list-item
         v-if="isLoggedIn"
         prepend-icon="mdi-history"
         title="History"
-        to="/history"
         class="spatial-item"
+        @click="router.push('History')"
       ></v-list-item>
       <v-list-item
         prepend-icon="mdi-cog"
         title="Settings"
-        to="/settings"
         class="spatial-item"
+        @click="router.push('Settings')"
       ></v-list-item>
       <v-list-item
         prepend-icon="mdi-account"
         title="Switch User"
-        to="/"
         class="spatial-item"
+        @click="router.push({ name: 'Root' })"
       ></v-list-item>
       <v-list-item
         v-if="!isLoggedIn"

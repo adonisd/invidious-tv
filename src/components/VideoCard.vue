@@ -3,7 +3,7 @@
     <v-card
       class="video-card spatial-item"
       style="cursor: pointer"
-      :to="disableInteraction ? undefined : `/video/${video.videoId}`"
+      @click="navigateToVideo(video.videoId)"
       hover
       rounded
     >
@@ -44,6 +44,7 @@ import { InvidiousHelper } from "@/helper/invidious";
 import type { Channel } from "@/interfaces/channels";
 import type { Video, VideoDetail } from "@/interfaces/videos";
 import { onMounted, ref } from "vue";
+import { navigateToVideo } from "@/router";
 
 const props = defineProps<{
   video: Video | VideoDetail;

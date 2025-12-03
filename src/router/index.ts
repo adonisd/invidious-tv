@@ -92,3 +92,30 @@ const router = createRouter({
 });
 
 export default router;
+
+export function navigateToChannel(channelId: string) {
+  router.push({
+    name: "channel",
+    params: {
+      id: channelId,
+    },
+  });
+}
+
+export function navigateToPlaylist(playlistId: string) {
+  router.push({
+    name: "playlist",
+    params: {
+      id: playlistId,
+    },
+  });
+}
+
+export function navigateToVideo(videoId: string) {
+  router.push({
+    name: "video",
+    params: {
+      id: videoId,
+    },
+  });
+}

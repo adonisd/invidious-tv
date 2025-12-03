@@ -3,11 +3,11 @@
     <v-card
       class="creator-card spatial-item"
       style="cursor: pointer"
-      :to="disableInteraction ? undefined : channel.authorUrl"
       hover
       rounded
       height="300px"
       max-width="350px"
+      @click="navigateToChannel(channel.authorId)"
     >
       <v-img height="120px" :src="banner" cover></v-img>
 
@@ -43,6 +43,7 @@
 
 <script setup lang="ts">
 import type { Channel } from "@/interfaces/channels";
+import { navigateToChannel } from "@/router";
 import { computed, onMounted } from "vue";
 
 const props = defineProps<{

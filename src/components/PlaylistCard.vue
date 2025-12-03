@@ -3,11 +3,11 @@
     <v-card
       class="playlist-card spatial-item"
       style="cursor: pointer"
-      :to="`/playlist/${playlist.playlistId}`"
       hover
       rounded
       height="300px"
       min-width="230px"
+      @click="navigateToPlaylist(playlist.playlistId)"
     >
       <!-- Thumbnail -->
       <v-img height="160px" :src="playlist.videos[0]?.videoThumbnails[0]?.url" cover>
@@ -39,6 +39,7 @@
 
 <script setup lang="ts">
 import type { Playlist } from "@/interfaces/playlists";
+import { navigateToPlaylist } from "@/router";
 
 defineProps<{
   playlist: Playlist;

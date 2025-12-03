@@ -26,9 +26,12 @@
             <v-icon size="large" icon="mdi-account-circle" color="green-darken-2"></v-icon>
           </v-avatar>
           <v-divider vertical thickness="10"></v-divider>
-          <a :href="video.authorUrl" class="text-primary font-weight-medium text-decoration-none">
+          <v-chip
+            class="text-primary font-weight-medium text-decoration-none"
+            @click="navigateToChannel(video.authorId)"
+          >
             {{ video.author }}
-          </a>
+          </v-chip>
         </div>
         <v-divider vertical thickness="2" class="custom-divider"></v-divider>
         <!-- Metadata Row -->
@@ -58,6 +61,7 @@ import { ref, onMounted, watch, computed, nextTick } from "vue";
 import { InvidiousHelper } from "@/helper/invidious";
 import type { VideoDetail } from "@/interfaces/videos";
 import ShakaVideoPlayer from "@/components/ShakaVideoPlayer.vue";
+import { navigateToChannel } from "@/router";
 
 const props = defineProps<{ videoId: string }>();
 
