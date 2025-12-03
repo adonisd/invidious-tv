@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 600px">
+  <div style="width: 30em">
     <v-card
       class="video-card spatial-item"
       style="cursor: pointer"

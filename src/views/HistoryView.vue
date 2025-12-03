@@ -4,9 +4,11 @@
       v-for="video in videos"
       :key="video.videoId"
       :data-video-id="video.videoId"
-      class="custom-col"
+      class="custom-col video-col"
+      cols="12"
+      sm="5"
+      md="3"
     >
-      <!-- Add click listener -->
       <v-card>
         <VideoCard :video="video" />
         <v-card-actions>
@@ -101,9 +103,20 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.custom-col {
-  flex: 0 0 25%;
-  max-width: 20%;
-  cursor: pointer;
+.video-col {
+  display: flex;
+  max-width: 30%;
+}
+
+.video-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.video-card .v-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 </style>

@@ -30,40 +30,40 @@
         prepend-icon="mdi-fire"
         title="Popular"
         class="spatial-item"
-        @click="router.push('Popular')"
+        @click="router.push({ name: 'Popular' })"
       ></v-list-item>
       <v-list-item
         prepend-icon="mdi-trending-up"
         title="Trending"
         class="spatial-item"
-        @click="router.push('Trending')"
+        @click="router.push({ name: 'Trending' })"
       ></v-list-item>
       <v-list-item
         v-if="isLoggedIn"
         prepend-icon="mdi-rss"
         title="Feed"
         class="spatial-item"
-        @click="router.push('Feed')"
+        @click="router.push({ name: 'Feed' })"
       ></v-list-item>
       <v-list-item
         v-if="isLoggedIn"
         prepend-icon="mdi-playlist-play"
         title="Playlists"
         class="spatial-item"
-        @click="router.push('Playlists')"
+        @click="router.push({ name: 'Playlists' })"
       ></v-list-item>
       <v-list-item
         v-if="isLoggedIn"
         prepend-icon="mdi-history"
         title="History"
         class="spatial-item"
-        @click="router.push('History')"
+        @click="router.push({ name: 'History' })"
       ></v-list-item>
       <v-list-item
         prepend-icon="mdi-cog"
         title="Settings"
         class="spatial-item"
-        @click="router.push('Settings')"
+        @click="router.push({ name: 'Settings' })"
       ></v-list-item>
       <v-list-item
         prepend-icon="mdi-account"

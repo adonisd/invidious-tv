@@ -4,23 +4,35 @@
     <form>
       <v-container>
         <v-row>
-          <v-col>
+          <v-col cols="12">
             <v-switch label="Show Shorts" v-model="showShorts"></v-switch>
-            <v-text-field label="Base URL" variant="outlined" v-model="baseUrl"></v-text-field>
-            <v-select
-              :items="supportedResolutions"
-              v-model="selectedPreferredResolution"
-              @update:model-value="changeResolution"
-            ></v-select>
-            <v-select
-              v-model="selectedTheme"
-              :items="themesMap"
-              label="Theme"
-              item-title="label"
-              item-value="value"
-              @update:model-value="changeTheme"
-              class="spatial-item"
-            ></v-select>
+            <v-text-field
+              label="Base URL"
+              v-model="baseUrl"
+              density="compact"
+              color="primary"
+              class="text-field"
+            ></v-text-field>
+            <v-row>
+              <v-select
+                label="Preferred Resolution"
+                :items="supportedResolutions"
+                v-model="selectedPreferredResolution"
+                @update:model-value="changeResolution"
+                style="padding: 2%"
+              ></v-select>
+              <v-select
+                v-model="selectedTheme"
+                :items="themesMap"
+                label="Theme"
+                item-title="label"
+                item-value="value"
+                @update:model-value="changeTheme"
+                class="spatial-item"
+                style="padding: 2%"
+              ></v-select>
+            </v-row>
+            <v-divider></v-divider>
           </v-col>
           <v-col cols="12">
             <h3 class="mb-4">Subscriptions</h3>
@@ -139,3 +151,10 @@ const baseUrl = computed({
   },
 });
 </script>
+
+<style>
+input {
+  color: rgb(var(--v-theme-primary));
+  background-color: rgba(var(--v-them-background), 1);
+}
+</style>

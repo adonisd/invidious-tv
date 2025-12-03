@@ -41,7 +41,9 @@ onMounted(() => {
       console.log("Authentication successful! Token:", token.substring(0, 10) + "...");
       // Give user feedback before redirecting
       setTimeout(() => {
-        router.push("/");
+        router.push({
+          name: "Root",
+        });
       }, 500);
     } else {
       console.error("No token found in URL");
