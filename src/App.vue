@@ -3,7 +3,7 @@
     <div class="app-layout">
       <NavigationDrawer />
       <v-main class="main-content">
-        <v-container fluid class="fill-height">
+        <v-container fluid class="fill-height" style="overflow: hidden">
           <RouterView v-slot="{ Component }">
             <v-fade-transition hide-on-leave>
               <component :is="Component" :key="$route.fullPath" />
@@ -75,7 +75,6 @@ watch(
   async () => {
     setTimeout(() => {
       spatial.refresh();
-      spatial.focusFirst();
     }, 1000);
   },
 );
