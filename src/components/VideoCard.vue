@@ -1,31 +1,37 @@
 <template>
-  <div>
+  <div style="width: 600px">
     <v-card
       class="video-card spatial-item"
       style="cursor: pointer"
       :to="disableInteraction ? undefined : `/video/${video.videoId}`"
       hover
       rounded
-      height="300px"
     >
-      <v-img height="160px" :src="video.videoThumbnails[0]?.url" cover></v-img>
+      <v-img
+        :src="video.videoThumbnails[0]?.url"
+        aspect-ratio="16/9"
+        cover
+        class="video-thumb"
+      ></v-img>
+
       <v-card-item>
         <v-card-title>
-          <v-avatar size="25" class="elevation-2" v-if="author">
+          <v-avatar size="32" class="elevation-2" v-if="author">
             <v-img :src="author.authorThumbnails[0]?.url"></v-img>
           </v-avatar>
           {{ video.author }}
         </v-card-title>
+
         <v-card-subtitle>
           <v-chip size="small" variant="tonal" color="primary" label>
             {{ formatViews(video.viewCount) }} views
           </v-chip>
-          <span style="margin-left: 2px"></span>
           <v-chip size="small" variant="tonal" color="secondary" label>
             {{ formateLength(video.lengthSeconds) }}
           </v-chip>
         </v-card-subtitle>
       </v-card-item>
+
       <v-card-text>
         {{ video.title }}
       </v-card-text>
@@ -69,27 +75,36 @@ onMounted(async () => {
 
 <style scoped>
 .video-card {
-  color: transparent !important;
   height: 100%;
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
+  font-size: 1.2em; /* Scale everything */
 }
 
 .video-card:hover,
 .spatial-focus {
-  transform: scale(1.07);
+  transform: scale(1.08);
 }
-.v-card-text,
-.v-card-title,
-.v-card-subtitle {
+
+/* Typography */
+.v-card-title {
+  font-size: 1.3em;
   color: white !important;
 }
 
-.v-card-title {
-  font-size: medium;
+.v-card-subtitle {
+  font-size: 1.1em;
+  color: white !important;
 }
+
 .v-card-text {
-  font-size: small;
+  font-size: 1.1em;
+  color: white !important;
+}
+
+/* Thumbnail spacing (optional) */
+.video-thumb {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
 }
 </style>

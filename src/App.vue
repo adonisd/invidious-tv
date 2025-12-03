@@ -84,32 +84,6 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style scoped>
-/* Parent layout: navigation drawer + main side by side */
-.app-layout {
-  display: flex;
-  height: 100vh;
-  width: 100%;
-  overflow: hidden;
-}
-
-/* Main takes the remaining space next to the drawer */
-.main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  height: 100vh;
-  margin: 0 auto;
-}
-
-.v-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-</style>
-
 <style>
 * {
   font-family: "Roboto", sans-serif;

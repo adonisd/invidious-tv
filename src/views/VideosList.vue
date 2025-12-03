@@ -1,16 +1,13 @@
 <template>
   <div>
-    <v-row>
-      <v-col v-for="v in videos" :key="v.videoId" class="video-col">
+    <v-row style="justify-content: space-evenly">
+      <v-col v-for="v in videos" :key="v.videoId" cols="12" sm="5" md="3" class="video-col">
         <VideoCard :video="v" />
       </v-col>
     </v-row>
-
     <v-row v-if="loading" class="justify-center my-4">
       <v-progress-circular indeterminate color="primary" />
     </v-row>
-
-    <!-- Sentinel -->
     <div ref="sentinel" class="sentinel"></div>
   </div>
 </template>
@@ -39,28 +36,18 @@ const hasMore = ref(true);
 const sentinel = ref<HTMLElement | null>(null);
 let observer: IntersectionObserver | null = null;
 
-/* -----------------------------------------
-   Fetch videos with FULL DEBUG LOGGING
------------------------------------------- */
 const fetchVideos = async () => {
-  console.log("%cfetchVideos called", "color: cyan; font-weight: bold;");
-  console.log("loading:", loading.value, "hasMore:", hasMore.value);
-
   if (loading.value || !hasMore.value) {
-    console.log("⛔ Skipping: Already loading or no more pages.");
     return;
   }
 
   loading.value = true;
-  console.log("➡ Starting fetch for page:", page.value);
 
   try {
     const userSettings = users.getUserSettings(currentUser);
     const showShorts = userSettings ? userSettings.showShorts : true;
 
     let fetched: Video[] = [];
-
-    console.log("➡ Route:", route.name);
 
     switch (route.name) {
       case "Popular":
@@ -73,7 +60,6 @@ const fetchVideos = async () => {
         break;
 
       case "Feed":
-        console.log("➡ Calling getPersonalFeed(page):", page.value);
         fetched = await invidious.getPersonalFeed(undefined, page.value);
         break;
 
@@ -81,20 +67,15 @@ const fetchVideos = async () => {
         console.warn("⚠ Unknown route:", route.name);
     }
 
-    console.log("➡ API returned videos:", fetched.length);
-
     if (!showShorts) {
       fetched = fetched.filter((v) => v.lengthSeconds !== 0);
-      console.log("➡ After shorts filter:", fetched.length);
     }
 
     if (fetched.length === 0) {
-      console.log("❌ No videos returned → stopping pagination");
       hasMore.value = false;
     } else {
       videos.value.push(...fetched);
       page.value++;
-      console.log("✔ Added videos → new total:", videos.value.length);
     }
 
     console.log("➡ Waiting for nextTick() to re-render DOM…");
@@ -162,16 +143,24 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.video-col {
-  flex: 0 0 22%;
-  max-width: 22%;
-  display: block;
-}
-.v-row {
-  display: flex;
-  flex-wrap: wrap; /* Critical: allows rows to wrap and increase vertical height */
-}
 .sentinel {
   height: 1px;
+}
+
+.video-col {
+  display: flex;
+  max-width: 30%;
+}
+
+.video-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.video-card .v-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 </style>

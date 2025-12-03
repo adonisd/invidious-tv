@@ -6,7 +6,7 @@
   </v-alert>
 
   <!-- Adaptive Video Player -->
-  <v-card elevation="2" v-else-if="video">
+  <v-card elevation="2" v-else-if="video" style="width: 200vh">
     <ShakaVideoPlayer
       :dash-url="proxiedDashUrl"
       :fallback-url="proxiedFallbackUrl"
