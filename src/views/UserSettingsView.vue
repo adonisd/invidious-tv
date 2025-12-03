@@ -8,6 +8,11 @@
             <v-switch label="Show Shorts" v-model="showShorts"></v-switch>
             <v-text-field label="Base URL" variant="outlined" v-model="baseUrl"></v-text-field>
             <v-select
+              :items="supportedResolutions"
+              v-model="selectedPreferredResolution"
+              @update:model-value="changeResolution"
+            ></v-select>
+            <v-select
               v-model="selectedTheme"
               :items="themesMap"
               label="Theme"
@@ -59,7 +64,12 @@
 <script setup lang="ts">
 import { InvidiousHelper, INVIDIOUS_BASE_URL_KEY } from "@/helper/invidious";
 import { themesMap, type ThemeName } from "@/helper/themes";
-import { defaultSettings, LocalUsers, type UserSettings } from "@/helper/users";
+import {
+  defaultSettings,
+  LocalUsers,
+  supportedResolutions,
+  type UserSettings,
+} from "@/helper/users";
 import type { UserSubscription } from "@/interfaces/user";
 import { computed, onMounted, ref } from "vue";
 import { useTheme } from "vuetify";
@@ -69,6 +79,8 @@ const user = ref<string>();
 const settings = ref<UserSettings>();
 const invidious = new InvidiousHelper();
 const localUsers = new LocalUsers();
+const unsubscribingIds = ref<string[]>([]);
+const subscriptions = ref<UserSubscription[]>([]);
 
 const currentUser = localUsers.getCurrentUser();
 if (!currentUser) {
@@ -84,10 +96,10 @@ if (!currentSettings) {
 } else {
   settings.value = currentSettings;
 }
-
-const unsubscribingIds = ref<string[]>([]);
-const subscriptions = ref<UserSubscription[]>([]);
 const selectedTheme = ref<ThemeName>(settings.value.activeTheme);
+const selectedPreferredResolution = ref<UserSettings["preferredResolution"]>(
+  settings.value.preferredResolution || "auto",
+);
 
 onMounted(async () => {
   theme.global.name.value = selectedTheme.value;
@@ -103,6 +115,10 @@ onMounted(async () => {
 const changeTheme = (newTheme: ThemeName) => {
   theme.global.name.value = newTheme;
   localUsers.changeTheme(user.value || "guest", newTheme);
+};
+
+const changeResolution = (newResolution: UserSettings["preferredResolution"]) => {
+  localUsers.changeDefaultResolution(currentUser || "guest", newResolution);
 };
 
 const showShorts = computed({

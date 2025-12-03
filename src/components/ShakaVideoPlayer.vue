@@ -28,6 +28,11 @@ const props = withDefaults(defineProps<Props>(), {
 const invidiousHelper = new InvidiousHelper();
 const localUsers = new LocalUsers();
 const currentUser = ref(localUsers.getCurrentUser());
+const userSettings = localUsers.getUserSettings(currentUser.value || "guest");
+
+const preferredResolution = userSettings?.preferredResolution || "auto";
+
+console.log(`User's preferred Resolution: ${preferredResolution}`);
 
 const isLoggedIn = computed(() => currentUser.value !== null && currentUser.value !== "guest");
 
@@ -66,10 +71,11 @@ async function initPlayer() {
       "volume",
       "spacer",
       "captions",
+      "quality",
       "overflow_menu",
       "fullscreen",
     ],
-    overflowMenuButtons: ["quality", "captions", "language", "playback_rate"],
+    overflowMenuButtons: ["captions", "language", "playback_rate"],
     addBigPlayButton: false,
   });
 
@@ -88,6 +94,8 @@ async function initPlayer() {
     player.configure({
       abr: { enabled: true, defaultBandwidthEstimate: 1_000_000 },
     });
+
+    applyPreferredResolution();
 
     // Enable captions by default (if available)
     player.addEventListener("trackschanged", () => {
@@ -132,6 +140,34 @@ function destroyPlayer() {
   if (player) {
     player.destroy();
     player = null;
+  }
+}
+
+function applyPreferredResolution() {
+  if (!player) return;
+
+  const tracks = player.getVariantTracks();
+  if (!tracks || tracks.length === 0) return;
+
+  if (preferredResolution === "auto") {
+    player.configure({ abr: { enabled: true } });
+    return;
+  }
+
+  // Convert preferredResolution ("720p") → numeric height
+  const match = preferredResolution.match(/(\d+)/);
+  const targetHeight = match ? Number(match[1]) : null;
+  if (!targetHeight) return;
+
+  // Find the closest track ≥ or = desired height
+  const selectedTrack =
+    tracks.find((t) => t.height === targetHeight) ||
+    tracks.filter((t) => t.height! <= targetHeight).sort((a, b) => b.height! - a.height!)[0]; // pick highest under desired
+
+  if (selectedTrack) {
+    player.configure({ abr: { enabled: false } }); // disable auto switching
+    player.selectVariantTrack(selectedTrack, true);
+    console.log("Selected quality:", selectedTrack.height, "p");
   }
 }
 

@@ -1,15 +1,37 @@
 import { InvidiousHelper } from "./invidious";
 import { themeSelector, type ThemeName } from "./themes";
 
+export const supportedResolutions = [
+  "auto",
+  "144p",
+  "240p",
+  "360p",
+  "480p",
+  "720p",
+  "1080p",
+  "1440p",
+  "2160p",
+];
 export interface UserSettings {
   token?: string;
   showShorts?: boolean;
+  preferredResolution?:
+    | "auto"
+    | "144p"
+    | "240p"
+    | "360p"
+    | "480p"
+    | "720p"
+    | "1080p"
+    | "1440p"
+    | "2160p";
   activeTheme: ThemeName;
 }
 
 export const defaultSettings: UserSettings = {
   showShorts: true,
   activeTheme: themeSelector.catppuccinMocha!,
+  preferredResolution: "auto",
 };
 
 export class LocalUsers {
@@ -151,6 +173,17 @@ export class LocalUsers {
     localStorage.setItem(
       this.STORAGE_USER_SETTINGS_PREFIX + username,
       JSON.stringify({ ...settings, activeTheme: theme }),
+    );
+  }
+
+  public changeDefaultResolution(
+    username: string,
+    resolution: UserSettings["preferredResolution"],
+  ) {
+    const settings = this.getUserSettings(username);
+    localStorage.setItem(
+      this.STORAGE_USER_SETTINGS_PREFIX + username,
+      JSON.stringify({ ...settings, preferredResolution: resolution }),
     );
   }
 
