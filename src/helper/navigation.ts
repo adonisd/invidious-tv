@@ -276,5 +276,7 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
     refresh,
     currentFocusedElement: currentFocusedElement as Ref<HTMLElement | null>,
     navigableElements: navigableElements as Ref<HTMLElement[]>,
+    whoAmI,
+    focusElement,
   };
 };

@@ -50,6 +50,15 @@ const spatial = useSpatialNavigation({
       video.pause();
       return;
     }
+    if (spatial.currentFocusedElement.value !== null) {
+      const whoAmI = spatial.whoAmI(spatial.currentFocusedElement.value);
+      if (whoAmI === "main-content") {
+        const navDrawer = document.querySelector(".first-nav-item") as HTMLElement;
+        if (navDrawer) spatial.focusElement(navDrawer);
+        return;
+      }
+    }
+    // TODO: if on nav bar then close the app
     router.back();
   },
 });

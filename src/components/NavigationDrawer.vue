@@ -29,7 +29,7 @@
       <v-list-item
         prepend-icon="mdi-fire"
         title="Popular"
-        class="spatial-item"
+        class="spatial-item first-nav-item"
         @click="router.push({ name: 'Popular' })"
       ></v-list-item>
       <v-list-item
