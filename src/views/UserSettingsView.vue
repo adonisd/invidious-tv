@@ -5,9 +5,20 @@
       <v-container>
         <v-row>
           <v-col cols="12">
-            <v-switch label="Show Shorts" v-model="showShorts"></v-switch>
-            <v-switch label="Enable Auto Fullscreen" v-model="enableFullScreen"></v-switch>
-            <v-switch label="Enable Auto Play" v-model="enableAutoPlay"></v-switch>
+            <v-row>
+              <v-col cols="auto">
+                <v-switch label="Show Shorts" v-model="showShorts" />
+              </v-col>
+
+              <v-col cols="auto">
+                <v-switch label="Enable Auto Fullscreen" v-model="enableFullScreen" />
+              </v-col>
+
+              <v-col cols="auto">
+                <v-switch label="Enable Auto Play" v-model="enableAutoPlay" />
+              </v-col>
+            </v-row>
+
             <v-text-field
               label="Base URL"
               v-model="baseUrl"
@@ -96,12 +107,8 @@ const localUsers = new LocalUsers();
 const unsubscribingIds = ref<string[]>([]);
 const subscriptions = ref<UserSubscription[]>([]);
 
-const currentUser = localUsers.getCurrentUser();
-if (!currentUser) {
-  user.value = "guest";
-} else {
-  user.value = currentUser;
-}
+const currentUser = localUsers.getCurrentUser() || "guest";
+user.value = currentUser;
 
 const currentSettings = localUsers.getUserSettings(user.value);
 if (!currentSettings) {
