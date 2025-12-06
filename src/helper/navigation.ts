@@ -67,7 +67,6 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
       },
     };
   };
-
   const calculateDistance = (from: ElementRect, to: ElementRect, direction: Direction): number => {
     const threshold = config.straightOverlapThreshold || 0.5;
 
@@ -125,6 +124,8 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
   const findNextElement = (direction: Direction): HTMLElement | null => {
     if (!currentFocusedElement.value) return null;
 
+    const whoIsIt = currentFocusedElement.value ? whoAmI(currentFocusedElement.value) : null;
+    const restrictToMainContent = whoIsIt === "nav-drawer" && direction === "right";
     const currentRect = getRect(currentFocusedElement.value);
     let bestElement: HTMLElement | null = null;
     let bestDistance = Infinity;
@@ -132,7 +133,11 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
     navigableElements.value.forEach((elem) => {
       if (elem === currentFocusedElement.value) return;
       if (!elem.offsetParent) return;
-
+      console.log(`Evaluating element:`, elem);
+      const elemWhoIsIt = whoAmI(elem);
+      console.log(`Comparing to element whoAmI: ${elemWhoIsIt} source: ${whoIsIt}`);
+      if (restrictToMainContent && elemWhoIsIt !== "main-content") return;
+      //if (restrictToMainContent && whoAmI(elem) !== "main-content") return;
       const targetRect = getRect(elem);
       const distance = calculateDistance(currentRect, targetRect, direction);
 
@@ -167,6 +172,13 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
       return true;
     }
     return false;
+  };
+
+  // figure out who the element is (nav drawer vs main content)
+  const whoAmI = (elem: HTMLElement): string | null => {
+    if (elem.closest(".v-navigation-drawer__content")) return "nav-drawer";
+    if (elem.closest(".v-container")) return "main-content";
+    return null;
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {
