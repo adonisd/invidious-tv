@@ -38,6 +38,20 @@ const spatial = useSpatialNavigation({
     ".v-select__selection",
     ".shaka-play-button",
   ],
+  onBack: () => {
+    // if full screen, should exit full screen
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+      return;
+    }
+    // if video is playing, pause it
+    const video = document.querySelector("video");
+    if (video && !video.paused) {
+      video.pause();
+      return;
+    }
+    router.back();
+  },
 });
 
 const isLoading = ref(true);
