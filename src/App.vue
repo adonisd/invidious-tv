@@ -35,8 +35,8 @@ const spatial = useSpatialNavigation({
     "input",
     "v-field__input",
     "select",
-    "v-select__selection",
-    "shaka-play-button",
+    ".v-select__selection",
+    ".shaka-play-button",
   ],
 });
 
