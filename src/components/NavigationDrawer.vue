@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer app permanent rail expand-on-hover class="custom-nav" :rail-width="65">
+  <v-navigation-drawer app permanent rail expand-on-hover class="custom-nav" :rail-width="69">
     <v-list>
       <v-list-item
         v-if="isLoggedIn"
