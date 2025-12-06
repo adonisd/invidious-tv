@@ -57,8 +57,11 @@ const spatial = useSpatialNavigation({
         if (navDrawer) spatial.focusElement(navDrawer);
         return;
       }
+
+      if (whoAmI === "nav-drawer") {
+        // TODO: if on nav bar then close the app
+      }
     }
-    // TODO: if on nav bar then close the app
     router.back();
   },
 });
