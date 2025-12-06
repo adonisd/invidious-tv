@@ -76,7 +76,7 @@ async function initPlayer() {
       "fullscreen",
     ],
     overflowMenuButtons: ["captions", "language", "playback_rate"],
-    addBigPlayButton: false,
+    addBigPlayButton: true,
   });
 
   // Add event listener for player errors
@@ -96,7 +96,6 @@ async function initPlayer() {
     });
 
     applyPreferredResolution();
-
     // Enable captions by default (if available)
     player.addEventListener("trackschanged", () => {
       const textTracks = player!.getTextTracks();
@@ -110,6 +109,11 @@ async function initPlayer() {
         await videoElement.value.play().catch((err) => {
           console.warn("Autoplay failed:", err);
         });
+    }
+
+    // check if in fullscreen
+    if (!document.fullscreenElement) {
+      ui.getControls()?.toggleFullScreen();
     }
   } catch (error) {
     console.error("Error loading video:", error);
@@ -184,6 +188,10 @@ watch(
 onMounted(() => {
   if (videoElement.value) {
     videoElement.value.addEventListener("playing", async () => {
+      // check if not fullscreen and toggle
+      if (!document.fullscreenElement) {
+        ui?.getControls()?.toggleFullScreen();
+      }
       if (isLoggedIn.value) {
         console.log("User is logged in, marking video as watched");
         await invidiousHelper.markVideoAsWatched(props.videoId);

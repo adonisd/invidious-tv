@@ -36,6 +36,7 @@ const spatial = useSpatialNavigation({
     "v-field__input",
     "select",
     "v-select__selection",
+    "shaka-play-button",
   ],
 });
 
@@ -101,9 +102,10 @@ body {
 
 .spatial-focus.shaka-tooltip {
   /* Your CSS styles here */
-  background-color: rgba(var(--v-theme-primary), 0.2);
-  border: 1px solid rgba(var(--v-theme-primary), 0.2);
+  background-color: rgba(var(--v-theme-background), 0.5);
+  border: 1px solid rgba(var(--v-theme-background), 0.2);
   border-radius: 25%;
+  color: rgb(var(--v-theme-on-surface));
 }
 
 .v-btn__overlay,
