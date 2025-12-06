@@ -11,7 +11,8 @@
       :dash-url="proxiedDashUrl"
       :fallback-url="proxiedFallbackUrl"
       :poster="video.videoThumbnails[0]?.url"
-      :autoplay="false"
+      :autoplay="userSettings?.autoPlay ?? true"
+      :autoFullscreen="userSettings?.autoFullscreen ?? true"
       :videoId="videoId"
     />
     <v-card-title>
@@ -62,6 +63,7 @@ import { InvidiousHelper } from "@/helper/invidious";
 import type { VideoDetail } from "@/interfaces/videos";
 import ShakaVideoPlayer from "@/components/ShakaVideoPlayer.vue";
 import { navigateToChannel } from "@/router";
+import { LocalUsers } from "@/helper/users";
 
 const props = defineProps<{ videoId: string }>();
 
@@ -71,13 +73,16 @@ const error = ref<string | null>(null);
 
 const invidious = new InvidiousHelper();
 
+const users = new LocalUsers();
+const currentUser = users.getCurrentUser() || "guest";
+const userSettings = users.getUserSettings(currentUser);
+
 // Proxied URLs through Invidious
 const proxiedDashUrl = computed(() => {
   if (!video.value?.dashUrl) return undefined;
   // Add local=true to proxy through Invidious
   return `${video.value.dashUrl}${video.value.dashUrl.includes("?") ? "&" : "?"}local=true`;
 });
-
 const proxiedFallbackUrl = computed(() => {
   if (!video.value?.formatStreams[0]?.url) return undefined;
   // Proxy the fallback URL through Invidious

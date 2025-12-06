@@ -26,12 +26,16 @@ export interface UserSettings {
     | "1440p"
     | "2160p";
   activeTheme: ThemeName;
+  autoPlay?: boolean;
+  autoFullscreen?: boolean;
 }
 
 export const defaultSettings: UserSettings = {
   showShorts: true,
   activeTheme: themeSelector.catppuccinMocha!,
   preferredResolution: "auto",
+  autoPlay: true,
+  autoFullscreen: true,
 };
 
 export class LocalUsers {
@@ -155,7 +159,7 @@ export class LocalUsers {
   public getUserSettings(username: string): UserSettings | null {
     const settingsStr = localStorage.getItem(this.STORAGE_USER_SETTINGS_PREFIX + username);
     if (settingsStr) {
-      return JSON.parse(settingsStr);
+      return { ...defaultSettings, ...JSON.parse(settingsStr) };
     }
     return null;
   }
@@ -165,6 +169,22 @@ export class LocalUsers {
     localStorage.setItem(
       this.STORAGE_USER_SETTINGS_PREFIX + username,
       JSON.stringify({ ...settings, showShorts: !settings?.showShorts }),
+    );
+  }
+
+  public toggleAutoPlay(username: string): void {
+    const settings = this.getUserSettings(username);
+    localStorage.setItem(
+      this.STORAGE_USER_SETTINGS_PREFIX + username,
+      JSON.stringify({ ...settings, autoPlay: !settings?.autoPlay }),
+    );
+  }
+
+  public toggleAutoFullscreen(username: string): void {
+    const settings = this.getUserSettings(username);
+    localStorage.setItem(
+      this.STORAGE_USER_SETTINGS_PREFIX + username,
+      JSON.stringify({ ...settings, autoFullscreen: !settings?.autoFullscreen }),
     );
   }
 

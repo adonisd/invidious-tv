@@ -6,6 +6,8 @@
         <v-row>
           <v-col cols="12">
             <v-switch label="Show Shorts" v-model="showShorts"></v-switch>
+            <v-switch label="Enable Auto Fullscreen" v-model="enableFullScreen"></v-switch>
+            <v-switch label="Enable Auto Play" v-model="enableAutoPlay"></v-switch>
             <v-text-field
               label="Base URL"
               v-model="baseUrl"
@@ -139,6 +141,26 @@ const showShorts = computed({
     if (settings.value) {
       settings.value.showShorts = val;
       localUsers.toggleShowShorts(user.value || "guest");
+    }
+  },
+});
+
+const enableFullScreen = computed({
+  get: () => settings.value?.autoFullscreen ?? false,
+  set: (val) => {
+    if (settings.value) {
+      settings.value.autoFullscreen = val;
+      localUsers.toggleAutoFullscreen(user.value || "guest");
+    }
+  },
+});
+
+const enableAutoPlay = computed({
+  get: () => settings.value?.autoPlay ?? false,
+  set: (val) => {
+    if (settings.value) {
+      settings.value.autoPlay = val;
+      localUsers.toggleAutoPlay(user.value || "guest");
     }
   },
 });

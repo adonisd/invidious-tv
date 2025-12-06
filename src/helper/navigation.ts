@@ -133,9 +133,9 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
     navigableElements.value.forEach((elem) => {
       if (elem === currentFocusedElement.value) return;
       if (!elem.offsetParent) return;
-      console.log(`Evaluating element:`, elem);
+      // console.log(`Evaluating element:`, elem);
       const elemWhoIsIt = whoAmI(elem);
-      console.log(`Comparing to element whoAmI: ${elemWhoIsIt} source: ${whoIsIt}`);
+      // console.log(`Comparing to element whoAmI: ${elemWhoIsIt} source: ${whoIsIt}`);
       if (restrictToMainContent && elemWhoIsIt !== "main-content") return;
       //if (restrictToMainContent && whoAmI(elem) !== "main-content") return;
       const targetRect = getRect(elem);

@@ -18,11 +18,13 @@ interface Props {
   fallbackUrl?: string;
   poster?: string;
   autoplay?: boolean;
+  autoFullscreen?: boolean;
   videoId: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  autoplay: false,
+  autoplay: true,
+  autoFullscreen: true,
 });
 
 const invidiousHelper = new InvidiousHelper();
@@ -105,14 +107,17 @@ async function initPlayer() {
     });
 
     if (props.autoplay) {
-      if (videoElement.value)
+      console.log("Attempting to autoplay video...");
+      if (videoElement.value) {
         await videoElement.value.play().catch((err) => {
           console.warn("Autoplay failed:", err);
         });
+        console.log("Autoplaying video done");
+      }
     }
 
     // check if in fullscreen
-    if (!document.fullscreenElement) {
+    if (!document.fullscreenElement && props.autoFullscreen) {
       ui.getControls()?.toggleFullScreen();
     }
   } catch (error) {
@@ -189,7 +194,7 @@ onMounted(() => {
   if (videoElement.value) {
     videoElement.value.addEventListener("playing", async () => {
       // check if not fullscreen and toggle
-      if (!document.fullscreenElement) {
+      if (!document.fullscreenElement && props.autoFullscreen) {
         ui?.getControls()?.toggleFullScreen();
       }
       if (isLoggedIn.value) {
