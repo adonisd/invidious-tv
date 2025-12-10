@@ -36,6 +36,38 @@ For other smart TVs:
 1. Open the web browser on your smart TV.
 2. Navigate to the hosted web app <https://adonisd.github.io/invidious-tv/>
 
+## CORS on your Invidious Instance
+
+For this app to work correctly, the Invidious instance you are connecting to must have CORS (Cross-Origin Resource Sharing) enabled. If you are running your own Invidious instance, ensure that CORS is properly configured to allow requests from the domain where the app is hosted. (<https://adonisd.github.io> in this case)
+
+Here is a sample caddy configuration to enable CORS:
+
+```caddy
+invidious.sample.com {
+ tls {
+  dns porkbun {
+   api_key {env.PORKBUN_API_KEY}
+   api_secret_key {env.PORKBUN_API_SECRET_KEY}
+  }
+  propagation_delay 30s
+  propagation_timeout 120s
+ }
+
+ @options method OPTIONS
+
+ handle @options {
+  header Access-Control-Allow-Credentials "true"
+  header Access-Control-Allow-Headers "User-Agent,Authorization,Content-Type,Range"
+  header Access-Control-Allow-Methods "GET,POST,OPTIONS,HEAD,PATCH,PUT,DELETE"
+  header Access-Control-Allow-Origin "{http.request.header.Origin}"
+  respond "" 204
+ }
+
+ reverse_proxy /companion/* 127.0.0.1:8282
+ reverse_proxy 127.0.0.1:3004
+}
+```
+
 ## What is this app?
 
 The `app` folder contains the source code for the Invidious TV application. It is built using Vite and Vue.js. The app communicates with your chosen Invidious instance via its public API primarily and private API for some features like login, subscriptions, and history management.
