@@ -42,7 +42,6 @@ jobs:
         run: |
           mkdir -p static_web_app
           cp -R app/dist/* static_web_app/
-          cp -R app/assets/* static_web_app/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
