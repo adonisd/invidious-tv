@@ -1,10 +1,11 @@
 {
   "id": "com.wristyquill.invidious",
   "version": "1.0.0",
-  "vendor": "My Company",
+  "vendor": "adonisd",
   "type": "web",
   "main": "index.html",
-  "title": "Invidious Client",
+  "title": "Invidious TV",
   "icon": "icon.png",
   "largeIcon": "largeIcon.png"
 }
+
