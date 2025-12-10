@@ -34,7 +34,7 @@ For WebOS TVs:
 For other smart TVs:
 
 1. Open the web browser on your smart TV.
-2. Navigate to the hosted web app https://adonisd.github.io/invidious-tv/
+2. Navigate to the hosted web app <https://adonisd.github.io/invidious-tv/>
 
 ## What is this app?
 
@@ -43,3 +43,24 @@ The `app` folder contains the source code for the Invidious TV application. It i
 The `hosted_web_app` folder contains the static assets needed to build a webOS web app + an index.html that loads the Invidious TV app from the public GitHub Pages URL.
 
 When building the webOS app, we basically package the hosted_web_app into an IPK file then when app is opened on the TV, it loads the Invidious TV app from the web.
+
+## Development
+
+To run the app locally for development:
+
+1. Clone the repository.
+2. install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+4. Open your web browser and navigate to `http://localhost:5173` to see the app.
+
+5. See `app/README.md` for more details on development and building the app.
