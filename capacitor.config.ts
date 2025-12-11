@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: "Invidious TV",
   webDir: "hosted_web_app",
   server: {
-    allowNavigation: ["adonisd.github.io", "com.wristyquill.invidious"],
+    allowNavigation: ["*"],
   },
 };
 
