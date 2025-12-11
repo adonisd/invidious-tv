@@ -1,11 +1,11 @@
 <template>
   <div>
     <v-row style="justify-content: space-evenly">
-      <v-col v-for="v in videos" :key="v.videoId" cols="12" sm="5" md="3" class="video-col">
+      <v-col v-for="v in videos" :key="v.videoId" class="video-col">
         <VideoCard :video="v" />
       </v-col>
     </v-row>
-    <v-row v-if="loading" class="justify-center my-4">
+    <v-row v-if="loading" class="justify-center">
       <v-progress-circular indeterminate color="primary" />
     </v-row>
     <div ref="sentinel" class="sentinel"></div>
@@ -154,7 +154,6 @@ onUnmounted(() => {
 .sentinel {
   height: 1px;
 }
-
 .video-col {
   display: flex;
   max-width: 30%;
@@ -170,5 +169,12 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   flex: 1;
+}
+
+@media (max-width: 768px) {
+  /* you can adjust the breakpoint */
+  .video-col {
+    max-width: 100%; /* one video per column */
+  }
 }
 </style>
