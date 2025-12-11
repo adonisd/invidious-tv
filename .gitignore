@@ -31,3 +31,4 @@ coverage
 *.ipk
 test-results/
 playwright-report/
+android/app/keystore/
