@@ -1,9 +1,12 @@
-import type { CapacitorConfig } from '@capacitor/cli';
+import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: 'com.wristyquill.invidious',
-  appName: 'Invidious TV',
-  webDir: 'hosted_web_app'
+  appId: "com.wristyquill.invidious",
+  appName: "Invidious TV",
+  webDir: "hosted_web_app",
+  server: {
+    allowNavigation: ["adonisd.github.io", "com.wristyquill.invidious"],
+  },
 };
 
 export default config;
