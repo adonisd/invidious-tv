@@ -4,7 +4,11 @@
   "description": "",
   "scripts": {
     "dev": "npm run --workspace app dev",
-    "build": "npm run --workspace app build"
+    "build": "npm run --workspace app build",
+    "android:open": "npx cap open android",
+    "android:sync": "npx cap sync android",
+    "android:build": "npx cap build android",
+    "android:generate-key": "keytool -genkeypair -v -keystore android/app/keystore/my-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias my-key-alias -storepass mypassword -keypass mypassword -dname 'CN=Invidious TV, OU=Dev, O=MyCompany, L=City, S=State, C=US'"
   },
   "workspaces": [
     "app",
