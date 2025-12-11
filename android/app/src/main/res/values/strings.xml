@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Invidious TV</string>
+    <string name="title_activity_main">Invidious TV</string>
+    <string name="package_name">com.wristyquill.invidious</string>
+    <string name="custom_url_scheme">com.wristyquill.invidious</string>
+</resources>

@@ -4,7 +4,12 @@
   "description": "",
   "scripts": {
     "dev": "npm run --workspace app dev",
-    "build": "npm run --workspace app build"
+    "build": "npm run --workspace app build",
+    "android:open": "npx cap open android",
+    "android:sync": "npx cap sync android",
+    "android:generate-key": "keytool -genkeypair -v -keystore android/app/keystore/my-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias my-key-alias -storepass mypassword -keypass mypassword -dname 'CN=Invidious TV, OU=Dev, O=MyCompany, L=City, S=State, C=US'",
+    "android:build": "npx cap build android --keystorepath android/app/keystore/my-release-key.jks --keystorepass mypassword --keystorealias my-key-alias --keystorealiaspass mypassword --androidreleasetype APK || echo 'DONE'",
+    "android:get-apk": "cp ./android/app/build/outputs/apk/release/app-release.apk ./invidious-tv.apk"
   },
   "workspaces": [
     "app",
@@ -19,5 +24,12 @@
   "bugs": {
     "url": "https://github.com/adonisd/invidious-tv/issues"
   },
-  "homepage": "https://github.com/adonisd/invidious-tv#readme"
+  "homepage": "https://github.com/adonisd/invidious-tv#readme",
+  "dependencies": {
+    "@capacitor/android": "^8.0.0",
+    "@capacitor/core": "^8.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.0.0"
+  }
 }

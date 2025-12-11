@@ -29,5 +29,7 @@ coverage
 
 *.tsbuildinfo
 *.ipk
+*.apk
 test-results/
 playwright-report/
+android/app/keystore/
