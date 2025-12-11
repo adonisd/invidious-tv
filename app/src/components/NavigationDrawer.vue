@@ -33,10 +33,16 @@
         @click="router.push({ name: 'Popular' })"
       ></v-list-item>
       <v-list-item
-        prepend-icon="mdi-trending-up"
-        title="Trending"
+        prepend-icon="mdi-gamepad-variant"
+        title="Gaming"
         class="spatial-item"
-        @click="router.push({ name: 'Trending' })"
+        @click="router.push({ name: 'Gaming' })"
+      ></v-list-item>
+      <v-list-item
+        prepend-icon="mdi-access-point"
+        title="Livestreams"
+        class="spatial-item"
+        @click="router.push({ name: 'Livestreams' })"
       ></v-list-item>
       <v-list-item
         v-if="isLoggedIn"

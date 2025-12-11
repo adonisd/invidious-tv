@@ -76,12 +76,25 @@ export class InvidiousHelper {
   async getTrending(type?: "music" | "gaming" | "movies" | "default"): Promise<Video[]> {
     const url = type
       ? `${this.baseUrl}/api/v1/trending?type=${type}`
-      : `${this.baseUrl}/api/v1/trending`;
+      : `${this.baseUrl}/api/v1/trending?type=default`;
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`Failed to fetch trending: ${response.status}`);
     }
-    return await response.json();
+    const jsonObj = await response.json();
+    console.log(`Fetched ${jsonObj.length} trending videos`);
+    // Fallback to gaming if no trending videos found
+    if (jsonObj.length === 0) {
+      const url = `${this.baseUrl}/api/v1/trending?type=gaming`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch trending: ${response.status}`);
+      }
+      const jsonObj = await response.json();
+      console.log(`Fetched ${jsonObj.length} trending videos`);
+      return jsonObj;
+    }
+    return jsonObj;
   }
 
   async getPopular(type?: string): Promise<Video[]> {

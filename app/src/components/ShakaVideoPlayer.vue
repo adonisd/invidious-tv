@@ -225,6 +225,7 @@ onMounted(() => {
 .shaka-video {
   width: 100%;
   height: auto;
+  max-height: 80vh;
   /* display: block; */
 }
 </style>
