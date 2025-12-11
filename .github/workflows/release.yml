@@ -46,6 +46,9 @@ jobs:
       - name: Generate Self-signed certificate
         run: npm run android:generate-key
 
+      - name: Sync Capacitor Android
+        run: npx cap sync android
+
       - name: Build Android APK
         run: npm run android:build
 
