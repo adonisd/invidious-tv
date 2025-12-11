@@ -1,5 +1,5 @@
 {
-  "name": "invid-vue",
+  "name": "invidious-tv",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -60,3 +60,4 @@
     "vue-tsc": "^3.1.0"
   }
 }
+

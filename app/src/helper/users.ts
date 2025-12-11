@@ -107,7 +107,7 @@ export class LocalUsers {
     const baseUrl = invidious.baseUrl;
     if (!callbackUrl) {
       if (window.location.origin.includes("github.io")) {
-        callbackUrl = `${window.location.origin}/invid-webos/#/callback`;
+        callbackUrl = `${window.location.origin}/invidious-tv/#/callback`;
       } else {
         callbackUrl = `${window.location.origin}/#/callback`;
       }
