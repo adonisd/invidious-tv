@@ -127,7 +127,6 @@ body {
 }
 
 .spatial-focus.shaka-tooltip {
-  /* Your CSS styles here */
   background-color: rgba(var(--v-theme-background), 0.5);
   border: 1px solid rgba(var(--v-theme-background), 0.2);
   border-radius: 25%;

@@ -1,11 +1,11 @@
 <template>
   <div>
     <v-row style="justify-content: space-evenly">
-      <v-col v-for="v in videos" :key="v.videoId" cols="12" sm="5" md="3" class="video-col">
+      <v-col v-for="v in videos" :key="v.videoId" cols="12" sm="1" md="2" lg="4" class="video-col">
         <VideoCard :video="v" />
       </v-col>
     </v-row>
-    <v-row v-if="loading" class="justify-center my-4">
+    <v-row v-if="loading" class="justify-center">
       <v-progress-circular indeterminate color="primary" />
     </v-row>
     <div ref="sentinel" class="sentinel"></div>

@@ -80,7 +80,6 @@ onMounted(async () => {
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
-  font-size: 1.2em; /* Scale everything */
 }
 
 .video-card:hover,
@@ -90,17 +89,14 @@ onMounted(async () => {
 
 /* Typography */
 .v-card-title {
-  font-size: 1.3em;
   color: white !important;
 }
 
 .v-card-subtitle {
-  font-size: 1.1em;
   color: white !important;
 }
 
 .v-card-text {
-  font-size: 1.1em;
   color: white !important;
 }
 

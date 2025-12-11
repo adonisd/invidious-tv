@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer app permanent rail expand-on-hover class="custom-nav" :rail-width="69">
+  <v-navigation-drawer app permanent rail expand-on-hover class="custom-nav">
     <v-list>
       <v-list-item
         v-if="isLoggedIn"
@@ -265,6 +265,7 @@ const handleSearch = () => {
   padding: 0px;
 }
 
+/*
 .custom-nav {
   font-size: 26px;
 }
@@ -272,4 +273,6 @@ const handleSearch = () => {
 .v-avatar {
   --v-avatar-height: 36px !important;
 }
+
+*/
 </style>
