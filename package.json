@@ -7,7 +7,7 @@
     "build": "npm run --workspace app build",
     "android:open": "npx cap open android",
     "android:sync": "npx cap sync android",
-    "android:generate-key": "keytool -genkeypair -v -keystore android/app/keystore/my-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias my-key-alias -storepass mypassword -keypass mypassword -dname 'CN=Invidious TV, OU=Dev, O=MyCompany, L=City, S=State, C=US'",
+    "android:generate-key": "mkdir -p android/app/keystore && keytool -genkeypair -v -keystore android/app/keystore/my-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias my-key-alias -storepass mypassword -keypass mypassword -dname 'CN=Invidious TV, OU=Dev, O=MyCompany, L=City, S=State, C=US'",
     "android:build": "npx cap build android --keystorepath android/app/keystore/my-release-key.jks --keystorepass mypassword --keystorealias my-key-alias --keystorealiaspass mypassword --androidreleasetype APK || echo 'DONE'",
     "android:get-apk": "cp ./android/app/build/outputs/apk/release/app-release.apk ./invidious-tv.apk"
   },
