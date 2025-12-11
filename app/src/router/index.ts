@@ -34,6 +34,16 @@ const router = createRouter({
       name: "Trending",
       component: VideosListView,
     },
+    {
+      path: "/gaming",
+      name: "Gaming",
+      component: VideosListView,
+    },
+    {
+      path: "/livestreams",
+      name: "Livestreams",
+      component: VideosListView,
+    },
     // AUTH CALLS
     {
       path: "/feed",

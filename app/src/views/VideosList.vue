@@ -55,8 +55,14 @@ const fetchVideos = async () => {
         fetched = await invidious.getPopular();
         break;
 
-      case "Trending":
-        fetched = await invidious.getTrending();
+      case "Gaming":
+        fetched = await invidious.getTrending("gaming");
+        console.log("➡ Fetched gaming videos:", fetched);
+        break;
+
+      case "Livestreams":
+        fetched = await invidious.getTrending("default");
+        console.log("➡ Fetched livestreams:", fetched);
         break;
 
       case "Feed":
@@ -68,7 +74,9 @@ const fetchVideos = async () => {
     }
 
     if (!showShorts) {
-      fetched = fetched.filter((v) => v.lengthSeconds !== 0);
+      // shorts and livestreams don't have lengthSeconds. Livestreams always have "0 seconds ago" as publishedText
+      // this way we can filter out shorts and keep livestreams
+      fetched = fetched.filter((v) => v.lengthSeconds !== 0 || v.publishedText === "0 seconds ago");
     }
 
     if (fetched.length === 0) {
