@@ -40,6 +40,28 @@ const KEYMAPPING: Record<string, Direction> = {
   Down: "down",
 };
 
+const lgRemoteCodes = {
+  "37": "left",
+  "38": "up",
+  "39": "right",
+  "40": "down",
+  "13": "enter",
+  "461": "back",
+
+  // colored buttons
+  "403": "red",
+  "404": "green",
+  "405": "yellow",
+  "406": "blue",
+
+  // media buttons
+  "415": "play",
+  "19": "pause",
+  "413": "stop",
+  "417": "fast-forward",
+  "412": "rewind",
+};
+
 export const useSpatialNavigation = (config: NavigationConfig) => {
   const currentFocusedElement = ref<HTMLElement | null>(null);
   const navigableElements = ref<HTMLElement[]>([]);
@@ -181,19 +203,29 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
     return null;
   };
 
+  const handleBackAction = (event: KeyboardEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (config.onBack) config.onBack();
+    else window.history?.back?.();
+  };
+
   const handleKeyDown = (event: KeyboardEvent) => {
     const key = event.key;
     console.log(`KEY: ${key} is pressed`);
+    const isLgKey = event.key === "Unidentified" && event.code in lgRemoteCodes;
 
-    if (["Back", "BrowserBack", "MediaBack", "Escape"].includes(key)) {
-      event.preventDefault();
-      event.stopPropagation();
-      if (config.onBack) config.onBack();
-      else window.history?.back?.();
+    if (
+      ["Back", "BrowserBack", "MediaBack", "Escape"].includes(key) ||
+      (isLgKey && lgRemoteCodes[event.code as keyof typeof lgRemoteCodes] === "back")
+    ) {
+      handleBackAction(event);
       return;
     }
 
-    const direction = KEYMAPPING[key];
+    const direction = isLgKey
+      ? KEYMAPPING[lgRemoteCodes[event.code as keyof typeof lgRemoteCodes]]
+      : KEYMAPPING[key];
     if (direction) {
       event.preventDefault();
       event.stopPropagation();
@@ -201,7 +233,12 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
       return;
     }
 
-    if ((key === "Enter" || key === "OK" || key === "Select") && currentFocusedElement.value) {
+    if (
+      ((key === "Enter" || key === "OK" || key === "Select") && currentFocusedElement.value) ||
+      (isLgKey &&
+        lgRemoteCodes[event.code as keyof typeof lgRemoteCodes] === "enter" &&
+        currentFocusedElement.value)
+    ) {
       event.preventDefault();
       currentFocusedElement.value.classList.add("spatial-active");
 
