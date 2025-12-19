@@ -119,6 +119,11 @@ body {
   background-color: rgb(var(--v-theme-background));
 }
 
+.v-container {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
 .spatial-focus {
   transition:
     transform 0.2s ease,
