@@ -184,13 +184,21 @@ function applyPreferredResolution() {
 function applyPreferredAudioLanguage() {
   if (!player) return;
 
-  const audioTracks = player.getAudioLanguages();
+  const audioTracks = player.getAudioTracks().map((t) => t.language);
   if (!audioTracks || audioTracks.length === 0) return;
 
   const userLang = userSettings?.prefferedLanguage;
-  if (userLang && audioTracks.includes(userLang)) {
-    player.selectAudioLanguage(userLang);
-    console.log("Selected audio language:", userLang);
+  if (userLang && audioTracks.length > 0) {
+    const trackToSelect = audioTracks.find((lang) => lang.includes(userLang));
+    if (trackToSelect) {
+      player.selectAudioLanguage(trackToSelect);
+      console.log("Audio language set to preferred:", trackToSelect);
+      return;
+    }
+
+    console.log(
+      "Preferred audio language not found in available tracks. Defaulting to first available.",
+    );
   } else {
     console.log("Preferred audio language not available, using default.");
   }
