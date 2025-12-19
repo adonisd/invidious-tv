@@ -28,6 +28,7 @@ export interface UserSettings {
   activeTheme: ThemeName;
   autoPlay?: boolean;
   autoFullscreen?: boolean;
+  prefferedLanguage?: string;
 }
 
 export const defaultSettings: UserSettings = {
@@ -36,6 +37,7 @@ export const defaultSettings: UserSettings = {
   preferredResolution: "auto",
   autoPlay: true,
   autoFullscreen: true,
+  prefferedLanguage: "en",
 };
 
 export class LocalUsers {
@@ -204,6 +206,14 @@ export class LocalUsers {
     localStorage.setItem(
       this.STORAGE_USER_SETTINGS_PREFIX + username,
       JSON.stringify({ ...settings, preferredResolution: resolution }),
+    );
+  }
+
+  public changePreferredLanguage(username: string, language: string): void {
+    const settings = this.getUserSettings(username);
+    localStorage.setItem(
+      this.STORAGE_USER_SETTINGS_PREFIX + username,
+      JSON.stringify({ ...settings, prefferedLanguage: language }),
     );
   }
 
