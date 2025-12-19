@@ -68,17 +68,25 @@ async function initPlayer() {
   ui.configure({
     controlPanelElements: [
       "play_pause",
-      "time_and_duration",
+      "chapter",
       "mute",
       "volume",
+      "rewind",
+      "fast_forward",
       "spacer",
       "captions",
       "quality",
+      "loop",
       "overflow_menu",
       "fullscreen",
     ],
     overflowMenuButtons: ["captions", "language", "playback_rate"],
-    addBigPlayButton: true,
+    addBigPlayButton: false,
+    seekBarColors: {
+      base: "rgba(255, 255, 255, 0.3)",
+      buffered: "rgba(255, 255, 255, 0.54)",
+      played: "rgba(255, 255, 255, 0.87)",
+    },
   });
 
   // Add event listener for player errors
@@ -107,6 +115,7 @@ async function initPlayer() {
       }
     });
 
+    // Autoplay if enabled
     if (props.autoplay) {
       console.log("Attempting to autoplay video...");
       if (videoElement.value) {
@@ -230,7 +239,7 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
+<style>
 .video-player-wrapper {
   border-radius: 12px;
   overflow: hidden;
@@ -250,6 +259,29 @@ onMounted(() => {
   width: 100%;
   height: auto;
   max-height: 80vh;
-  /* display: block; */
+}
+.shaka-controls-button-panel > *,
+.shaka-range-container > * {
+  color: var(--v-theme-surface);
+  background-color: rgba(var(--v-theme-surface), 0.7);
+}
+
+.shaka-controls-button-panel,
+.shaka-seek-bar-container {
+  margin-bottom: 10px;
+  border-radius: 25%;
+}
+.shaka-small-play-button,
+.shaka-resolution-button {
+  border-top-left-radius: 25%;
+  border-bottom-left-radius: 25%;
+}
+.shaka-fullscreen-button,
+.shaka-fast-forward-button {
+  border-top-right-radius: 25%;
+  border-bottom-right-radius: 25%;
+}
+.shaka-spacer {
+  background-color: transparent !important;
 }
 </style>
