@@ -172,7 +172,6 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
-  /* you can adjust the breakpoint */
   .video-col {
     max-width: 100%; /* one video per column */
   }

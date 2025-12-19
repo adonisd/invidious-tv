@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer app permanent rail expand-on-hover class="custom-nav">
+  <v-navigation-drawer permanent :rail="rail" expand-on-hover class="custom-nav">
     <v-list>
       <v-list-item
         v-if="isLoggedIn"
@@ -24,6 +24,8 @@
         title="Search"
         @click="hideTopBar = !hideTopBar"
         class="spatial-item"
+        @focus="handleRail"
+        @blur="handleRail"
       >
       </v-list-item>
       <v-list-item
@@ -31,18 +33,24 @@
         title="Popular"
         class="spatial-item first-nav-item"
         @click="router.push({ name: 'Popular' })"
+        @focus="handleRail"
+        @blur="handleRail"
       ></v-list-item>
       <v-list-item
         prepend-icon="mdi-gamepad-variant"
         title="Gaming"
         class="spatial-item"
         @click="router.push({ name: 'Gaming' })"
+        @focus="handleRail"
+        @blur="handleRail"
       ></v-list-item>
       <v-list-item
         prepend-icon="mdi-access-point"
         title="Livestreams"
         class="spatial-item"
         @click="router.push({ name: 'Livestreams' })"
+        @focus="handleRail"
+        @blur="handleRail"
       ></v-list-item>
       <v-list-item
         v-if="isLoggedIn"
@@ -50,6 +58,8 @@
         title="Feed"
         class="spatial-item"
         @click="router.push({ name: 'Feed' })"
+        @focus="handleRail"
+        @blur="handleRail"
       ></v-list-item>
       <v-list-item
         v-if="isLoggedIn"
@@ -57,6 +67,8 @@
         title="Playlists"
         class="spatial-item"
         @click="router.push({ name: 'Playlists' })"
+        @focus="handleRail"
+        @blur="handleRail"
       ></v-list-item>
       <v-list-item
         v-if="isLoggedIn"
@@ -64,18 +76,24 @@
         title="History"
         class="spatial-item"
         @click="router.push({ name: 'History' })"
+        @focus="handleRail"
+        @blur="handleRail"
       ></v-list-item>
       <v-list-item
         prepend-icon="mdi-cog"
         title="Settings"
         class="spatial-item"
         @click="router.push({ name: 'Settings' })"
+        @focus="handleRail"
+        @blur="handleRail"
       ></v-list-item>
       <v-list-item
         prepend-icon="mdi-account"
         title="Switch User"
         class="spatial-item"
         @click="router.push({ name: 'Root' })"
+        @focus="handleRail"
+        @blur="handleRail"
       ></v-list-item>
       <v-list-item
         v-if="!isLoggedIn"
@@ -83,6 +101,8 @@
         title="Login"
         @click="users.authorize()"
         class="spatial-item"
+        @focus="handleRail"
+        @blur="handleRail"
       ></v-list-item>
       <v-list-item
         v-else
@@ -90,6 +110,8 @@
         title="Logout"
         @click="handleLogout"
         class="spatial-item"
+        @focus="handleRail"
+        @blur="handleRail"
       ></v-list-item>
     </v-list>
   </v-navigation-drawer>
@@ -143,7 +165,7 @@ const users = new LocalUsers();
 
 const currentUser = computed(() => userState.currentUser);
 const isLoggedIn = computed(() => userState.isLoggedIn);
-
+const rail = ref(true);
 const hideTopBar = ref(false);
 const route = useRoute();
 
@@ -232,6 +254,10 @@ const handleSearch = () => {
       query: query,
     },
   });
+};
+
+const handleRail = () => {
+  rail.value = !rail.value;
 };
 </script>
 

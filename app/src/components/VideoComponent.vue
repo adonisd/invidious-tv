@@ -6,7 +6,7 @@
   </v-alert>
 
   <!-- Adaptive Video Player -->
-  <v-card elevation="2" v-else-if="video">
+  <v-card elevation="2" v-else-if="video" width="100%">
     <ShakaVideoPlayer
       :dash-url="proxiedDashUrl"
       :fallback-url="proxiedFallbackUrl"
@@ -23,7 +23,10 @@
       <!-- Author Row -->
       <div class="card-subtitle-layout">
         <div>
-          <v-avatar size="32" color="primary">
+          <v-avatar size="32" class="elevation-2" v-if="author">
+            <v-img :src="author.authorThumbnails[0]?.url"></v-img>
+          </v-avatar>
+          <v-avatar size="32" color="primary" v-else>
             <v-icon size="large" icon="mdi-account-circle" color="green-darken-2"></v-icon>
           </v-avatar>
           <v-divider vertical thickness="10"></v-divider>
@@ -64,10 +67,12 @@ import type { VideoDetail } from "@/interfaces/videos";
 import ShakaVideoPlayer from "@/components/ShakaVideoPlayer.vue";
 import { navigateToChannel } from "@/router";
 import { LocalUsers } from "@/helper/users";
+import type { Channel } from "@/interfaces/channels";
 
 const props = defineProps<{ videoId: string }>();
 
 const video = ref<VideoDetail | null>(null);
+const author = ref<Channel | null>(null);
 const loading = ref(true);
 const error = ref<string | null>(null);
 
@@ -122,6 +127,9 @@ async function fetchVideo() {
 
 onMounted(async () => {
   await fetchVideo();
+  if (video.value) {
+    author.value = await invidious.getChannelDetails(video.value.authorId);
+  }
   await nextTick();
 });
 
