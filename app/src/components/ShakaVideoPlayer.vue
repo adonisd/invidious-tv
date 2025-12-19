@@ -70,7 +70,7 @@ async function initPlayer() {
       "play_pause",
       "chapter",
       "mute",
-      "volume",
+      // "volume",
       "rewind",
       "fast_forward",
       "spacer",
