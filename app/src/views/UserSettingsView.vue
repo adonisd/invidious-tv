@@ -35,6 +35,18 @@
                 style="padding: 2%"
               ></v-select>
               <v-select
+                v-model="selectedPreferredLanguage"
+                label="Preferred Language"
+                :items="languageNames"
+                item-title="name"
+                item-value="name"
+                class="spatial-item"
+                @update:model-value="changePreferredLanguage"
+                style="padding: 2%"
+              ></v-select>
+            </v-row>
+            <v-row>
+              <v-select
                 v-model="selectedTheme"
                 :items="themesMap"
                 label="Theme"
@@ -98,6 +110,7 @@ import {
 import type { UserSubscription } from "@/interfaces/user";
 import { computed, onMounted, ref } from "vue";
 import { useTheme } from "vuetify";
+import ISO6391 from "iso-639-1";
 
 const theme = useTheme();
 const user = ref<string>();
@@ -121,6 +134,13 @@ const selectedTheme = ref<ThemeName>(settings.value.activeTheme);
 const selectedPreferredResolution = ref<UserSettings["preferredResolution"]>(
   settings.value.preferredResolution || "auto",
 );
+const selectedPreferredLanguage = ref<string>(
+  ISO6391.getName(settings.value.prefferedLanguage || "en"),
+);
+
+const languageCodes = ISO6391.getAllCodes();
+const languages = ISO6391.getLanguages(languageCodes);
+const languageNames = languages.map((lang) => lang.name);
 
 onMounted(async () => {
   theme.global.name.value = selectedTheme.value;
@@ -140,6 +160,13 @@ const changeTheme = (newTheme: ThemeName) => {
 
 const changeResolution = (newResolution: UserSettings["preferredResolution"]) => {
   localUsers.changeDefaultResolution(currentUser || "guest", newResolution);
+};
+
+const changePreferredLanguage = (langName: string) => {
+  const langCode = ISO6391.getCode(langName);
+  if (langCode) {
+    setPreferredLanguage(langCode);
+  }
 };
 
 const showShorts = computed({
@@ -171,6 +198,13 @@ const enableAutoPlay = computed({
     }
   },
 });
+
+const setPreferredLanguage = (langCode: string) => {
+  if (settings.value) {
+    settings.value.prefferedLanguage = langCode;
+    localUsers.changePreferredLanguage(user.value || "guest", langCode);
+  }
+};
 
 const baseUrl = computed({
   get: () => localStorage.getItem(INVIDIOUS_BASE_URL_KEY),

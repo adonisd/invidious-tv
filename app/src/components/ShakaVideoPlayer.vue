@@ -98,6 +98,7 @@ async function initPlayer() {
     });
 
     applyPreferredResolution();
+    applyPreferredAudioLanguage();
     // Enable captions by default (if available)
     player.addEventListener("trackschanged", () => {
       const textTracks = player!.getTextTracks();
@@ -177,6 +178,21 @@ function applyPreferredResolution() {
     player.configure({ abr: { enabled: false } }); // disable auto switching
     player.selectVariantTrack(selectedTrack, true);
     console.log("Selected quality:", selectedTrack.height, "p");
+  }
+}
+
+function applyPreferredAudioLanguage() {
+  if (!player) return;
+
+  const audioTracks = player.getAudioLanguages();
+  if (!audioTracks || audioTracks.length === 0) return;
+
+  const userLang = userSettings?.prefferedLanguage;
+  if (userLang && audioTracks.includes(userLang)) {
+    player.selectAudioLanguage(userLang);
+    console.log("Selected audio language:", userLang);
+  } else {
+    console.log("Preferred audio language not available, using default.");
   }
 }
 
