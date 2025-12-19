@@ -68,6 +68,7 @@ async function initPlayer() {
   ui.configure({
     controlPanelElements: [
       "play_pause",
+      "time_and_duration",
       "chapter",
       "mute",
       // "volume",
