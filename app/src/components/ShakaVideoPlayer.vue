@@ -262,9 +262,10 @@ onMounted(() => {
   max-height: 80vh;
 }
 .shaka-controls-button-panel > *,
-.shaka-range-container > * {
-  color: var(--v-theme-surface);
-  background-color: rgba(var(--v-theme-surface), 0.7);
+.shaka-range-container > *,
+.shaka-current-time {
+  color: var(--v-theme-surface) !important;
+  background-color: rgba(var(--v-theme-surface), 0.7) !important;
 }
 
 .shaka-controls-button-panel,
