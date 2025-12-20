@@ -237,10 +237,33 @@ onMounted(() => {
       }
     });
   }
+  document.addEventListener("fullscreenchange", () => {
+    // When exiting fullscreen, pause the video
+    if (!document.fullscreenElement) {
+      console.log("Exited fullscreen, pausing video");
+      videoElement.value?.pause();
+
+      // reset maxHeight
+      if (videoElement.value) {
+        videoElement.value.style.maxHeight = "80vh";
+      }
+    }
+
+    // when entering fullscreen, make sure .shaka-video is set to 100vh
+    if (document.fullscreenElement) {
+      if (videoElement.value) {
+        videoElement.value.style.maxHeight = "100vh";
+      }
+    }
+  });
 });
 </script>
 
 <style>
+:root {
+  --shaka-border-radius: 14px;
+}
+
 .video-player-wrapper {
   border-radius: 12px;
   overflow: hidden;
@@ -261,6 +284,7 @@ onMounted(() => {
   height: auto;
   max-height: 80vh;
 }
+
 .shaka-controls-button-panel > *,
 .shaka-range-container > *,
 .shaka-current-time {
@@ -271,17 +295,17 @@ onMounted(() => {
 .shaka-controls-button-panel,
 .shaka-seek-bar-container {
   margin-bottom: 10px;
-  border-radius: 25%;
+  border-radius: var(--shaka-border-radius);
 }
 .shaka-small-play-button,
 .shaka-resolution-button {
-  border-top-left-radius: 25%;
-  border-bottom-left-radius: 25%;
+  border-top-left-radius: var(--shaka-border-radius);
+  border-bottom-left-radius: var(--shaka-border-radius);
 }
 .shaka-fullscreen-button,
 .shaka-fast-forward-button {
-  border-top-right-radius: 25%;
-  border-bottom-right-radius: 25%;
+  border-top-right-radius: var(--shaka-border-radius);
+  border-bottom-right-radius: var(--shaka-border-radius);
 }
 .shaka-spacer {
   background-color: transparent !important;
