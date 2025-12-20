@@ -96,6 +96,18 @@ onMounted(async () => {
   spatial.init();
   spatial.refresh();
   spatial.focusFirst();
+
+  // TRY HANDLE BACK BUTTON TO NOT EXIT THE APP
+  // https://stackoverflow.com/questions/43329654/android-back-button-on-a-progressive-web-application-closes-de-app
+  window.addEventListener("load", function () {
+    window.history.pushState({ noBackExitsApp: true }, "");
+  });
+
+  window.addEventListener("popstate", function (event) {
+    if (event.state && event.state.noBackExitsApp) {
+      window.history.pushState({ noBackExitsApp: true }, "");
+    }
+  });
 });
 watch(
   () => $route.fullPath,
