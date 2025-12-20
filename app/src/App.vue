@@ -68,25 +68,9 @@ const spatial = useSpatialNavigation({
 
 const isLoading = ref(true);
 const error = ref("");
-let lastBackPress = 0;
-function onBack() {
-  window.history.pushState(null, "", window.location.href);
-
-  if (Date.now() - lastBackPress < 2000) {
-    window.removeEventListener("popstate", onBack);
-    window.history.back();
-  } else {
-    lastBackPress = Date.now();
-  }
-}
-
 onMounted(async () => {
   console.log("Current URL:", window.location.href);
   console.log("Search params:", window.location.search);
-
-  // Seed history so Android doesn't exit immediately
-  window.history.pushState(null, "", window.location.href);
-  window.addEventListener("popstate", onBack);
 
   try {
     const token = localUsers.parseAuthCallback();
@@ -107,6 +91,7 @@ onMounted(async () => {
     error.value = "Failed to parse authentication token";
     isLoading.value = false;
   }
+
   await nextTick();
   spatial.init();
   spatial.refresh();
@@ -122,7 +107,6 @@ watch(
 );
 onBeforeUnmount(() => {
   spatial.cleanup();
-  window.removeEventListener("popstate", onBack);
 });
 </script>
 

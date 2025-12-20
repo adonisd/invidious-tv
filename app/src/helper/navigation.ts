@@ -213,7 +213,7 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
   const handleKeyDown = (event: KeyboardEvent) => {
     const key = event.key;
     console.log(`KEY: ${key} is pressed`);
-    const isLgKey = event.key === "Unidentified" && event.code in lgRemoteCodes;
+    const isLgKey = event.code in lgRemoteCodes;
 
     if (
       ["Back", "BrowserBack", "MediaBack", "Escape"].includes(key) ||
@@ -288,6 +288,10 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
       focusElement(navigableElements.value[0]!);
     }
     console.log("spatial navigation loaded");
+    window.addEventListener("popstate", function () {
+      // received back, check inEvent.state if you want the data from the history push
+      handleBackAction(new KeyboardEvent("keydown", { key: "Back" }));
+    });
   };
 
   const cleanup = () => {
