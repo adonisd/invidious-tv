@@ -240,9 +240,6 @@ onMounted(() => {
   document.addEventListener("fullscreenchange", () => {
     // When exiting fullscreen, pause the video
     if (!document.fullscreenElement) {
-      console.log("Exited fullscreen, pausing video");
-      videoElement.value?.pause();
-
       // reset maxHeight
       if (videoElement.value) {
         videoElement.value.style.maxHeight = "80vh";
