@@ -212,11 +212,16 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
 
   const handleKeyDown = (event: KeyboardEvent) => {
     const key = event.key;
-    console.log("EVENT: ", JSON.stringify(event));
-    console.dir(event);
-    console.log(event);
-    console.log(`KEY: ${key} is pressed code: ${event.code}`);
-    const isLgKey = event.code in lgRemoteCodes || event.keyCode.toString() in lgRemoteCodes;
+    let code = event.code;
+    if (!key && !code) {
+      // LG webos doesn't supply code or key, but supplies which and keyCode
+      if (event.which) {
+        code = event.which.toString();
+      }
+    }
+    const isLgKey = code in lgRemoteCodes;
+    console.log("EVENT: ", event);
+    console.log("KEYCODE: ", code);
     console.log(`isLgKey: ${isLgKey}`);
     if (isLgKey) {
       console.log(
