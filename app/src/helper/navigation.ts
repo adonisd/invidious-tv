@@ -214,6 +214,7 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
     const key = event.key;
     console.log("EVENT: ", JSON.stringify(event));
     console.dir(event);
+    console.log(event);
     console.log(`KEY: ${key} is pressed code: ${event.code}`);
     const isLgKey = event.code in lgRemoteCodes || event.keyCode.toString() in lgRemoteCodes;
     console.log(`isLgKey: ${isLgKey}`);
