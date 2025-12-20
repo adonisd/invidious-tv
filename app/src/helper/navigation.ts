@@ -213,7 +213,7 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
   const handleKeyDown = (event: KeyboardEvent) => {
     const key = event.key;
     let code = event.code;
-    if (!key && !code) {
+    if (key === "Unidentified" && (!event.code || event.code === "")) {
       // LG webos doesn't supply code or key, but supplies which and keyCode
       if (event.which) {
         code = event.which.toString();
