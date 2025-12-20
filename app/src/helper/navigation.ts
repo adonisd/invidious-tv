@@ -1,6 +1,7 @@
 // composables/useSpatialNavigation.ts
 import { ref, type Ref } from "vue";
 import type { BackButtonEventDetail } from "@ionic/core";
+import { useBackButton } from "@ionic/vue";
 
 interface Position {
   x: number;
@@ -290,11 +291,7 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
     updateNavigableElements();
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("ionBackButton", handleIonicBackButton);
-    document.addEventListener("ionBackButton", (event) => {
-      const parsedEvent = event as CustomEvent<BackButtonEventDetail>;
-      parsedEvent.detail.register(100, handleIonicBackButton);
-      handleBackAction(new KeyboardEvent("keydown", { key: "Back" }));
-    });
+    useBackButton(100, handleIonicBackButton);
 
     isInitialized.value = true;
 
