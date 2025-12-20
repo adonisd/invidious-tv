@@ -212,8 +212,17 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
 
   const handleKeyDown = (event: KeyboardEvent) => {
     const key = event.key;
-    console.log(`KEY: ${key} is pressed`);
+    console.log(`KEY: ${key} is pressed code: ${event.code}`);
     const isLgKey = event.code in lgRemoteCodes;
+    console.log(`isLgKey: ${isLgKey}`);
+    if (isLgKey) {
+      console.log(
+        `LG Remote Key Detected: ${lgRemoteCodes[event.code as keyof typeof lgRemoteCodes]}`,
+      );
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
 
     if (
       ["Back", "BrowserBack", "MediaBack", "Escape"].includes(key) ||
