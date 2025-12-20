@@ -1,6 +1,5 @@
 // composables/useSpatialNavigation.ts
 import { ref, type Ref } from "vue";
-import type { BackButtonEventDetail } from "@ionic/core";
 import { useBackButton } from "@ionic/vue";
 
 interface Position {

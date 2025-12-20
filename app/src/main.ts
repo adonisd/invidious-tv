@@ -2,7 +2,7 @@ import "core-js/stable";
 import "regenerator-runtime/runtime";
 
 import { createApp } from "vue";
-
+import { IonicVue, isPlatform } from "@ionic/vue";
 import App from "./App.vue";
 import router from "./router";
 import { createVuetify } from "vuetify";
@@ -28,6 +28,13 @@ import { aliases, mdi } from "vuetify/iconsets/mdi";
 import { themes, themeSelector } from "./helper/themes";
 
 const app = createApp(App);
+
+if (isPlatform("android") || isPlatform("ios")) {
+  app.use(IonicVue, {
+    experimentalCloseWatcher: true,
+    mode: "md",
+  });
+}
 
 const vuetify = createVuetify({
   icons: {
