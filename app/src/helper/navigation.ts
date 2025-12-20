@@ -224,9 +224,7 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
     console.log("KEYCODE: ", code);
     console.log(`isLgKey: ${isLgKey}`);
     if (isLgKey) {
-      console.log(
-        `LG Remote Key Detected: ${lgRemoteCodes[event.code as keyof typeof lgRemoteCodes]}`,
-      );
+      console.log(`LG Remote Key Detected: ${lgRemoteCodes[code as keyof typeof lgRemoteCodes]}`);
       event.preventDefault();
       event.stopPropagation();
       return;
@@ -234,14 +232,14 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
 
     if (
       ["Back", "BrowserBack", "MediaBack", "Escape"].includes(key) ||
-      (isLgKey && lgRemoteCodes[event.code as keyof typeof lgRemoteCodes] === "back")
+      (isLgKey && lgRemoteCodes[code as keyof typeof lgRemoteCodes] === "back")
     ) {
       handleBackAction(event);
       return;
     }
 
     const direction = isLgKey
-      ? KEYMAPPING[lgRemoteCodes[event.code as keyof typeof lgRemoteCodes]]
+      ? KEYMAPPING[lgRemoteCodes[code as keyof typeof lgRemoteCodes]]
       : KEYMAPPING[key];
     if (direction) {
       event.preventDefault();
@@ -253,7 +251,7 @@ export const useSpatialNavigation = (config: NavigationConfig) => {
     if (
       ((key === "Enter" || key === "OK" || key === "Select") && currentFocusedElement.value) ||
       (isLgKey &&
-        lgRemoteCodes[event.code as keyof typeof lgRemoteCodes] === "enter" &&
+        lgRemoteCodes[code as keyof typeof lgRemoteCodes] === "enter" &&
         currentFocusedElement.value)
     ) {
       event.preventDefault();
